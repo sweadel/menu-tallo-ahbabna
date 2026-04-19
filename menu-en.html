@@ -616,7 +616,18 @@ setTab(initialTab, document.querySelectorAll('#mainTabRow .pill')[pillIndex]);
                 items.forEach(item => grids[0].appendChild(buildCard(item)));
             });
         });
+
+        // ── Settings Listener (show/hide buttons, social links) ───
+        db.ref('settings/home').on('value', (snap) => {
+            const cfg = snap.val();
+            if (!cfg) return;
+            const waLink  = document.getElementById('link-whatsapp');
+            if (waLink  && cfg.whatsapp)   waLink.href  = 'https://wa.me/' + cfg.whatsapp.replace(/\D/g,'');
+        });
     </script>
+    <a id="link-whatsapp" class="floating-wa" href="https://wa.me/962779688633" target="_blank" title="Contact us via WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}</script>
 </body>
 </html>

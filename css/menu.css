@@ -800,7 +800,39 @@ section.active {
 }
 
 /* ════════════════════════════════════════════════════════════════════
- 11. استجابة الموبايل — Responsive Mobile
+ 11. الزر العائم للواتس اب — Floating WhatsApp Button
+ ════════════════════════════════════════════════════════════════════ */
+ .floating-wa {
+    position: fixed;
+    bottom: 25px;
+    right: 25px; /* right for arabic, left for english, but let's keep it right for both or just use right/left based on html dir */
+    background: #25d366;
+    color: white;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: transform 0.3s ease, background 0.3s;
+    text-decoration: none;
+ }
+
+ .floating-wa:hover {
+    background: #128c7e;
+    transform: scale(1.1);
+ }
+
+ html[dir="ltr"] .floating-wa {
+    right: auto;
+    left: 25px;
+ }
+
+/* ════════════════════════════════════════════════════════════════════
+ 12. استجابة الموبايل — Responsive Mobile
  ════════════════════════════════════════════════════════════════════
  الشاشات < 600px → عمودان بدل ثلاثة للبطاقات
  ════════════════════════════════════════════════════════════════════ */
