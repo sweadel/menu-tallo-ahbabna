@@ -1,125 +1,237 @@
 /**
- * design-sync.js
- * Automatically syncs global design settings (Logo, Font, Primary Color)
- * to any page that includes this script.
+ * design-sync.js — v2.0 (Full Header Control)
+ * يطبق جميع إعدادات التصميم المحفوظة في Firebase على أي صفحة تضمّنه.
+ * يشمل التحكم الكامل في: الخلفية، اللوجو، التبويبات، البحث، الأزرار الفرعية.
  */
 
-(function() {
-    // Wait for Firebase to be ready (assuming 'db' is defined globally)
+(function () {
+    const injectStyle = (id, css) => {
+        let tag = document.getElementById(id);
+        if (!tag) { tag = document.createElement('style'); tag.id = id; document.head.appendChild(tag); }
+        tag.textContent = css;
+    };
+
     const syncDesign = () => {
         if (typeof firebase === 'undefined' || !firebase.apps.length) {
-            console.warn('Firebase not initialized yet. Waiting...');
             setTimeout(syncDesign, 500);
             return;
         }
-
         const db = firebase.database();
-        db.ref('settings/design').on('value', (snapshot) => {
-            const d = snapshot.val();
+
+        // ══════════════════════════════════════════════════════
+        // A. Global design settings
+        // ══════════════════════════════════════════════════════
+        db.ref('settings/design').on('value', (snap) => {
+            const d = snap.val();
             if (!d) return;
 
             // 1. Typography
             if (d.fontFamily) {
-                document.body.style.setProperty('font-family', `"${d.fontFamily}", sans-serif`, 'important');
-                document.querySelectorAll('*').forEach(el => {
-                    const tag = el.tagName.toLowerCase();
-                    // Skip icons
-                    if (el.classList.contains('fa-solid') || el.classList.contains('fa-brands') || tag === 'i') return;
-                    el.style.setProperty('font-family', `"${d.fontFamily}", sans-serif`, 'important');
-                });
+                const fontRules = `@import url('https://fonts.googleapis.com/css2?family=${encodeURIComponent(d.fontFamily)}:wght@300;400;500;600;700&display=swap');`;
+                injectStyle('ds-font-import', fontRules);
+                injectStyle('ds-font', `* { font-family: '${d.fontFamily}', sans-serif !important; }`);
             }
             if (typeof d.fontBold !== 'undefined') {
                 document.body.style.fontWeight = d.fontBold ? '700' : '400';
             }
 
-            // 2. Branding Colors
+            // 2. Branding Color (--gold and --primary)
             if (d.primaryColor) {
                 document.documentElement.style.setProperty('--gold', d.primaryColor);
                 document.documentElement.style.setProperty('--primary', d.primaryColor);
-                
-                // Specific overrides for buttons if needed
-                const goldBtns = document.querySelectorAll('.main-btn.gold, .submit-btn, .primary-btn');
-                goldBtns.forEach(btn => {
-                    btn.style.setProperty('background', d.primaryColor, 'important');
-                    btn.style.setProperty('color', '#000', 'important');
-                });
             }
 
-            // 3. Logo URL
+            // 3. Global Logo URL
             if (d.logoUrl) {
-                const logoImgs = document.querySelectorAll('.logo-wrap img, .logo-header img');
-                logoImgs.forEach(img => img.src = d.logoUrl);
-                const touchIcon = document.querySelector('link[rel="apple-touch-icon"]');
-                if(touchIcon) touchIcon.href = d.logoUrl;
+                document.querySelectorAll('.logo-wrap img, .logo-header img').forEach(img => img.src = d.logoUrl);
             }
 
-            // 4. Backgrounds
+            // 4. Page / Card backgrounds
             if (d.pageBg) document.documentElement.style.setProperty('--bg', d.pageBg);
             if (d.cardBg) document.documentElement.style.setProperty('--card-bg', d.cardBg);
 
-            // 5. Promotional Banner
+            // 5. Card Style
+            if (d.cardStyle) {
+                const cardStyles = {
+                    modern:  `.menu-card { box-shadow: 0 4px 20px rgba(0,0,0,.5); border-radius: 14px; }`,
+                    classic: `.menu-card { box-shadow: none; border-radius: 6px; }`,
+                    glass:   `.menu-card { backdrop-filter: blur(12px); background: rgba(255,255,255,.05) !important; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; }`,
+                };
+                injectStyle('ds-card-style', cardStyles[d.cardStyle] || '');
+            }
+
+            // 6. Promo Banner
             let banner = document.getElementById('offer-banner');
             if (d.bannerActive && d.bannerText) {
                 if (!banner) {
                     banner = document.createElement('div');
                     banner.id = 'offer-banner';
-                    banner.style.cssText = 'background:var(--gold); color:#000; text-align:center; padding:12px; font-weight:bold; position:sticky; top:0; z-index:2000; box-shadow:0 4px 15px rgba(0,0,0,0.5); font-size:1.05rem;';
+                    banner.style.cssText = 'position:sticky;top:0;z-index:2000;text-align:center;padding:12px;font-weight:700;font-size:1rem;box-shadow:0 4px 15px rgba(0,0,0,.5);';
                     const hdr = document.getElementById('hdr') || document.querySelector('header');
-                    if(hdr) hdr.parentNode.insertBefore(banner, hdr);
+                    if (hdr) hdr.parentNode.insertBefore(banner, hdr);
                     else document.body.prepend(banner);
                 }
                 banner.textContent = d.bannerText;
+                banner.style.background = d.primaryColor || 'var(--gold)';
+                banner.style.color = '#000';
                 banner.style.display = 'block';
-                if(d.primaryColor) banner.style.background = d.primaryColor;
             } else if (banner) {
                 banner.style.display = 'none';
             }
 
-            // 6. Header Visuals
-            const hdr = document.getElementById('hdr') || document.querySelector('header');
-            const logo = document.querySelector('.logo-wrap img, .logo-header img');
+            // 7. Search row visibility
             const searchRow = document.getElementById('searchRow');
+            if (searchRow) searchRow.style.display = (d.showSearch === false) ? 'none' : 'block';
 
-            if (hdr) {
-                const bgImg = d.headerBg ? `url('${d.headerBg}')` : "url('images/sadu-pattern.jpg')";
-                const op = d.headerOpacity || '0.3';
-                hdr.style.background = `linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,${op})), ${bgImg} center / 120px repeat`;
-            }
-            if (logo && d.logoHeight) {
-                logo.style.height = d.logoHeight + 'px';
-            }
-            if (searchRow) {
-                searchRow.style.display = (d.showSearch === false) ? 'none' : 'block';
-            }
+            // 8. Tab Labels
+            const tabMap = { arabic: 'd_labelArabic', intl: 'd_labelIntl', drinks: 'd_labelDrinks', argileh: 'd_labelArgileh' };
+            [['arabic', d.labelArabic], ['intl', d.labelIntl], ['drinks', d.labelDrinks], ['argileh', d.labelArgileh]].forEach(([key, val]) => {
+                if (val) { const el = document.getElementById(`pill-${key}`); if (el) el.textContent = val; }
+            });
 
-            // 7. Main Menu Tab Labels
-            if (d.labelArabic) {
-                const p = document.getElementById('pill-arabic');
-                if(p) p.textContent = d.labelArabic;
-            }
-            if (d.labelIntl) {
-                const p = document.getElementById('pill-intl');
-                if(p) p.textContent = d.labelIntl;
-            }
-            if (d.labelDrinks) {
-                const p = document.getElementById('pill-drinks');
-                if(p) p.textContent = d.labelDrinks;
-            }
-            if (d.labelArgileh) {
-                const p = document.getElementById('pill-argileh');
-                if(p) p.textContent = d.labelArgileh;
-            }
-
-            // 8. SEO Meta
-            if (d.siteTitle) {
-                document.title = d.siteTitle;
-            }
+            // 9. SEO
+            if (d.siteTitle) document.title = d.siteTitle;
             if (d.siteDesc) {
-                const meta = document.querySelector('meta[name="description"]');
-                if(meta) meta.content = d.siteDesc;
-                const ogMeta = document.querySelector('meta[property="og:description"]');
-                if(ogMeta) ogMeta.content = d.siteDesc;
+                let m = document.querySelector('meta[name="description"]');
+                if (m) m.content = d.siteDesc;
             }
+
+            // ══════════════════════════════════════════════════
+            // 10. MENU HEADER — Full Control
+            // ══════════════════════════════════════════════════
+            const h = d.menuHeader;
+            if (!h) return;
+
+            const hdr = document.getElementById('hdr') || document.querySelector('header');
+            if (hdr) {
+                // Background
+                const bgSize = h.bgSize || 120;
+                if (h.bgImage) {
+                    const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.1;
+                    const o2 = h.overlay2 !== undefined ? h.overlay2 : 0.3;
+                    hdr.style.background = `linear-gradient(rgba(0,0,0,${o1}), rgba(0,0,0,${o2})), url('${h.bgImage}') center/${bgSize}px repeat`;
+                } else {
+                    hdr.style.background = h.solidColor || '#111111';
+                }
+            }
+
+            // Logo in header
+            const logoImg = document.querySelector('.logo-wrap img');
+            if (logoImg) {
+                if (h.logoUrl) logoImg.src = h.logoUrl;
+                if (h.logoHeight) logoImg.style.height = h.logoHeight + 'px';
+                logoImg.style.opacity = h.logoOpacity !== undefined ? h.logoOpacity : 0.93;
+                const shadow = h.logoShadow !== undefined ? h.logoShadow : 8;
+                logoImg.style.filter = `drop-shadow(0 2px ${shadow}px rgba(0,0,0,.6))`;
+            }
+
+            // Back button
+            const backBtn = document.querySelector('.back-btn');
+            if (backBtn) {
+                backBtn.style.display = (h.showBack === false) ? 'none' : 'flex';
+                if (h.backText) backBtn.textContent = h.backText;
+                if (h.backColor) backBtn.style.color = h.backColor;
+            }
+
+            // Pills (main tabs)
+            if (h.pills) {
+                const p = h.pills;
+                const pillCSS = `
+                    .pill {
+                        font-size: ${p.fontSize || 0.9}rem !important;
+                        border-radius: ${p.radius || 22}px !important;
+                        padding: ${p.padV || 9}px ${p.padH || 22}px !important;
+                        color: ${p.textColor || 'var(--text-dim)'} !important;
+                        background: ${p.bgColor || 'rgba(255,255,255,.06)'} !important;
+                    }
+                    .pill.active {
+                        background: ${p.activeBg || 'var(--gold)'} !important;
+                        color: ${p.activeText || '#000'} !important;
+                        border-color: ${p.activeBg || 'var(--gold)'} !important;
+                    }
+                `;
+                injectStyle('ds-pills', pillCSS);
+            }
+
+            // Search box
+            if (h.search) {
+                const s = h.search;
+                const searchCSS = `
+                    .search-box {
+                        background: ${s.bg || 'rgba(255,255,255,.05)'} !important;
+                        border-radius: ${s.radius || 12}px !important;
+                    }
+                    .search-box svg path { fill: ${s.iconColor || 'var(--gold)'} !important; }
+                    .search-box svg { color: ${s.iconColor || 'var(--gold)'} !important; }
+                `;
+                injectStyle('ds-search', searchCSS);
+                const srchInput = document.getElementById('srch');
+                if (srchInput && s.placeholder) srchInput.placeholder = s.placeholder;
+            }
+
+            // Sub-nav category buttons
+            if (h.catbtn) {
+                const cb = h.catbtn;
+                const catCSS = `
+                    .cat-btn {
+                        font-size: ${cb.fontSize || 0.78}rem !important;
+                        border-radius: ${cb.radius || 50}px !important;
+                        padding: ${cb.padV || 5}px ${cb.padH || 14}px !important;
+                        color: ${cb.color || 'var(--text-dim)'} !important;
+                    }
+                    .cat-btn:hover, .cat-btn.active {
+                        color: ${cb.activeColor || 'var(--gold)'} !important;
+                    }
+                `;
+                injectStyle('ds-catbtn', catCSS);
+            }
+        });
+
+        // ══════════════════════════════════════════════════════
+        // B. Home page settings
+        // ══════════════════════════════════════════════════════
+        db.ref('settings/home').on('value', (snap) => {
+            const h = snap.val();
+            if (!h) return;
+
+            // Buttons visibility
+            const btnAr   = document.getElementById('btn-ar-menu')   || document.querySelector('[data-home-btn="ar"]');
+            const btnEn   = document.getElementById('btn-en-menu')   || document.querySelector('[data-home-btn="en"]');
+            const btnFeed = document.getElementById('btn-feedback')  || document.querySelector('[data-home-btn="feed"]');
+            if (btnAr)   btnAr.style.display   = h.showBtnAr   === false ? 'none' : '';
+            if (btnEn)   btnEn.style.display   = h.showBtnEn   === false ? 'none' : '';
+            if (btnFeed) btnFeed.style.display  = h.showBtnFeed === false ? 'none' : '';
+
+            // Social links
+            const wa  = document.querySelector('[data-social="whatsapp"]');
+            const ig  = document.querySelector('[data-social="instagram"]');
+            const fb  = document.querySelector('[data-social="facebook"]');
+            const gm  = document.querySelector('[data-social="maps"]');
+            if (wa && h.whatsapp)   wa.href = `https://wa.me/${h.whatsapp}`;
+            if (ig && h.instagram)  ig.href = h.instagram;
+            if (fb && h.facebook)   fb.href = h.facebook;
+            if (gm && h.maps)       gm.href = h.maps;
+
+            // Video background
+            const vid = document.querySelector('video.bg-video') || document.querySelector('.hero-video video');
+            if (vid && h.homeVideo) {
+                const src = vid.querySelector('source') || document.createElement('source');
+                src.src = h.homeVideo; src.type = 'video/mp4';
+                if (!src.parentNode) vid.appendChild(src);
+                vid.load();
+            }
+
+            // Tagline
+            const tagline = document.querySelector('.hero-tagline, .tagline, [data-tagline]');
+            if (tagline && h.homeTagline) tagline.textContent = h.homeTagline;
+
+            // Overlay opacity
+            const overlay = document.querySelector('.video-overlay, .hero-overlay, [data-overlay]');
+            if (overlay && h.homeOverlay !== undefined) overlay.style.opacity = h.homeOverlay;
+
+            // Logo size
+            const homeLogo = document.querySelector('.home-logo img, .hero-logo img');
+            if (homeLogo && h.homeLogoSize) homeLogo.style.width = h.homeLogoSize + 'px';
         });
     };
 

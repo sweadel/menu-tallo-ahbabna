@@ -146,9 +146,10 @@ REFS.deleted.on('value', snapshot => {
 REFS.design.on('value', snapshot => {
     const d = snapshot.val();
     if (!d) return;
-    const sv = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+    const sv = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.value = val; };
     const sc = (id, val) => { const el = document.getElementById(id); if(el) el.checked = val !== false; };
 
+    // Colors & Typography
     sv('d_primaryColor', d.primaryColor || '#C8A84B');
     sv('d_primaryColorText', d.primaryColor || '#C8A84B');
     sv('d_pageBg', d.pageBg || '#080808');
@@ -157,20 +158,78 @@ REFS.design.on('value', snapshot => {
     sv('d_cardBgText', d.cardBg || '#121212');
     sv('d_fontFamily', d.fontFamily || 'IBM Plex Sans Arabic');
     sv('d_cardStyle', d.cardStyle || 'modern');
+    sc('d_fontBold', d.fontBold);
+    sc('d_showSearch', d.showSearch !== false);
+
+    // Logo & Header (legacy fields)
     sv('d_logoUrl', d.logoUrl || '');
     sv('d_headerBg', d.headerBg || '');
     sv('d_logoHeight', d.logoHeight || '');
     sv('d_headerOpacity', d.headerOpacity || '');
-    sv('d_bannerText', d.bannerText || '');
+
+    // Tabs Labels
     sv('d_labelArabic', d.labelArabic || '');
     sv('d_labelIntl', d.labelIntl || '');
     sv('d_labelDrinks', d.labelDrinks || '');
     sv('d_labelArgileh', d.labelArgileh || '');
+
+    // Promo Banner
+    sv('d_bannerText', d.bannerText || '');
+    sc('d_bannerActive', d.bannerActive || false);
+
+    // SEO
     sv('d_siteTitle', d.siteTitle || '');
     sv('d_siteDesc', d.siteDesc || '');
-    sc('d_fontBold', d.fontBold);
-    sc('d_showSearch', d.showSearch);
-    sc('d_bannerActive', d.bannerActive || false);
+
+    // ── Menu Header Controls ──
+    const h = d.menuHeader || {};
+    sv('hdr_bgImage',   h.bgImage   || '');
+    sv('hdr_overlay1',  h.overlay1  !== undefined ? h.overlay1 : '');
+    sv('hdr_overlay2',  h.overlay2  !== undefined ? h.overlay2 : '');
+    sv('hdr_solidColor', h.solidColor || '#111111');
+    sv('hdr_solidColorText', h.solidColor || '');
+    sv('hdr_bgSize',    h.bgSize    || '');
+    sv('hdr_logoUrl',   h.logoUrl   || '');
+    sv('hdr_logoHeight',h.logoHeight|| '');
+    sv('hdr_logoOpacity',h.logoOpacity !== undefined ? h.logoOpacity : '');
+    sv('hdr_logoShadow',h.logoShadow|| '');
+    sc('hdr_showBack',  h.showBack !== false);
+    sv('hdr_backText',  h.backText  || '');
+    sv('hdr_backColor', h.backColor || '#E5C467');
+    sv('hdr_backColorTxt', h.backColor || '');
+
+    // Pills
+    const p = h.pills || {};
+    sv('pill_fontSize',    p.fontSize    || '');
+    sv('pill_radius',      p.radius      || '');
+    sv('pill_padV',        p.padV        || '');
+    sv('pill_padH',        p.padH        || '');
+    sv('pill_textColor',   p.textColor   || '#8a8580');
+    sv('pill_textColorTxt',p.textColor   || '');
+    sv('pill_bgColor',     p.bgColor     || '');
+    sv('pill_activeText',  p.activeText  || '#000000');
+    sv('pill_activeTextTxt', p.activeText || '');
+    sv('pill_activeBg',    p.activeBg    || '#E5C467');
+    sv('pill_activeBgTxt', p.activeBg    || '');
+
+    // Search
+    const s = h.search || {};
+    sv('srch_bg',          s.bg          || '');
+    sv('srch_radius',      s.radius      || '');
+    sv('srch_placeholder', s.placeholder || '');
+    sv('srch_iconColor',   s.iconColor   || '#E5C467');
+    sv('srch_iconColorTxt',s.iconColor   || '');
+
+    // Cat Buttons
+    const cb = h.catbtn || {};
+    sv('catbtn_fontSize',    cb.fontSize    || '');
+    sv('catbtn_radius',      cb.radius      || '');
+    sv('catbtn_padV',        cb.padV        || '');
+    sv('catbtn_padH',        cb.padH        || '');
+    sv('catbtn_color',       cb.color       || '#8a8580');
+    sv('catbtn_colorTxt',    cb.color       || '');
+    sv('catbtn_activeColor', cb.activeColor || '#E5C467');
+    sv('catbtn_activeColorTxt', cb.activeColor || '');
 });
 
 function saveDesign() {
@@ -197,12 +256,52 @@ function saveDesign() {
         labelArgileh:  gv('d_labelArgileh'),
         siteTitle:     gv('d_siteTitle'),
         siteDesc:      gv('d_siteDesc'),
+
+        // ── Menu Header ──
+        menuHeader: {
+            bgImage:    gv('hdr_bgImage'),
+            overlay1:   parseFloat(gv('hdr_overlay1')) || 0.1,
+            overlay2:   parseFloat(gv('hdr_overlay2')) || 0.3,
+            solidColor: gv('hdr_solidColor'),
+            bgSize:     parseInt(gv('hdr_bgSize')) || 120,
+            logoUrl:    gv('hdr_logoUrl'),
+            logoHeight: parseInt(gv('hdr_logoHeight')) || 62,
+            logoOpacity: parseFloat(gv('hdr_logoOpacity')) || 0.93,
+            logoShadow: parseInt(gv('hdr_logoShadow')) || 8,
+            showBack:   gc('hdr_showBack'),
+            backText:   gv('hdr_backText') || '→',
+            backColor:  gv('hdr_backColor'),
+            pills: {
+                fontSize:   parseFloat(gv('pill_fontSize'))  || 0.9,
+                radius:     parseInt(gv('pill_radius'))      || 22,
+                padV:       parseInt(gv('pill_padV'))        || 9,
+                padH:       parseInt(gv('pill_padH'))        || 22,
+                textColor:  gv('pill_textColor')             || '#8a8580',
+                bgColor:    gv('pill_bgColor')               || 'rgba(255,255,255,.06)',
+                activeText: gv('pill_activeText')            || '#000000',
+                activeBg:   gv('pill_activeBg')              || '#E5C467',
+            },
+            search: {
+                bg:          gv('srch_bg')          || 'rgba(255,255,255,.05)',
+                radius:      parseInt(gv('srch_radius'))     || 12,
+                placeholder: gv('srch_placeholder') || 'ابحث في القائمة...',
+                iconColor:   gv('srch_iconColor')   || '#E5C467',
+            },
+            catbtn: {
+                fontSize:    parseFloat(gv('catbtn_fontSize'))  || 0.78,
+                radius:      parseInt(gv('catbtn_radius'))      || 50,
+                padV:        parseInt(gv('catbtn_padV'))        || 5,
+                padH:        parseInt(gv('catbtn_padH'))        || 14,
+                color:       gv('catbtn_color')                 || '#8a8580',
+                activeColor: gv('catbtn_activeColor')           || '#E5C467',
+            },
+        }
     };
 
     REFS.design.set(designData)
         .then(() => {
-            showToast('✓ تم تطبيق إعدادات التصميم على الموقع بالكامل');
-            log('تحديث التصميم', 'تعديل إعدادات المظهر العام');
+            showToast('✓ تم تطبيق جميع إعدادات التصميم والهيدر على الموقع');
+            log('تحديث التصميم', 'تعديل شامل لإعدادات المظهر والهيدر');
         })
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
