@@ -297,8 +297,8 @@ function showToast(msg, type = 'success') {
 settRef.on('value', (snapshot) => {
     const data = snapshot.val();
     if (!data) return;
-    const fields = ['set_btn_ar','set_btn_en','set_btn_feed','set_whatsapp','set_instagram','set_maps'];
-    const keys   = ['showBtnAr','showBtnEn','showBtnFeed','whatsapp','instagram','maps'];
+    const fields = ['set_btn_ar','set_btn_en','set_btn_feed','set_whatsapp','set_instagram','set_maps', 'set_facebook', 'set_home_video', 'set_home_tagline', 'set_home_overlay', 'set_home_logo_size'];
+    const keys   = ['showBtnAr','showBtnEn','showBtnFeed','whatsapp','instagram','maps', 'facebook', 'homeVideo', 'homeTagline', 'homeOverlay', 'homeLogoSize'];
     fields.forEach((id, i) => {
         const el = document.getElementById(id);
         if (!el) return;
@@ -317,10 +317,15 @@ function saveSettings() {
         showBtnFeed: document.getElementById('set_btn_feed')?.checked ?? true,
         whatsapp:    document.getElementById('set_whatsapp')?.value   || '',
         instagram:   document.getElementById('set_instagram')?.value  || '',
-        maps:        document.getElementById('set_maps')?.value       || '',
+        facebook:    document.getElementById('set_facebook')?.value   || '',
+        maps:         document.getElementById('set_maps')?.value       || '',
+        homeVideo:    document.getElementById('set_home_video')?.value || '',
+        homeTagline:  document.getElementById('set_home_tagline')?.value || '',
+        homeOverlay:  document.getElementById('set_home_overlay')?.value || '',
+        homeLogoSize: document.getElementById('set_home_logo_size')?.value || ''
     };
     settRef.set(data)
-        .then(() => showToast('تم حفظ الإعدادات بنجاح'))
+        .then(() => showToast('تم حفظ إعدادات الصفحة الرئيسية بنجاح'))
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
 
@@ -343,13 +348,11 @@ designRef.on('value', (snapshot) => {
     if(document.getElementById('set_banner_active')) document.getElementById('set_banner_active').checked = data.bannerActive || false;
     if(document.getElementById('set_banner_text')) document.getElementById('set_banner_text').value = data.bannerText || '';
     
-    // New fields
     if(document.getElementById('set_logo_url')) document.getElementById('set_logo_url').value = data.logoUrl || '';
     if(document.getElementById('set_primary_color')) document.getElementById('set_primary_color').value = data.primaryColor || '#c3922e';
     if(document.getElementById('set_secondary_text')) document.getElementById('set_secondary_text').value = data.secondaryText || '#888888';
     if(document.getElementById('set_card_style')) document.getElementById('set_card_style').value = data.cardStyle || 'modern';
 
-    // Header & Labels
     if(document.getElementById('set_header_bg')) document.getElementById('set_header_bg').value = data.headerBg || '';
     if(document.getElementById('set_logo_height')) document.getElementById('set_logo_height').value = data.logoHeight || '';
     if(document.getElementById('set_header_opacity')) document.getElementById('set_header_opacity').value = data.headerOpacity || '';
@@ -359,6 +362,10 @@ designRef.on('value', (snapshot) => {
     if(document.getElementById('set_label_intl')) document.getElementById('set_label_intl').value = data.labelIntl || '';
     if(document.getElementById('set_label_drinks')) document.getElementById('set_label_drinks').value = data.labelDrinks || '';
     if(document.getElementById('set_label_argileh')) document.getElementById('set_label_argileh').value = data.labelArgileh || '';
+
+    // SEO
+    if(document.getElementById('set_site_title')) document.getElementById('set_site_title').value = data.siteTitle || '';
+    if(document.getElementById('set_site_desc')) document.getElementById('set_site_desc').value = data.siteDesc || '';
 });
 
 // Listen for custom category names
@@ -392,7 +399,11 @@ function saveDesignSettings() {
         labelArabic: document.getElementById('set_label_arabic')?.value || '',
         labelIntl: document.getElementById('set_label_intl')?.value || '',
         labelDrinks: document.getElementById('set_label_drinks')?.value || '',
-        labelArgileh: document.getElementById('set_label_argileh')?.value || ''
+        labelArgileh: document.getElementById('set_label_argileh')?.value || '',
+        
+        // SEO
+        siteTitle: document.getElementById('set_site_title')?.value || '',
+        siteDesc: document.getElementById('set_site_desc')?.value || ''
     };
     
     // 2. Save Categories

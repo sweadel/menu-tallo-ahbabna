@@ -47,11 +47,8 @@
 
             // 3. Logo URL
             if (d.logoUrl) {
-                // Try common logo containers
                 const logoImgs = document.querySelectorAll('.logo-wrap img, .logo-header img');
                 logoImgs.forEach(img => img.src = d.logoUrl);
-                
-                // Also update favicon/touch icon if exists
                 const touchIcon = document.querySelector('link[rel="apple-touch-icon"]');
                 if(touchIcon) touchIcon.href = d.logoUrl;
             }
@@ -112,10 +109,20 @@
                 const p = document.getElementById('pill-argileh');
                 if(p) p.textContent = d.labelArgileh;
             }
+
+            // 8. SEO Meta
+            if (d.siteTitle) {
+                document.title = d.siteTitle;
+            }
+            if (d.siteDesc) {
+                const meta = document.querySelector('meta[name="description"]');
+                if(meta) meta.content = d.siteDesc;
+                const ogMeta = document.querySelector('meta[property="og:description"]');
+                if(ogMeta) ogMeta.content = d.siteDesc;
+            }
         });
     };
 
-    // Start sync
     if (document.readyState === 'complete') syncDesign();
     else window.addEventListener('load', syncDesign);
 })();

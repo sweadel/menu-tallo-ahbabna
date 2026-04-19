@@ -103,8 +103,8 @@
  content: '';
  position: absolute;
  inset: 0;
- background: rgba(0, 0, 0, .52);
- /* تعتيم 52% */
+ background: rgba(0, 0, 0, var(--overlay-op, .52));
+ /* تعتيم بالتحكم الديناميكي */
  }
 
  /* 
@@ -370,16 +370,41 @@
 		settingsRef.on('value', (snapshot) => {
 			const data = snapshot.val();
 			if(data) {
-				// Hide/Show Buttons
+				// 1. Hide/Show Buttons
 				if(document.getElementById('btn_arabic')) document.getElementById('btn_arabic').style.display = data.showBtnAr === false ? 'none' : 'flex';
 				if(document.getElementById('btn_english')) document.getElementById('btn_english').style.display = data.showBtnEn === false ? 'none' : 'flex';
 				if(document.getElementById('btn_feedback_ar')) document.getElementById('btn_feedback_ar').style.display = data.showBtnFeed === false ? 'none' : 'flex';
 				if(document.getElementById('btn_feedback_en')) document.getElementById('btn_feedback_en').style.display = data.showBtnFeed === false ? 'none' : 'flex';
 				
-				// Update Links
+				// 2. Update Links
 				if(data.whatsapp) document.getElementById('link_whatsapp').href = `https://wa.me/${data.whatsapp.replace(/\D/g,'')}`;
 				if(data.instagram) document.getElementById('link_instagram').href = data.instagram;
+				if(data.facebook) {
+					const fb = document.querySelector('.s-link[href*="facebook"]');
+					if(fb) fb.href = data.facebook;
+				}
 				if(data.maps) document.getElementById('link_maps').href = data.maps;
+
+				// 3. Home Visuals
+				if (data.homeTagline) {
+					const tag = document.querySelector('.tagline');
+					if(tag) tag.textContent = data.homeTagline;
+				}
+				if (data.homeVideo) {
+					const video = document.querySelector('.vid-bg video');
+					if(video && !video.src.includes(data.homeVideo)) {
+						video.src = data.homeVideo;
+						video.load();
+					}
+				}
+				if (data.homeOverlay) {
+					const overlay = document.querySelector('.vid-bg');
+					if(overlay) overlay.style.setProperty('--overlay-op', data.homeOverlay);
+				}
+				if (data.homeLogoSize) {
+					const logo = document.querySelector('.logo-wrap img');
+					if(logo) logo.style.height = data.homeLogoSize + 'px';
+				}
 			}
 		});
 	</script>

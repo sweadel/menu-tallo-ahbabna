@@ -158,7 +158,7 @@
 
                 <div class="settings-grid">
                     <div class="panel-card">
-                        <h3 class="panel-title">أزرار الصفحة الرئيسية</h3>
+                        <h3 class="panel-title"><i class="fa-solid fa-toggle-on"></i> أزرار الصفحة الرئيسية</h3>
                         <div class="form-group row-align">
                             <label>زر المنيو العربي</label>
                             <label class="switch"><input type="checkbox" id="set_btn_ar" checked><span class="slider"></span></label>
@@ -168,24 +168,65 @@
                             <label class="switch"><input type="checkbox" id="set_btn_en" checked><span class="slider"></span></label>
                         </div>
                         <div class="form-group row-align">
-                            <label>زر التقييم</label>
+                            <label>أزرار التقييم (FEEDBACK)</label>
                             <label class="switch"><input type="checkbox" id="set_btn_feed" checked><span class="slider"></span></label>
                         </div>
                     </div>
 
                     <div class="panel-card">
-                        <h3 class="panel-title">روابط التواصل الاجتماعي</h3>
+                        <h3 class="panel-title"><i class="fa-solid fa-share-nodes"></i> روابط التواصل الاجتماعي</h3>
                         <div class="form-group">
-                            <label>رقم الواتساب</label>
+                            <label>رقم الواتساب (مباشر)</label>
                             <input type="text" id="set_whatsapp" class="form-control" placeholder="962779688633">
                         </div>
                         <div class="form-group">
                             <label>رابط إنستغرام</label>
-                            <input type="text" id="set_instagram" class="form-control" placeholder="https://www.instagram.com/...">
+                            <input type="text" id="set_instagram" class="form-control" placeholder="URL">
                         </div>
                         <div class="form-group">
-                            <label>رابط خرائط جوجل</label>
-                            <input type="text" id="set_maps" class="form-control" placeholder="https://maps.app.goo.gl/...">
+                            <label>رابط فيسبوك</label>
+                            <input type="text" id="set_facebook" class="form-control" placeholder="URL">
+                        </div>
+                        <div class="form-group">
+                            <label>رابط خرائط جوجل (Location)</label>
+                            <input type="text" id="set_maps" class="form-control" placeholder="Google Maps URL">
+                        </div>
+                    </div>
+
+                    <!-- New: Home Page Visuals -->
+                    <div class="panel-card">
+                        <h3 class="panel-title"><i class="fa-solid fa-image"></i> هوية وخلفية الصفحة الرئيسية</h3>
+                        <div class="form-group">
+                            <label>رابط فيديو الخلفية (MP4)</label>
+                            <input type="text" id="set_home_video" class="form-control" placeholder="images/tallo-video.mp4">
+                            <p class="text-muted" style="margin-top:5px;">يفضل فيديو صامت وبحجم صغير.</p>
+                        </div>
+                        <div class="form-group">
+                            <label>النص التعريفي (Tagline)</label>
+                            <input type="text" id="set_home_tagline" class="form-control" placeholder="طلوا حبابنا - مادبا، الأردن">
+                        </div>
+                        <div class="form-row" style="display:flex; gap:10px;">
+                            <div class="form-group flex-1">
+                                <label>تعتيم الفيديو (0-1)</label>
+                                <input type="number" id="set_home_overlay" class="form-control" step="0.1" min="0" max="1" placeholder="0.5">
+                            </div>
+                            <div class="form-group flex-1">
+                                <label>ارتفاع اللوجو (%)</label>
+                                <input type="number" id="set_home_logo_size" class="form-control" placeholder="300">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New: SEO & Meta Management -->
+                    <div class="panel-card">
+                        <h3 class="panel-title"><i class="fa-solid fa-globe"></i> إعدادات محركات البحث (SEO)</h3>
+                        <div class="form-group">
+                            <label>عنوان الموقع في المتصفح</label>
+                            <input type="text" id="set_site_title" class="form-control" placeholder="طلوا حبابنا | مادبا">
+                        </div>
+                        <div class="form-group">
+                            <label>وصف الموقع للزبائن</label>
+                            <textarea id="set_site_desc" class="form-control" rows="3" placeholder="اكتب وصفاً مختصراً يظهر في نتائج البحث..."></textarea>
                         </div>
                     </div>
                 </div>
