@@ -33,6 +33,8 @@
             <a href="#" class="nav-item" data-target="arabic-menu"><i class="fa-solid fa-utensils"></i> إدارة المنيو</a>
             <a href="#" class="nav-item" data-target="home-settings"><i class="fa-solid fa-house-chimney"></i> الصفحة الرئيسية</a>
             <a href="#" class="nav-item" data-target="design-settings"><i class="fa-solid fa-paint-roller"></i> التصميم والظهور</a>
+            <a href="#" class="nav-item" data-target="audit-logs"><i class="fa-solid fa-clock-rotate-left"></i> سجل العمليات</a>
+            <a href="#" class="nav-item" data-target="user-accounts"><i class="fa-solid fa-users-gear"></i> إدارة الحسابات</a>
         </nav>
         <div class="sidebar-footer">
             <a href="index.html" class="nav-item" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> عرض الموقع</a>
@@ -54,7 +56,7 @@
                 <button class="icon-btn" title="تسجيل الخروج" onclick="logout()" style="color: #ff4d4d;"><i class="fa-solid fa-right-from-bracket"></i></button>
                 <div class="user-profile">
                     <img src="images/tallo-logo.png" alt="Admin">
-                    <span>المدير العام</span>
+                    <span id="current-user-display">المدير العام</span>
                 </div>
             </div>
         </header>
@@ -262,9 +264,34 @@
                             <input type="color" id="set_page_bg" value="#0a0a0a" style="border: none; width: 40px; height: 40px; background: none; cursor: pointer;">
                         </div>
 
-                        <div class="form-group row-align" style="border-bottom: none;">
+                        <div class="form-group row-align">
                             <label>لون خلفية البطاقات (شرائح الأطباق)</label>
                             <input type="color" id="set_card_bg" value="#121212" style="border: none; width: 40px; height: 40px; background: none; cursor: pointer;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>رابط اللوجو العلوي (URL)</label>
+                            <input type="text" id="set_logo_url" class="form-control" placeholder="https://...">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label>اللون الأساسي (Primary/Gold)</label>
+                                <input type="color" id="set_primary_color" value="#c3922e" class="form-control" style="height:45px;">
+                            </div>
+                            <div class="form-group flex-1">
+                                <label>لون النص الثانوي</label>
+                                <input type="color" id="set_secondary_text" value="#888888" class="form-control" style="height:45px;">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>نمط عرض البطاقات</label>
+                            <select id="set_card_style" class="form-control">
+                                <option value="modern">عصري (زوايا مستديرة + ظل)</option>
+                                <option value="classic">كلاسيكي (خلفية سادة)</option>
+                                <option value="glass">زجاجي (Glassmorphism)</option>
+                            </select>
                         </div>
                     </div>
 
@@ -308,6 +335,91 @@
                     </div>
                 </div>
 
+            </div>
+
+            <!-- ── 5. Audit Logs ── -->
+            <div id="audit-logs" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">سجل العمليات والدروب بوكس</h1>
+                        <p class="page-subtitle">تتبع التعديلات، الحذف، والقدرة على استعادة ما تم حذفه</p>
+                    </div>
+                    <button class="secondary-btn" onclick="clearAuditLogs()" style="color: #ff4d4d;">
+                        <i class="fa-solid fa-eraser"></i> مسح السجل
+                    </button>
+                </div>
+
+                <div class="tabs-control" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="tab-btn active" data-log-tab="all-logs">سجل التعديلات</button>
+                    <button class="tab-btn" data-log-tab="deleted-items">سلة المحذوفات</button>
+                </div>
+
+                <div id="all-logs-tab" class="log-tab-content active">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>الوقت</th>
+                                    <th>المستخدم</th>
+                                    <th>العملية</th>
+                                    <th>التفاصيل</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-logs-body">
+                                <tr><td colspan="4" style="text-align:center;">جاري تحميل السجل...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="deleted-items-tab" class="log-tab-content" style="display: none;">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>وقت الحذف</th>
+                                    <th>اسم الصنف</th>
+                                    <th>القسم</th>
+                                    <th>بواسطة</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deleted-items-body">
+                                <tr><td colspan="5" style="text-align:center;">جاري تحميل المحذوفات...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── 6. Account Management ── -->
+            <div id="user-accounts" class="view-section">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">إدارة حسابات النظام</h1>
+                        <p class="page-subtitle">إضافة مستخدمين بكلمات مرور وصلاحيات مختلفة</p>
+                    </div>
+                    <button class="primary-btn" onclick="openUserModal()">
+                        <i class="fa-solid fa-user-plus"></i> إضافة حساب
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اسم المستخدم</th>
+                                <th>الرتبة / الصلاحية</th>
+                                <th>تاريخ الإنشاء</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr><td colspan="5" style="text-align:center;">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         </div><!-- /views-container -->
@@ -415,6 +527,40 @@
         <div class="modal-footer">
             <button class="secondary-btn" onclick="closeItemModal()">إلغاء</button>
             <button class="primary-btn" onclick="saveItem()"><i class="fa-solid fa-check"></i> حفظ الصنف</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ MODAL: Add / Edit User ═══ -->
+<div class="modal-overlay" id="userModal">
+    <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2 id="userModalTitle">إضافة حساب جديد</h2>
+            <button class="close-btn" onclick="closeUserModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="userForm" onsubmit="event.preventDefault(); saveUser();">
+                <div class="form-group">
+                    <label>اسم المستخدم <span class="required">*</span></label>
+                    <input type="text" id="userName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور <span class="required">*</span></label>
+                    <input type="password" id="userPass" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>الرتبة / الصلاحية</label>
+                    <select id="userRole" class="form-control">
+                        <option value="admin">مدير نظام (كامل الصلاحيات)</option>
+                        <option value="manager">مدير فرع (تعديل الأطباق فقط)</option>
+                        <option value="viewer">مشاهد (للمعاينة فقط)</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="closeUserModal()">إلغاء</button>
+            <button class="primary-btn" onclick="saveUser()"><i class="fa-solid fa-user-check"></i> حفظ الحساب</button>
         </div>
     </div>
 </div>

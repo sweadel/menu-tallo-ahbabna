@@ -6,8 +6,16 @@ if (localStorage.getItem('admin_auth') !== 'true') {
 
 function logout() {
     localStorage.removeItem('admin_auth');
+    localStorage.removeItem('admin_user');
     window.location.href = 'login.html';
 }
+
+// Display current user
+document.addEventListener('DOMContentLoaded', () => {
+    const user = localStorage.getItem('admin_user') || 'المدير العام';
+    const display = document.getElementById('current-user-display');
+    if (display) display.textContent = user;
+});
 
 // ── 1. Firebase Init ──────────────────────────────────────────────
 const firebaseConfig = {
@@ -25,8 +33,13 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const db       = firebase.database();
-const menuRef  = db.ref('menu_items');
-const settRef  = db.ref('settings/home');
+const menuRef    = db.ref('menu_items');
+const settRef    = db.ref('settings/home');
+const logsRef    = db.ref('audit_logs');
+const deletedRef = db.ref('deleted_items');
+const usersRef   = db.ref('users');
+const designRef  = db.ref('settings/design');
+const catNamesRef = db.ref('settings/categories');
 
 // ── 2. Mobile Sidebar ─────────────────────────────────────────────
 function toggleSidebar() {
@@ -196,17 +209,21 @@ function saveItem() {
     }
 
     const itemData = { name, nameEn, category, price, status, desc, descEn, image };
+    const currentUser = localStorage.getItem('admin_user') || 'Admin';
 
     if (editingKey) {
+        const oldItem = menuItems.find(i => i.firebaseKey === editingKey);
         menuRef.child(editingKey).update(itemData)
             .then(() => {
+                logAction('تعديل صنف', `تعديل صنف: ${name}`, { from: oldItem, to: itemData });
                 closeItemModal();
                 showToast('تم تحديث الصنف بنجاح');
             })
             .catch(err => showToast('خطأ: ' + err.message, 'error'));
     } else {
-        menuRef.push(itemData)
+        menuRef.push({ ...itemData, createdAt: Date.now(), createdBy: currentUser })
             .then(() => {
+                logAction('إضافة صنف', `إضافة صنف جديد: ${name}`, itemData);
                 closeItemModal();
                 showToast('تم إضافة الصنف بنجاح');
             })
@@ -214,12 +231,39 @@ function saveItem() {
     }
 }
 
-// ── 13. Delete ────────────────────────────────────────────────────
+// ── 13. Delete (Soft Delete) ──────────────────────────────────────
 function deleteItem(key) {
-    if (!confirm('هل أنت متأكد من حذف هذا الصنف نهائياً؟')) return;
-    menuRef.child(key).remove()
-        .then(() => showToast('تم حذف الصنف'))
+    const item = menuItems.find(i => i.firebaseKey === key);
+    if (!item) return;
+
+    if (!confirm(`هل أنت متأكد من حذف (${item.name})؟ سيتم نقله إلى سلة المحذوفات.`)) return;
+
+    const currentUser = localStorage.getItem('admin_user') || 'Admin';
+    const deletedData = {
+        ...item,
+        deletedAt: Date.now(),
+        deletedBy: currentUser
+    };
+
+    deletedRef.child(key).set(deletedData)
+        .then(() => menuRef.child(key).remove())
+        .then(() => {
+            logAction('حذف صنف', `حذف صنف: ${item.name}`, item);
+            showToast('تم نقل الصنف إلى سلة المحذوفات');
+        })
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+
+// ── 14. Audit Action Logger ───────────────────────────────────────
+function logAction(type, description, details = {}) {
+    const logEntry = {
+        timestamp: Date.now(),
+        user: localStorage.getItem('admin_user') || 'المدير العام',
+        action: type,
+        details: description,
+        data: details
+    };
+    logsRef.push(logEntry);
 }
 
 // ── 14. Toast Notification ────────────────────────────────────────
@@ -294,6 +338,12 @@ designRef.on('value', (snapshot) => {
     if(document.getElementById('set_card_bg')) document.getElementById('set_card_bg').value = data.cardBg || '#121212';
     if(document.getElementById('set_banner_active')) document.getElementById('set_banner_active').checked = data.bannerActive || false;
     if(document.getElementById('set_banner_text')) document.getElementById('set_banner_text').value = data.bannerText || '';
+    
+    // New fields
+    if(document.getElementById('set_logo_url')) document.getElementById('set_logo_url').value = data.logoUrl || '';
+    if(document.getElementById('set_primary_color')) document.getElementById('set_primary_color').value = data.primaryColor || '#c3922e';
+    if(document.getElementById('set_secondary_text')) document.getElementById('set_secondary_text').value = data.secondaryText || '#888888';
+    if(document.getElementById('set_card_style')) document.getElementById('set_card_style').value = data.cardStyle || 'modern';
 });
 
 // Listen for custom category names
@@ -313,7 +363,11 @@ function saveDesignSettings() {
         pageBg: document.getElementById('set_page_bg')?.value || '#0a0a0a',
         cardBg: document.getElementById('set_card_bg')?.value || '#121212',
         bannerActive: document.getElementById('set_banner_active')?.checked ?? false,
-        bannerText: document.getElementById('set_banner_text')?.value || ''
+        bannerText: document.getElementById('set_banner_text')?.value || '',
+        logoUrl: document.getElementById('set_logo_url')?.value || '',
+        primaryColor: document.getElementById('set_primary_color')?.value || '#c3922e',
+        secondaryText: document.getElementById('set_secondary_text')?.value || '#888888',
+        cardStyle: document.getElementById('set_card_style')?.value || 'modern'
     };
     
     // 2. Save Categories
@@ -330,6 +384,190 @@ function saveDesignSettings() {
         designRef.set(designData),
         catNamesRef.set(catData)
     ])
-    .then(() => showToast('تم حفظ إعدادات التصميم والأقسام بنجاح'))
+    .then(() => {
+        logAction('تحديث التصميم', 'قام بتعديل إعدادات المظهر العام والأقسام');
+        showToast('تم حفظ إعدادات التصميم والأقسام بنجاح');
+    })
     .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+
+// ── 18. Audit Logs Display ────────────────────────────────────────
+logsRef.limitToLast(50).on('value', snapshot => {
+    const tbody = document.getElementById('audit-logs-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const data = snapshot.val();
+    if (!data) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا يوجد سجلات حالياً</td></tr>';
+        return;
+    }
+    Object.keys(data).reverse().forEach(key => {
+        const log = data[key];
+        const date = new Date(log.timestamp).toLocaleString('ar-EG');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${date}</td>
+            <td style="color:var(--gold); font-weight:600;">${log.user}</td>
+            <td><span class="badge" style="background:rgba(195,146,46,0.1); color:var(--gold); padding:2px 8px; border-radius:4px;">${log.action}</span></td>
+            <td>${log.details}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+});
+
+function clearAuditLogs() {
+    if (!confirm('هل أنت متأكد من مسح جميع السجلات؟')) return;
+    logsRef.remove().then(() => showToast('تم مسح السجل'));
+}
+
+// ── 19. Trash Can (Deleted Items) ────────────────────────────────
+deletedRef.on('value', snapshot => {
+    const tbody = document.getElementById('deleted-items-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const data = snapshot.val();
+    if (!data) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">السلة فارغة حالياً</td></tr>';
+        return;
+    }
+    Object.keys(data).forEach(key => {
+        const item = data[key];
+        const date = new Date(item.deletedAt).toLocaleString('ar-EG');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${date}</td>
+            <td><strong>${item.name}</strong></td>
+            <td>${item.category}</td>
+            <td>${item.deletedBy || 'Admin'}</td>
+            <td>
+                <button class="primary-btn" onclick="restoreItem('${key}')" title="استعادة" style="padding:5px 12px; font-size:0.8rem;">
+                    <i class="fa-solid fa-rotate-left"></i> استعادة
+                </button>
+                <button class="action-btn delete" onclick="permanentDelete('${key}')" title="حذف نهائي" style="margin-right:10px;">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+});
+
+function restoreItem(key) {
+    deletedRef.child(key).once('value').then(snapshot => {
+        const item = snapshot.val();
+        if (!item) return;
+        const { deletedAt, deletedBy, ...cleanItem } = item;
+        menuRef.child(key).set(cleanItem).then(() => {
+            deletedRef.child(key).remove();
+            logAction('استعادة صنف', `قام باستعادة الصنف: ${item.name}`, item);
+            showToast('تمت استعادة الصنف بنجاح');
+        });
+    });
+}
+
+function permanentDelete(key) {
+    if (!confirm('سيتم حذف هذا الصنف للأبد، هل أنت متأكد؟')) return;
+    deletedRef.child(key).remove().then(() => showToast('تم الحذف النهائي'));
+}
+
+// ── 20. Tabs Logic ────────────────────────────────────────────────
+document.querySelectorAll('[data-log-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-log-tab');
+        document.querySelectorAll('.log-tab-content').forEach(c => c.style.display = 'none');
+        document.getElementById(target + '-tab').style.display = 'block';
+        document.querySelectorAll('[data-log-tab]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+// ── 21. User Accounts Management ──────────────────────────────────
+let editingUserKey = null;
+
+usersRef.on('value', snapshot => {
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const data = snapshot.val();
+    if (!data) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">لا يوجد حسابات أخرى</td></tr>';
+        return;
+    }
+    Object.keys(data).forEach(key => {
+        const user = data[key];
+        const date = new Date(user.createdAt).toLocaleDateString('ar-EG');
+        const roleMap = { admin: 'مدير نظام', manager: 'مدير فرع', viewer: 'مشاهد' };
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${user.username}</strong></td>
+            <td>${roleMap[user.role] || user.role}</td>
+            <td>${date}</td>
+            <td><span class="status-badge status-active">نشط</span></td>
+            <td>
+                <button class="action-btn edit" onclick="editUser('${key}')"><i class="fa-solid fa-pen"></i></button>
+                <button class="action-btn delete" onclick="deleteUser('${key}')"><i class="fa-solid fa-user-slash"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+});
+
+function openUserModal() {
+    editingUserKey = null;
+    document.getElementById('userForm').reset();
+    document.getElementById('userModalTitle').textContent = 'إضافة حساب جديد';
+    document.getElementById('userModal').classList.add('open');
+}
+
+function closeUserModal() {
+    document.getElementById('userModal').classList.remove('open');
+}
+
+function saveUser() {
+    const username = document.getElementById('userName').value.trim();
+    const password = document.getElementById('userPass').value.trim();
+    const role     = document.getElementById('userRole').value;
+
+    if (!username || !password) {
+        showToast('يرجى ملء جميع الحقول', 'error');
+        return;
+    }
+
+    const userData = { username, password, role };
+
+    if (editingUserKey) {
+        usersRef.child(editingUserKey).update(userData).then(() => {
+            logAction('تعديل حساب', `تعديل بيانات المستخدم: ${username}`);
+            closeUserModal();
+            showToast('تم تحديث الحساب');
+        });
+    } else {
+        userData.createdAt = Date.now();
+        usersRef.push(userData).then(() => {
+            logAction('إنشاء حساب', `إضافة مستخدم جديد: ${username}`);
+            closeUserModal();
+            showToast('تم إشاء الحساب بنجاح');
+        });
+    }
+}
+
+function editUser(key) {
+    usersRef.child(key).once('value').then(snapshot => {
+        const user = snapshot.val();
+        if (!user) return;
+        editingUserKey = key;
+        document.getElementById('userModalTitle').textContent = 'تعديل حساب: ' + user.username;
+        document.getElementById('userName').value = user.username;
+        document.getElementById('userPass').value = user.password;
+        document.getElementById('userRole').value = user.role;
+        document.getElementById('userModal').classList.add('open');
+    });
+}
+
+function deleteUser(key) {
+    if (!confirm('هل تريد حذف هذا الحساب؟')) return;
+    usersRef.child(key).remove().then(() => {
+        showToast('تم حذف الحساب');
+        logAction('حذف حساب', `حذف مستخدم بصلاحية معينة`);
+    });
 }

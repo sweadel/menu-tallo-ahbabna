@@ -93,24 +93,79 @@
     <p class="error-msg" id="error">خطأ في اسم المستخدم أو كلمة المرور!</p>
 </div>
 
-<script>
-    function handleLogin() {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
-        const err = document.getElementById('error');
+<!-- Firebase SDKs (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
-        // البيانات المطلوبة: 123456
-        if(u === '123456' && p === '123456') {
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
+        authDomain: "tallow-ahbabna.firebaseapp.com",
+        projectId: "tallow-ahbabna",
+        storageBucket: "tallow-ahbabna.firebasestorage.app",
+        messagingSenderId: "1025966646494",
+        appId: "1:1025966646494:web:f89373fad63d988f298e4f",
+        databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function handleLogin() {
+        const u = document.getElementById('username').value.trim();
+        const p = document.getElementById('password').value.trim();
+        const err = document.getElementById('error');
+        const btn = document.querySelector('.login-btn');
+
+        if(!u || !p) return;
+        
+        btn.disabled = true;
+        btn.textContent = 'جاري التحقق...';
+
+        // 1. Check Hardcoded SuperAdmin (for safety/first run)
+        if(u === '120120' && p === '120120') {
+            doAuth(u);
+            return;
+        }
+
+        // 2. Check Firebase Users
+        db.ref('users').once('value').then(snapshot => {
+            const users = snapshot.val();
+            let found = false;
+            
+            if (users) {
+                Object.keys(users).forEach(key => {
+                    const user = users[key];
+                    if (user.username === u && user.password === p) {
+                        found = true;
+                    }
+                });
+            }
+
+            if (found) {
+                doAuth(u);
+            } else {
+                showError();
+            }
+        }).catch(() => {
+            showError();
+        });
+
+        function doAuth(user) {
             localStorage.setItem('admin_auth', 'true');
+            localStorage.setItem('admin_user', user);
             localStorage.setItem('auth_time', Date.now());
             window.location.href = 'admin.html';
-        } else {
+        }
+
+        function showError() {
             err.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'دخول النظام';
             setTimeout(() => { err.style.display = 'none'; }, 3000);
         }
     }
 
-    // إذا كان مسجل دخول أصلاً
+    // Auto redirect if already logged in
     if(localStorage.getItem('admin_auth') === 'true') {
         window.location.href = 'admin.html';
     }
