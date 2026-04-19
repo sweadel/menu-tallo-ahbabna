@@ -7,12 +7,12 @@
     --bg-main: #080808;
     --bg-surface: #121212;
     --bg-card: #1a1a1a;
-    --gold: #C5A022;
-    --gold-hover: #e2bc3e;
-    --gold-glow: rgba(197, 160, 34, 0.2);
+    --gold: #E5C467;
+    --gold-hover: #f2d68c;
+    --gold-glow: rgba(229, 196, 103, 0.2);
     --text-primary: #f8f6f0;
     --text-secondary: #a39d96;
-    --border-color: rgba(197, 160, 34, 0.15);
+    --border-color: rgba(229, 196, 103, 0.15);
     
     --success: #00cc66;
     --success-bg: rgba(0, 204, 102, 0.1);
