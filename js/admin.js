@@ -1,7 +1,6 @@
 /**
- * admin.js v3.0
- * لوحة إدارة المنيو - طلوا حبابنا
- * Clean, efficient, feature-rich
+ * admin.js v4.0 — لوحة التحكم الكاملة
+ * طلوا حبابنا | Tallo Ahbabna
  */
 
 // ══════════════ 0. SECURITY ══════════════
@@ -15,14 +14,13 @@ function logout() {
     window.location.href = 'login.html';
 }
 
-// Display user
 document.addEventListener('DOMContentLoaded', () => {
     const user = localStorage.getItem('admin_user') || 'المدير العام';
     const el = document.getElementById('current-user-display');
     if (el) el.textContent = user;
 });
 
-// ══════════════ 1. FIREBASE INIT ══════════════
+// ══════════════ 1. FIREBASE ══════════════
 const firebaseConfig = {
     apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
     authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -32,7 +30,6 @@ const firebaseConfig = {
     appId: "1:1025966646494:web:f89373fad63d988f298e4f",
     databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
 };
-
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
@@ -41,6 +38,9 @@ const REFS = {
     deleted:    db.ref('deleted_items'),
     categories: db.ref('categories_meta'),
     logs:       db.ref('audit_logs'),
+    users:      db.ref('users'),
+    design:     db.ref('settings/design'),
+    home:       db.ref('settings/home'),
 };
 
 // ══════════════ 2. STATE ══════════════
@@ -48,7 +48,8 @@ let menuItems     = [];
 let categoryItems = [];
 let editingKey    = null;
 let editingCatKey = null;
-let viewMode      = 'table'; // 'table' | 'grid'
+let editingUserKey = null;
+let viewMode      = 'table';
 let catFilter     = 'all';
 
 // ══════════════ 3. NAVIGATION ══════════════
@@ -60,16 +61,11 @@ document.querySelectorAll('[data-view]').forEach(btn => {
 });
 
 function navigateTo(viewId) {
-    // Update sidebar active
     document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
     document.querySelectorAll(`[data-view="${viewId}"]`).forEach(b => b.classList.add('active'));
-
-    // Show view
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById(viewId);
     if (target) target.classList.add('active');
-
-    // Close mobile sidebar
     document.getElementById('sidebar')?.classList.remove('open');
 }
 
@@ -77,15 +73,12 @@ function toggleSidebar() {
     document.getElementById('sidebar')?.classList.toggle('open');
 }
 
-// ══════════════ 4. REAL-TIME MENU LISTENER ══════════════
+// ══════════════ 4. MENU LISTENER ══════════════
 REFS.menu.on('value', snapshot => {
     const data = snapshot.val();
     menuItems = [];
     if (data) {
-        Object.entries(data).forEach(([key, val]) => {
-            menuItems.push({ firebaseKey: key, ...val });
-        });
-        // Sort by featured first, then by name
+        Object.entries(data).forEach(([key, val]) => menuItems.push({ firebaseKey: key, ...val }));
         menuItems.sort((a, b) => {
             if (a.featured && !b.featured) return -1;
             if (!a.featured && b.featured) return 1;
@@ -106,9 +99,7 @@ REFS.categories.on('value', snapshot => {
     const data = snapshot.val();
     categoryItems = [];
     if (data) {
-        Object.entries(data).forEach(([key, val]) => {
-            categoryItems.push({ id: key, ...val });
-        });
+        Object.entries(data).forEach(([key, val]) => categoryItems.push({ id: key, ...val }));
         categoryItems.sort((a, b) => (a.order || 0) - (b.order || 0));
     }
     rebuildCategorySelects();
@@ -120,37 +111,30 @@ REFS.categories.on('value', snapshot => {
 
 // ══════════════ 6. DELETED ITEMS LISTENER ══════════════
 REFS.deleted.on('value', snapshot => {
-    const data = snapshot.val();
+    const data  = snapshot.val();
     const tbody = document.getElementById('deleted-items-body');
     if (!tbody) return;
     tbody.innerHTML = '';
 
     if (!data) {
-        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-trash-can"></i><h3>السلة فارغة</h3><p>لا توجد أصناف محذوفة حالياً</p></div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-trash-can"></i><h3>السلة فارغة</h3><p>لا توجد أصناف محذوفة</p></div></td></tr>`;
         return;
     }
 
     Object.entries(data).forEach(([key, item]) => {
-        const date = new Date(item.deletedAt).toLocaleString('ar-EG');
-        const catObj = categoryItems.find(c => c.id === item.category);
+        const date    = new Date(item.deletedAt).toLocaleString('ar-EG');
+        const catObj  = categoryItems.find(c => c.id === item.category);
         const catName = catObj ? catObj.nameAr : (item.category || '-');
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="color:var(--text-3); font-size:0.78rem;">${date}</td>
-            <td>
-                <strong>${item.name || ''}</strong>
-                ${item.nameEn ? `<span style="color:var(--text-2); font-size:0.78rem;"> / ${item.nameEn}</span>` : ''}
-            </td>
+            <td style="color:var(--text-3);font-size:0.75rem;">${date}</td>
+            <td><strong>${item.name || ''}</strong>${item.nameEn ? `<span style="color:var(--text-2);font-size:0.78rem;"> / ${item.nameEn}</span>` : ''}</td>
             <td><span class="cat-chip">${catName}</span></td>
             <td class="price-cell">${item.price ? item.price + ' د.أ' : '—'}</td>
             <td>
                 <div class="row-actions">
-                    <button class="act-btn toggle" onclick="restoreItem('${key}')" title="استعادة">
-                        <i class="fa-solid fa-rotate-left"></i>
-                    </button>
-                    <button class="act-btn del" onclick="permanentDelete('${key}')" title="حذف نهائي">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
+                    <button class="act-btn toggle" onclick="restoreItem('${key}')" title="استعادة"><i class="fa-solid fa-rotate-left"></i></button>
+                    <button class="act-btn del" onclick="permanentDelete('${key}')" title="حذف نهائي"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             </td>
         `;
@@ -158,24 +142,279 @@ REFS.deleted.on('value', snapshot => {
     });
 });
 
-// ══════════════ 7. RENDER TABLE ══════════════
+// ══════════════ 7. DESIGN SETTINGS LISTENER ══════════════
+REFS.design.on('value', snapshot => {
+    const d = snapshot.val();
+    if (!d) return;
+    const sv = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+    const sc = (id, val) => { const el = document.getElementById(id); if(el) el.checked = val !== false; };
+
+    sv('d_primaryColor', d.primaryColor || '#C8A84B');
+    sv('d_primaryColorText', d.primaryColor || '#C8A84B');
+    sv('d_pageBg', d.pageBg || '#080808');
+    sv('d_pageBgText', d.pageBg || '#080808');
+    sv('d_cardBg', d.cardBg || '#121212');
+    sv('d_cardBgText', d.cardBg || '#121212');
+    sv('d_fontFamily', d.fontFamily || 'IBM Plex Sans Arabic');
+    sv('d_cardStyle', d.cardStyle || 'modern');
+    sv('d_logoUrl', d.logoUrl || '');
+    sv('d_headerBg', d.headerBg || '');
+    sv('d_logoHeight', d.logoHeight || '');
+    sv('d_headerOpacity', d.headerOpacity || '');
+    sv('d_bannerText', d.bannerText || '');
+    sv('d_labelArabic', d.labelArabic || '');
+    sv('d_labelIntl', d.labelIntl || '');
+    sv('d_labelDrinks', d.labelDrinks || '');
+    sv('d_labelArgileh', d.labelArgileh || '');
+    sv('d_siteTitle', d.siteTitle || '');
+    sv('d_siteDesc', d.siteDesc || '');
+    sc('d_fontBold', d.fontBold);
+    sc('d_showSearch', d.showSearch);
+    sc('d_bannerActive', d.bannerActive || false);
+});
+
+function saveDesign() {
+    const gv = id => document.getElementById(id)?.value || '';
+    const gc = id => document.getElementById(id)?.checked ?? true;
+
+    const designData = {
+        primaryColor:  gv('d_primaryColor'),
+        pageBg:        gv('d_pageBg'),
+        cardBg:        gv('d_cardBg'),
+        fontFamily:    gv('d_fontFamily'),
+        fontBold:      gc('d_fontBold'),
+        cardStyle:     gv('d_cardStyle'),
+        logoUrl:       gv('d_logoUrl'),
+        headerBg:      gv('d_headerBg'),
+        logoHeight:    gv('d_logoHeight'),
+        headerOpacity: gv('d_headerOpacity'),
+        showSearch:    gc('d_showSearch'),
+        bannerActive:  gc('d_bannerActive'),
+        bannerText:    gv('d_bannerText'),
+        labelArabic:   gv('d_labelArabic'),
+        labelIntl:     gv('d_labelIntl'),
+        labelDrinks:   gv('d_labelDrinks'),
+        labelArgileh:  gv('d_labelArgileh'),
+        siteTitle:     gv('d_siteTitle'),
+        siteDesc:      gv('d_siteDesc'),
+    };
+
+    REFS.design.set(designData)
+        .then(() => {
+            showToast('✓ تم تطبيق إعدادات التصميم على الموقع بالكامل');
+            log('تحديث التصميم', 'تعديل إعدادات المظهر العام');
+        })
+        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+
+// ══════════════ 8. HOME SETTINGS LISTENER ══════════════
+REFS.home.on('value', snapshot => {
+    const d = snapshot.val();
+    if (!d) return;
+    const sv = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+    const sc = (id, val) => { const el = document.getElementById(id); if(el) el.checked = val !== false; };
+
+    sc('h_btn_ar', d.showBtnAr);
+    sc('h_btn_en', d.showBtnEn);
+    sc('h_btn_feed', d.showBtnFeed);
+    sv('h_whatsapp', d.whatsapp || '');
+    sv('h_instagram', d.instagram || '');
+    sv('h_facebook', d.facebook || '');
+    sv('h_maps', d.maps || '');
+    sv('h_video', d.homeVideo || '');
+    sv('h_tagline', d.homeTagline || '');
+    sv('h_overlay', d.homeOverlay || '');
+    sv('h_logoSize', d.homeLogoSize || '');
+});
+
+function saveHomeSettings() {
+    const gv = id => document.getElementById(id)?.value || '';
+    const gc = id => document.getElementById(id)?.checked ?? true;
+
+    const data = {
+        showBtnAr:   gc('h_btn_ar'),
+        showBtnEn:   gc('h_btn_en'),
+        showBtnFeed: gc('h_btn_feed'),
+        whatsapp:    gv('h_whatsapp'),
+        instagram:   gv('h_instagram'),
+        facebook:    gv('h_facebook'),
+        maps:        gv('h_maps'),
+        homeVideo:   gv('h_video'),
+        homeTagline: gv('h_tagline'),
+        homeOverlay: gv('h_overlay'),
+        homeLogoSize: gv('h_logoSize'),
+    };
+
+    REFS.home.set(data)
+        .then(() => {
+            showToast('✓ تم حفظ إعدادات الصفحة الرئيسية');
+            log('تحديث الرئيسية', 'تعديل إعدادات الصفحة الرئيسية');
+        })
+        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+
+// ══════════════ 9. USERS LISTENER ══════════════
+REFS.users.on('value', snapshot => {
+    const data  = snapshot.val();
+    const tbody = document.getElementById('users-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!data) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-users"></i><h3>لا يوجد حسابات</h3><p>أضف مستخدمين جدد</p></div></td></tr>`;
+        return;
+    }
+
+    const roleMap = { admin: '👑 مدير نظام', manager: '🛠️ مدير فرع', viewer: '👁️ مشاهد' };
+    Object.entries(data).forEach(([key, user]) => {
+        const date = user.createdAt ? new Date(user.createdAt).toLocaleDateString('ar-EG') : '-';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${user.username}</strong></td>
+            <td><span class="cat-chip">${roleMap[user.role] || user.role}</span></td>
+            <td style="color:var(--text-3);font-size:0.78rem;">${date}</td>
+            <td><span class="status-pill active">نشط</span></td>
+            <td>
+                <div class="row-actions">
+                    <button class="act-btn edit" onclick="editUser('${key}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                    <button class="act-btn del" onclick="deleteUser('${key}')" title="حذف"><i class="fa-solid fa-user-slash"></i></button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+});
+
+function openUserModal() {
+    editingUserKey = null;
+    document.getElementById('userForm')?.reset();
+    document.getElementById('userModalTitle').textContent = 'إضافة حساب جديد';
+    document.getElementById('userModal')?.classList.add('open');
+}
+
+function closeUserModal() {
+    document.getElementById('userModal')?.classList.remove('open');
+    editingUserKey = null;
+}
+
+function editUser(key) {
+    REFS.users.child(key).once('value').then(snap => {
+        const user = snap.val();
+        if (!user) return;
+        editingUserKey = key;
+        document.getElementById('userModalTitle').textContent = `تعديل: ${user.username}`;
+        document.getElementById('userName').value = user.username;
+        document.getElementById('userPass').value = user.password || '';
+        document.getElementById('userRole').value = user.role || 'admin';
+        document.getElementById('userModal')?.classList.add('open');
+    });
+}
+
+function saveUser() {
+    const username = document.getElementById('userName')?.value.trim();
+    const password = document.getElementById('userPass')?.value.trim();
+    const role     = document.getElementById('userRole')?.value;
+
+    if (!username || !password) { showToast('يرجى ملء الاسم وكلمة المرور', 'error'); return; }
+
+    const userData = { username, password, role };
+
+    if (editingUserKey) {
+        REFS.users.child(editingUserKey).update(userData)
+            .then(() => { closeUserModal(); showToast('تم تحديث الحساب ✓'); log('تعديل حساب', `تعديل: ${username}`); })
+            .catch(err => showToast('خطأ: ' + err.message, 'error'));
+    } else {
+        userData.createdAt = Date.now();
+        REFS.users.push(userData)
+            .then(() => { closeUserModal(); showToast('تم إنشاء الحساب ✓'); log('إضافة حساب', `إضافة: ${username}`); })
+            .catch(err => showToast('خطأ: ' + err.message, 'error'));
+    }
+}
+
+function deleteUser(key) {
+    if (!confirm('هل تريد حذف هذا الحساب نهائياً؟')) return;
+    REFS.users.child(key).remove()
+        .then(() => showToast('تم حذف الحساب'))
+        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+
+// ══════════════ 10. AUDIT LOG LISTENER ══════════════
+REFS.logs.limitToLast(100).on('value', snapshot => {
+    const data  = snapshot.val();
+    const tbody = document.getElementById('audit-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!data) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i><h3>لا توجد سجلات</h3><p>ستظهر هنا كل التعديلات التي تقوم بها</p></div></td></tr>`;
+        return;
+    }
+
+    const entries = Object.entries(data).reverse();
+    entries.forEach(([logKey, entry]) => {
+        const date = new Date(entry.timestamp).toLocaleString('ar-EG');
+        const tr = document.createElement('tr');
+
+        // Build undo button only for item edits with snapshot
+        let undoBtn = '—';
+        if (entry.snapshot && (entry.action === 'تعديل صنف') && entry.itemKey) {
+            undoBtn = `<button class="act-btn toggle" onclick="revertLog('${entry.itemKey}', '${logKey}')" title="تراجع عن التعديل"><i class="fa-solid fa-rotate-left"></i></button>`;
+        }
+
+        tr.innerHTML = `
+            <td style="color:var(--text-3);font-size:0.75rem;white-space:nowrap;">${date}</td>
+            <td><span class="cat-chip">${entry.user || 'Admin'}</span></td>
+            <td><span class="status-pill ${getLogClass(entry.action)}" style="font-size:0.72rem;">${entry.action}</span></td>
+            <td style="font-size:0.82rem;">${entry.details || ''}</td>
+            <td>${undoBtn}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+});
+
+function getLogClass(action) {
+    if (action.includes('إضافة')) return 'active';
+    if (action.includes('حذف')) return 'hidden';
+    return '';
+}
+
+function revertLog(itemKey, logKey) {
+    if (!confirm('هل تريد التراجع عن هذا التعديل واستعادة البيانات السابقة؟')) return;
+    REFS.logs.child(logKey).once('value').then(snap => {
+        const entry = snap.val();
+        if (!entry || !entry.snapshot) { showToast('لا يمكن التراجع — لا توجد نسخة سابقة', 'error'); return; }
+        REFS.menu.child(itemKey).set(entry.snapshot)
+            .then(() => {
+                showToast('✓ تم التراجع عن التعديل واستعادة البيانات السابقة');
+                log('تراجع عن تعديل', `استعادة نسخة سابقة للصنف`);
+            })
+            .catch(err => showToast('خطأ: ' + err.message, 'error'));
+    });
+}
+
+function clearAuditLogs() {
+    if (!confirm('هل تريد مسح جميع السجلات؟ لا يمكن استعادتها.')) return;
+    REFS.logs.remove().then(() => showToast('تم مسح السجل'));
+}
+
+// ══════════════ 11. RENDER TABLE ══════════════
 function renderTable() {
     const tbody = document.getElementById('menu-table-body');
     if (!tbody) return;
 
     const q       = (document.getElementById('filterSearch')?.value || document.getElementById('globalSearch')?.value || '').toLowerCase();
     const catF    = document.getElementById('filterCategory')?.value || 'all';
-    const statusF = document.getElementById('filterStatus')?.value || 'all';
+    const statusF = document.getElementById('filterStatus')?.value   || 'all';
 
     const filtered = menuItems.filter(item => {
-        const matchText = !q || (item.name || '').toLowerCase().includes(q) || (item.nameEn || '').toLowerCase().includes(q);
+        const matchText = !q || (item.name||'').toLowerCase().includes(q) || (item.nameEn||'').toLowerCase().includes(q);
         const matchCat  = catF === 'all' || item.category === catF;
         const matchStat = statusF === 'all' || (statusF === 'active' ? item.status !== 'inactive' : item.status === 'inactive');
         return matchText && matchCat && matchStat;
     });
 
-    if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-search"></i><h3>لا توجد نتائج</h3><p>جرب تغيير كلمة البحث أو الفلتر</p></div></td></tr>`;
+    if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-magnifying-glass"></i><h3>لا توجد نتائج</h3><p>جرب تغيير البحث أو الفلتر</p></div></td></tr>`;
         return;
     }
 
@@ -188,17 +427,13 @@ function renderTable() {
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>
-                <div class="item-thumb ${item.featured ? 'featured' : ''}"
-                     style="background-image:url('${imgSrc}')">
-                </div>
-            </td>
+            <td><div class="item-thumb" style="background-image:url('${imgSrc}');"></div></td>
             <td>
                 <div class="item-name-cell">
                     <strong>${item.name || '—'}</strong>
                     ${item.nameEn ? `<div class="en-name">${item.nameEn}</div>` : ''}
-                    ${item.desc ? `<div class="desc">${item.desc}</div>` : ''}
-                    ${item.featured ? `<span style="font-size:0.65rem; color:var(--gold); background:var(--gold-glow); padding:2px 6px; border-radius:4px; margin-top:4px; display:inline-block;">⭐ مميز</span>` : ''}
+                    ${item.desc   ? `<div class="desc">${item.desc}</div>` : ''}
+                    ${item.featured ? `<span style="font-size:0.65rem;color:var(--gold);background:var(--gold-glow);padding:2px 6px;border-radius:4px;display:inline-block;margin-top:3px;">⭐ مميز</span>` : ''}
                 </div>
             </td>
             <td><span class="cat-chip">${catName}</span></td>
@@ -206,18 +441,15 @@ function renderTable() {
             <td>
                 <button class="status-pill ${isActive ? 'active' : 'hidden'}"
                         onclick="toggleStatus('${item.firebaseKey}', '${item.status}')"
-                        title="اضغط لتغيير الحالة" style="border:none; cursor:pointer; font-family:inherit;">
+                        title="اضغط لتغيير الحالة"
+                        style="border:none;cursor:pointer;font-family:inherit;">
                     ${isActive ? 'نشط' : 'مخفي'}
                 </button>
             </td>
             <td>
                 <div class="row-actions">
-                    <button class="act-btn edit" onclick="editItem('${item.firebaseKey}')" title="تعديل">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-                    <button class="act-btn del" onclick="deleteItem('${item.firebaseKey}')" title="حذف">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                    <button class="act-btn edit" onclick="editItem('${item.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                    <button class="act-btn del"  onclick="deleteItem('${item.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                 </div>
             </td>
         `;
@@ -225,24 +457,24 @@ function renderTable() {
     });
 }
 
-// ══════════════ 8. RENDER GRID ══════════════
+// ══════════════ 12. RENDER GRID ══════════════
 function renderGrid() {
     const container = document.getElementById('menu-grid-body');
     if (!container) return;
 
     const q       = (document.getElementById('filterSearch')?.value || '').toLowerCase();
     const catF    = document.getElementById('filterCategory')?.value || 'all';
-    const statusF = document.getElementById('filterStatus')?.value || 'all';
+    const statusF = document.getElementById('filterStatus')?.value   || 'all';
 
     const filtered = menuItems.filter(item => {
-        const matchText = !q || (item.name || '').toLowerCase().includes(q) || (item.nameEn || '').toLowerCase().includes(q);
+        const matchText = !q || (item.name||'').toLowerCase().includes(q) || (item.nameEn||'').toLowerCase().includes(q);
         const matchCat  = catF === 'all' || item.category === catF;
         const matchStat = statusF === 'all' || (statusF === 'active' ? item.status !== 'inactive' : item.status === 'inactive');
         return matchText && matchCat && matchStat;
     });
 
-    if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-search"></i><h3>لا توجد نتائج</h3></div>`;
+    if (!filtered.length) {
+        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-magnifying-glass"></i><h3>لا توجد نتائج</h3></div>`;
         return;
     }
 
@@ -251,32 +483,25 @@ function renderGrid() {
         const isActive = item.status !== 'inactive';
         const catObj   = categoryItems.find(c => c.id === item.category);
         const catName  = catObj ? catObj.nameAr : '—';
-        const imgSrc   = item.image || '';
 
         const card = document.createElement('div');
         card.className = 'menu-card';
         card.innerHTML = `
-            <div class="menu-card-img" style="background-image:url('${imgSrc || 'images/tallo-logo.png'}')">
-                <div class="card-status">
-                    <span class="status-pill ${isActive ? 'active' : 'hidden'}">${isActive ? 'نشط' : 'مخفي'}</span>
-                </div>
+            <div class="menu-card-img" style="background-image:url('${item.image || 'images/tallo-logo.png'}')">
+                <div class="card-status"><span class="status-pill ${isActive ? 'active' : 'hidden'}">${isActive ? 'نشط' : 'مخفي'}</span></div>
                 ${item.featured ? `<div style="position:absolute;top:10px;left:10px;background:var(--gold);color:#000;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:4px;">⭐ مميز</div>` : ''}
             </div>
             <div class="menu-card-body">
                 <h3>${item.name || '—'}</h3>
                 ${item.nameEn ? `<div class="en">${item.nameEn}</div>` : ''}
-                ${item.desc ? `<div style="font-size:0.75rem;color:var(--text-3);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;">${item.desc}</div>` : ''}
+                ${item.desc ? `<div style="font-size:0.75rem;color:var(--text-3);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.desc}</div>` : ''}
                 <div class="cat">${catName}</div>
             </div>
             <div class="menu-card-footer">
                 <span class="price">${item.price ? item.price + ' د.أ' : '—'}</span>
                 <div class="card-actions">
-                    <button class="act-btn edit" onclick="editItem('${item.firebaseKey}')" title="تعديل">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-                    <button class="act-btn del" onclick="deleteItem('${item.firebaseKey}')" title="حذف">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                    <button class="act-btn edit" onclick="editItem('${item.firebaseKey}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                    <button class="act-btn del"  onclick="deleteItem('${item.firebaseKey}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                 </div>
             </div>
         `;
@@ -284,7 +509,7 @@ function renderGrid() {
     });
 }
 
-// ══════════════ 9. VIEW MODE TOGGLE ══════════════
+// ══════════════ 13. VIEW MODE TOGGLE ══════════════
 function setViewMode(mode) {
     viewMode = mode;
     document.getElementById('tableView').style.display = mode === 'table' ? 'block' : 'none';
@@ -293,15 +518,12 @@ function setViewMode(mode) {
     document.getElementById('vt-grid')?.classList.toggle('active', mode === 'grid');
 }
 
-// ══════════════ 10. STATS ══════════════
+// ══════════════ 14. STATS ══════════════
 function updateStats() {
-    const total  = menuItems.length;
-    const active = menuItems.filter(i => i.status !== 'inactive').length;
-    const hidden = menuItems.filter(i => i.status === 'inactive').length;
     const el = id => document.getElementById(id);
-    if (el('stat-total'))  el('stat-total').textContent  = total;
-    if (el('stat-active')) el('stat-active').textContent = active;
-    if (el('stat-hidden')) el('stat-hidden').textContent = hidden;
+    if (el('stat-total'))  el('stat-total').textContent  = menuItems.length;
+    if (el('stat-active')) el('stat-active').textContent = menuItems.filter(i => i.status !== 'inactive').length;
+    if (el('stat-hidden')) el('stat-hidden').textContent = menuItems.filter(i => i.status === 'inactive').length;
 }
 
 function updateBadge() {
@@ -309,10 +531,9 @@ function updateBadge() {
     if (badge) badge.textContent = menuItems.length;
 }
 
-// ══════════════ 11. GLOBAL SEARCH ══════════════
+// ══════════════ 15. GLOBAL SEARCH ══════════════
 function onGlobalSearch() {
     navigateTo('view-menu');
-    // Copy global search value to filter search
     const gs = document.getElementById('globalSearch')?.value || '';
     const fs = document.getElementById('filterSearch');
     if (fs) fs.value = gs;
@@ -320,16 +541,16 @@ function onGlobalSearch() {
     renderGrid();
 }
 
-// ══════════════ 12. IMAGE PREVIEW ══════════════
+// ══════════════ 16. IMAGE PREVIEW ══════════════
 function previewImage(url) {
-    const img  = document.getElementById('img-preview-el');
-    const ph   = document.getElementById('img-placeholder');
+    const img = document.getElementById('img-preview-el');
+    const ph  = document.getElementById('img-placeholder');
     if (!img) return;
-    if (url && url.startsWith('http')) {
+    if (url && (url.startsWith('http') || url.startsWith('images/'))) {
         img.src = url;
         img.classList.add('visible');
         if (ph) ph.style.display = 'none';
-        img.onerror = () => { img.classList.remove('visible'); if (ph) ph.style.display = 'flex'; };
+        img.onerror = () => { img.classList.remove('visible'); if(ph) ph.style.display = 'flex'; };
     } else {
         img.classList.remove('visible');
         img.src = '';
@@ -337,7 +558,7 @@ function previewImage(url) {
     }
 }
 
-// ══════════════ 13. MODAL: OPEN / CLOSE ══════════════
+// ══════════════ 17. ITEM MODAL ══════════════
 function openItemModal() {
     editingKey = null;
     document.getElementById('itemForm')?.reset();
@@ -351,40 +572,19 @@ function closeItemModal() {
     editingKey = null;
 }
 
-function openCatModal() {
-    editingCatKey = null;
-    document.getElementById('catForm')?.reset();
-    document.getElementById('catModalTitle').textContent = 'إضافة قسم جديد';
-    document.getElementById('catModal')?.classList.add('open');
-}
-
-function closeCatModal() {
-    document.getElementById('catModal')?.classList.remove('open');
-    editingCatKey = null;
-}
-
-// Close modal on overlay click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-        if (e.target === overlay) overlay.classList.remove('open');
-    });
-});
-
-// ══════════════ 14. EDIT ITEM ══════════════
 function editItem(key) {
     const item = menuItems.find(i => i.firebaseKey === key);
     if (!item) return;
-
     editingKey = key;
-    document.getElementById('modalTitle').textContent = `تعديل: ${item.name || ''}`;
-    document.getElementById('itemName').value     = item.name    || '';
-    document.getElementById('itemNameEn').value   = item.nameEn  || '';
+    document.getElementById('modalTitle').textContent       = `تعديل: ${item.name || ''}`;
+    document.getElementById('itemName').value     = item.name     || '';
+    document.getElementById('itemNameEn').value   = item.nameEn   || '';
     document.getElementById('itemCategory').value = item.category || '';
-    document.getElementById('itemPrice').value    = item.price   || '';
-    document.getElementById('itemStatus').value   = item.status  || 'active';
-    document.getElementById('itemDesc').value     = item.desc    || '';
-    document.getElementById('itemDescEn').value   = item.descEn  || '';
-    document.getElementById('itemImg').value      = item.image   || '';
+    document.getElementById('itemPrice').value    = item.price    || '';
+    document.getElementById('itemStatus').value   = item.status   || 'active';
+    document.getElementById('itemDesc').value     = item.desc     || '';
+    document.getElementById('itemDescEn').value   = item.descEn   || '';
+    document.getElementById('itemImg').value      = item.image    || '';
     document.getElementById('itemPrepTime').value = item.prepTime || '';
     document.getElementById('itemCalories').value = item.calories || '';
     document.getElementById('itemFeatured').checked = item.featured || false;
@@ -392,9 +592,8 @@ function editItem(key) {
     document.getElementById('itemModal')?.classList.add('open');
 }
 
-// ══════════════ 15. SAVE ITEM ══════════════
 function saveItem() {
-    const name  = document.getElementById('itemName').value.trim();
+    const name = document.getElementById('itemName').value.trim();
     if (!name) { showToast('يرجى إدخال اسم الصنف', 'error'); return; }
 
     const itemData = {
@@ -406,41 +605,37 @@ function saveItem() {
         desc:     document.getElementById('itemDesc').value.trim(),
         descEn:   document.getElementById('itemDescEn').value.trim(),
         image:    document.getElementById('itemImg').value.trim(),
-        prepTime: document.getElementById('itemPrepTime').value || '',
-        calories: document.getElementById('itemCalories').value || '',
-        featured: document.getElementById('itemFeatured').checked,
+        prepTime: document.getElementById('itemPrepTime')?.value || '',
+        calories: document.getElementById('itemCalories')?.value || '',
+        featured: document.getElementById('itemFeatured')?.checked || false,
     };
 
     const currentUser = localStorage.getItem('admin_user') || 'Admin';
 
     if (editingKey) {
+        // Save snapshot of old data for undo
+        const oldItem = menuItems.find(i => i.firebaseKey === editingKey);
+        const { firebaseKey: _fk, ...oldSnapshot } = (oldItem || {});
+
         REFS.menu.child(editingKey).update(itemData)
-            .then(() => { closeItemModal(); showToast('تم تحديث الصنف بنجاح ✓'); log('تعديل صنف', `تعديل: ${name}`); })
+            .then(() => {
+                closeItemModal();
+                showToast('تم تحديث الصنف ✓');
+                logWithSnapshot('تعديل صنف', `تعديل: ${name}`, editingKey, oldSnapshot);
+            })
             .catch(err => showToast('خطأ: ' + err.message, 'error'));
     } else {
         REFS.menu.push({ ...itemData, createdAt: Date.now(), createdBy: currentUser })
-            .then(() => { closeItemModal(); showToast('تم إضافة الصنف بنجاح ✓'); log('إضافة صنف', `إضافة جديد: ${name}`); })
+            .then(() => {
+                closeItemModal();
+                showToast('تم إضافة الصنف ✓');
+                log('إضافة صنف', `إضافة: ${name}`);
+            })
             .catch(err => showToast('خطأ: ' + err.message, 'error'));
     }
 }
 
-// ══════════════ 16. DELETE ITEM (SOFT) ══════════════
-function deleteItem(key) {
-    const item = menuItems.find(i => i.firebaseKey === key);
-    if (!item) return;
-    if (!confirm(`هل تريد نقل "${item.name}" إلى سلة المحذوفات؟`)) return;
-
-    const currentUser = localStorage.getItem('admin_user') || 'Admin';
-    const deletedData = { ...item, deletedAt: Date.now(), deletedBy: currentUser };
-    delete deletedData.firebaseKey;
-
-    REFS.deleted.child(key).set(deletedData)
-        .then(() => REFS.menu.child(key).remove())
-        .then(() => { showToast(`تم حذف "${item.name}" — يمكن استعادته من سلة المحذوفات`); log('حذف صنف', `حذف: ${item.name}`); })
-        .catch(err => showToast('خطأ: ' + err.message, 'error'));
-}
-
-// ══════════════ 17. TOGGLE STATUS ══════════════
+// ══════════════ 18. STATUS TOGGLE ══════════════
 function toggleStatus(key, currentStatus) {
     const newStatus = currentStatus === 'inactive' ? 'active' : 'inactive';
     REFS.menu.child(key).update({ status: newStatus })
@@ -448,28 +643,48 @@ function toggleStatus(key, currentStatus) {
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
 
-// ══════════════ 18. RESTORE ITEM ══════════════
+// ══════════════ 19. DELETE ══════════════
+function deleteItem(key) {
+    const item = menuItems.find(i => i.firebaseKey === key);
+    if (!item) return;
+    if (!confirm(`هل تريد نقل "${item.name}" إلى سلة المحذوفات؟`)) return;
+
+    const currentUser = localStorage.getItem('admin_user') || 'Admin';
+    const { firebaseKey: _fk, ...cleanItem } = item;
+    const deletedData = { ...cleanItem, deletedAt: Date.now(), deletedBy: currentUser };
+
+    REFS.deleted.child(key).set(deletedData)
+        .then(() => REFS.menu.child(key).remove())
+        .then(() => {
+            showToast(`تم نقل "${item.name}" إلى سلة المحذوفات`);
+            log('حذف صنف', `حذف: ${item.name}`);
+        })
+        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+
 function restoreItem(key) {
     REFS.deleted.child(key).once('value').then(snap => {
         const item = snap.val();
         if (!item) return;
         const { deletedAt, deletedBy, ...cleanItem } = item;
         REFS.menu.child(key).set(cleanItem)
-            .then(() => { REFS.deleted.child(key).remove(); showToast('تمت استعادة الصنف بنجاح ✓'); log('استعادة صنف', `استعادة: ${item.name}`); })
+            .then(() => {
+                REFS.deleted.child(key).remove();
+                showToast('تمت استعادة الصنف ✓');
+                log('استعادة صنف', `استعادة: ${item.name}`);
+            })
             .catch(err => showToast('خطأ: ' + err.message, 'error'));
     });
 }
 
 function permanentDelete(key) {
     if (!confirm('سيتم الحذف الكامل ولا يمكن استعادته. متأكد؟')) return;
-    REFS.deleted.child(key).remove()
-        .then(() => showToast('تم الحذف النهائي'))
-        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+    REFS.deleted.child(key).remove().then(() => showToast('تم الحذف النهائي'));
 }
 
-// ══════════════ 19. CATEGORIES ══════════════
+// ══════════════ 20. CATEGORIES ══════════════
 function rebuildCategorySelects() {
-    const itemCatSel  = document.getElementById('itemCategory');
+    const itemCatSel   = document.getElementById('itemCategory');
     const filterCatSel = document.getElementById('filterCategory');
 
     if (itemCatSel) {
@@ -501,20 +716,11 @@ function renderCategoryGrid() {
     const grid = document.getElementById('categories-grid');
     if (!grid) return;
 
-    const sectionNames = {
-        arabic:  'المنيو العربي',
-        intl:    'انترناشونل',
-        drinks:  'المشروبات',
-        argileh: 'أراجيل'
-    };
+    const sectionNames = { arabic: 'المنيو العربي', intl: 'انترناشونل', drinks: 'المشروبات', argileh: 'أراجيل' };
+    const filtered = catFilter === 'all' ? categoryItems : categoryItems.filter(c => c.section === catFilter);
 
-    let filtered = categoryItems;
-    if (catFilter !== 'all') {
-        filtered = categoryItems.filter(c => c.section === catFilter);
-    }
-
-    if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-folder-open"></i><h3>لا توجد أقسام</h3><p>أضف قسماً جديداً أو استعد الأقسام الافتراضية</p></div>`;
+    if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-folder-open"></i><h3>لا توجد أقسام</h3><p>أضف قسماً أو استعد الأقسام الافتراضية</p></div>`;
         return;
     }
 
@@ -526,9 +732,7 @@ function renderCategoryGrid() {
         const card = document.createElement('div');
         card.className = 'cat-card';
         card.innerHTML = `
-            <div class="cat-card-icon">
-                <i class="fa-solid ${cat.icon || 'fa-folder'}"></i>
-            </div>
+            <div class="cat-card-icon"><i class="fa-solid ${cat.icon || 'fa-folder'}"></i></div>
             <div class="cat-card-info">
                 <h3>${cat.nameAr}</h3>
                 <div class="en">${cat.nameEn || '—'}</div>
@@ -539,19 +743,14 @@ function renderCategoryGrid() {
                 </div>
             </div>
             <div class="cat-card-actions">
-                <button class="act-btn edit" onclick="editCategory('${cat.id}')" title="تعديل">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
-                <button class="act-btn del" onclick="deleteCategory('${cat.id}')" title="حذف">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
+                <button class="act-btn edit" onclick="editCategory('${cat.id}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                <button class="act-btn del"  onclick="deleteCategory('${cat.id}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
         grid.appendChild(card);
     });
 }
 
-// Section filter buttons
 document.querySelectorAll('.section-filter').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.section-filter').forEach(b => b.classList.remove('active'));
@@ -561,8 +760,33 @@ document.querySelectorAll('.section-filter').forEach(btn => {
     });
 });
 
+function openCatModal() {
+    editingCatKey = null;
+    document.getElementById('catForm')?.reset();
+    document.getElementById('catModalTitle').textContent = 'إضافة قسم جديد';
+    document.getElementById('catModal')?.classList.add('open');
+}
+
+function closeCatModal() {
+    document.getElementById('catModal')?.classList.remove('open');
+    editingCatKey = null;
+}
+
+function editCategory(key) {
+    const cat = categoryItems.find(c => c.id === key);
+    if (!cat) return;
+    editingCatKey = key;
+    document.getElementById('catModalTitle').textContent = `تعديل: ${cat.nameAr}`;
+    document.getElementById('catNameAr').value  = cat.nameAr || '';
+    document.getElementById('catNameEn').value  = cat.nameEn || '';
+    document.getElementById('catSection').value = cat.section || 'arabic';
+    document.getElementById('catIcon').value    = cat.icon   || '';
+    document.getElementById('catOrder').value   = cat.order  || 0;
+    document.getElementById('catModal')?.classList.add('open');
+}
+
 function saveCategory() {
-    const nameAr  = document.getElementById('catNameAr').value.trim();
+    const nameAr = document.getElementById('catNameAr').value.trim();
     if (!nameAr) { showToast('يرجى إدخال اسم القسم', 'error'); return; }
 
     const catData = {
@@ -584,25 +808,9 @@ function saveCategory() {
     }
 }
 
-function editCategory(key) {
-    const cat = categoryItems.find(c => c.id === key);
-    if (!cat) return;
-    editingCatKey = key;
-    document.getElementById('catModalTitle').textContent = `تعديل قسم: ${cat.nameAr}`;
-    document.getElementById('catNameAr').value  = cat.nameAr || '';
-    document.getElementById('catNameEn').value  = cat.nameEn || '';
-    document.getElementById('catSection').value = cat.section || 'arabic';
-    document.getElementById('catIcon').value    = cat.icon || '';
-    document.getElementById('catOrder').value   = cat.order || 0;
-    document.getElementById('catModal')?.classList.add('open');
-}
-
 function deleteCategory(key) {
     const count = menuItems.filter(i => i.category === key).length;
-    if (count > 0) {
-        showToast(`لا يمكن حذف هذا القسم — يحتوي على ${count} أصناف`, 'error');
-        return;
-    }
+    if (count > 0) { showToast(`لا يمكن الحذف — يحتوي على ${count} أصناف`, 'error'); return; }
     if (!confirm('هل تريد حذف هذا القسم نهائياً؟')) return;
     REFS.categories.child(key).remove()
         .then(() => showToast('تم حذف القسم'))
@@ -610,45 +818,56 @@ function deleteCategory(key) {
 }
 
 function restoreDefaultCategories() {
-    if (!confirm('سيتم إضافة الأقسام الأساسية دون حذف الموجود. متابعة؟')) return;
-
+    if (!confirm('سيتم إضافة الأقسام الأساسية. متابعة؟')) return;
     const defaults = [
-        { id: 'ar-break',  nameAr: 'الإفطار والمناقيش',    nameEn: 'Breakfast',              section: 'arabic',   order: 1,  icon: 'fa-bread-slice' },
-        { id: 'ar-cold',   nameAr: 'مقبلات وسلطات',        nameEn: 'Starters & Salads',       section: 'arabic',   order: 2,  icon: 'fa-leaf' },
-        { id: 'ar-lunch',  nameAr: 'أطباق الغداء',          nameEn: 'Main Dishes',             section: 'arabic',   order: 3,  icon: 'fa-utensils' },
-        { id: 'ar-grill',  nameAr: 'مشاوي على الجمر',       nameEn: 'Charcoal Grills',         section: 'arabic',   order: 4,  icon: 'fa-fire' },
-        { id: 'ar-sweets', nameAr: 'الحلويات',              nameEn: 'Desserts',                section: 'arabic',   order: 5,  icon: 'fa-ice-cream' },
-        { id: 'in-app',    nameAr: 'مقبلات عالمية',         nameEn: 'International Starters',  section: 'intl',     order: 10, icon: 'fa-cheese' },
-        { id: 'in-main',   nameAr: 'أطباق عالمية',          nameEn: 'Main Course',             section: 'intl',     order: 11, icon: 'fa-plate-wheat' },
-        { id: 'in-pizza',  nameAr: 'بيتزا',                 nameEn: 'Pizza',                   section: 'intl',     order: 12, icon: 'fa-pizza-slice' },
-        { id: 's-hot',     nameAr: 'مشروبات ساخنة',         nameEn: 'Hot Drinks',              section: 'drinks',   order: 20, icon: 'fa-mug-hot' },
-        { id: 's-ice',     nameAr: 'مشروبات مثلجة',         nameEn: 'Cold Drinks',             section: 'drinks',   order: 21, icon: 'fa-glass-water' },
-        { id: 's-smoothie',nameAr: 'سموذي وميلك شيك',       nameEn: 'Smoothies',               section: 'drinks',   order: 22, icon: 'fa-blender' },
-        { id: 's-other',   nameAr: 'مياه وغازيات',          nameEn: 'Soft Drinks & Water',     section: 'drinks',   order: 23, icon: 'fa-bottle-water' },
-        { id: 'arg-all',   nameAr: 'أراجيل منوعة',          nameEn: 'Argileh Selection',       section: 'argileh',  order: 30, icon: 'fa-smoking' },
+        { id: 'ar-break',   nameAr: 'الإفطار والمناقيش',   nameEn: 'Breakfast',             section: 'arabic',   order: 1,  icon: 'fa-bread-slice' },
+        { id: 'ar-cold',    nameAr: 'مقبلات وسلطات',       nameEn: 'Starters & Salads',      section: 'arabic',   order: 2,  icon: 'fa-leaf' },
+        { id: 'ar-lunch',   nameAr: 'أطباق الغداء',         nameEn: 'Main Dishes',            section: 'arabic',   order: 3,  icon: 'fa-utensils' },
+        { id: 'ar-grill',   nameAr: 'مشاوي على الجمر',      nameEn: 'Charcoal Grills',        section: 'arabic',   order: 4,  icon: 'fa-fire' },
+        { id: 'ar-sweets',  nameAr: 'الحلويات',             nameEn: 'Desserts',               section: 'arabic',   order: 5,  icon: 'fa-ice-cream' },
+        { id: 'in-app',     nameAr: 'مقبلات عالمية',        nameEn: 'International Starters', section: 'intl',     order: 10, icon: 'fa-cheese' },
+        { id: 'in-main',    nameAr: 'أطباق عالمية',         nameEn: 'Main Course',            section: 'intl',     order: 11, icon: 'fa-plate-wheat' },
+        { id: 'in-pizza',   nameAr: 'بيتزا',                nameEn: 'Pizza',                  section: 'intl',     order: 12, icon: 'fa-pizza-slice' },
+        { id: 's-hot',      nameAr: 'مشروبات ساخنة',        nameEn: 'Hot Drinks',             section: 'drinks',   order: 20, icon: 'fa-mug-hot' },
+        { id: 's-ice',      nameAr: 'مشروبات مثلجة',        nameEn: 'Cold Drinks',            section: 'drinks',   order: 21, icon: 'fa-glass-water' },
+        { id: 's-smoothie', nameAr: 'سموذي وميلك شيك',      nameEn: 'Smoothies',              section: 'drinks',   order: 22, icon: 'fa-blender' },
+        { id: 's-other',    nameAr: 'مياه وغازيات',         nameEn: 'Soft Drinks',            section: 'drinks',   order: 23, icon: 'fa-bottle-water' },
+        { id: 'arg-all',    nameAr: 'أراجيل منوعة',         nameEn: 'Argileh Selection',      section: 'argileh',  order: 30, icon: 'fa-smoking' },
     ];
-
-    const promises = defaults.map(({ id, ...data }) => REFS.categories.child(id).set(data));
-    Promise.all(promises)
+    Promise.all(defaults.map(({ id, ...data }) => REFS.categories.child(id).set(data)))
         .then(() => { showToast('تمت استعادة الأقسام الأساسية ✓'); log('استعادة أقسام', 'استيراد الأقسام الافتراضية'); })
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
 
-// ══════════════ 20. AUDIT LOG ══════════════
+// ══════════════ 21. MODAL OVERLAY CLOSE ══════════════
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.classList.remove('open');
+    });
+});
+
+// ══════════════ 22. AUDIT LOG HELPERS ══════════════
 function log(action, details) {
     const user = localStorage.getItem('admin_user') || 'Admin';
     REFS.logs.push({ user, action, details, timestamp: Date.now() }).catch(() => {});
 }
 
-// ══════════════ 21. TOAST ══════════════
+function logWithSnapshot(action, details, itemKey, snapshot) {
+    const user = localStorage.getItem('admin_user') || 'Admin';
+    REFS.logs.push({ user, action, details, itemKey, snapshot, timestamp: Date.now() }).catch(() => {});
+}
+
+// ══════════════ 23. TOAST ══════════════
 function showToast(message, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
-
     const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation' };
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.success} toast-icon"></i><span>${message}</span>`;
     container.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; toast.style.transition = '0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+    setTimeout(() => {
+        toast.style.cssText = 'opacity:0;transform:translateX(20px);transition:0.3s;';
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
 }

@@ -1114,12 +1114,12 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
         <img src="images/tallo-logo.png" alt="Tallo">
         <div class="sb-brand-text">
             <h2>طلوا حبابنا</h2>
-            <span>لوحة إدارة المنيو</span>
+            <span>لوحة التحكم الكاملة</span>
         </div>
     </div>
 
     <nav class="sb-nav">
-        <span class="sb-section-label">الإدارة</span>
+        <span class="sb-section-label">المنيو</span>
         <button class="nav-link active" data-view="view-dashboard">
             <i class="fa-solid fa-gauge-high"></i> نظرة عامة
         </button>
@@ -1134,7 +1134,21 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
             <i class="fa-solid fa-trash-can"></i> المحذوفات
         </button>
 
+        <span class="sb-section-label">التخصيص</span>
+        <button class="nav-link" data-view="view-design">
+            <i class="fa-solid fa-paint-roller"></i> التصميم والمظهر
+        </button>
+        <button class="nav-link" data-view="view-home">
+            <i class="fa-solid fa-house"></i> الصفحة الرئيسية
+        </button>
+
         <span class="sb-section-label">النظام</span>
+        <button class="nav-link" data-view="view-accounts">
+            <i class="fa-solid fa-users-gear"></i> إدارة الحسابات
+        </button>
+        <button class="nav-link" data-view="view-audit">
+            <i class="fa-solid fa-clock-rotate-left"></i> سجل التعديلات
+        </button>
         <a class="nav-link" href="index.html" target="_blank">
             <i class="fa-solid fa-arrow-up-right-from-square"></i> معاينة الموقع
         </a>
@@ -1228,15 +1242,21 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
             </div>
 
             <!-- Quick Actions -->
-            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:12px; margin-top:8px;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap:12px; margin-top:8px;">
                 <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-menu')">
                     <i class="fa-solid fa-utensils" style="font-size:1.1rem; color:var(--gold);"></i> إدارة الأصناف
                 </button>
                 <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-cats')">
                     <i class="fa-solid fa-folder-tree" style="font-size:1.1rem; color:var(--blue);"></i> إدارة الأقسام
                 </button>
+                <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-design')">
+                    <i class="fa-solid fa-paint-roller" style="font-size:1.1rem; color:#e74c3c;"></i> التصميم
+                </button>
+                <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-home')">
+                    <i class="fa-solid fa-house" style="font-size:1.1rem; color:#2ecc71;"></i> الصفحة الرئيسية
+                </button>
                 <button class="btn btn-secondary" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;" onclick="navigateTo('view-deleted')">
-                    <i class="fa-solid fa-trash-can" style="font-size:1.1rem; color:var(--red);"></i> سلة المحذوفات
+                    <i class="fa-solid fa-trash-can" style="font-size:1.1rem; color:var(--red);"></i> المحذوفات
                 </button>
                 <a class="btn btn-secondary" href="menu.html" target="_blank" style="height:60px; flex-direction:column; gap:4px; font-size:0.78rem;">
                     <i class="fa-solid fa-eye" style="font-size:1.1rem; color:var(--green);"></i> معاينة المنيو
@@ -1364,6 +1384,312 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                     </thead>
                     <tbody id="deleted-items-body">
                         <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-3);">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ─── DESIGN & APPEARANCE ─── -->
+        <div class="view" id="view-design">
+            <div class="page-hdr">
+                <div class="page-hdr-left">
+                    <h1>التصميم والمظهر</h1>
+                    <p>تحكم كامل في كل جزئية بصرية في الموقع والمنيو</p>
+                </div>
+                <div class="page-hdr-right">
+                    <button class="btn btn-primary" onclick="saveDesign()">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> حفظ وتطبيق
+                    </button>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px,1fr)); gap:16px;">
+
+                <!-- BRAND COLORS -->
+                <div class="table-wrap" style="padding:20px;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-palette"></i> الألوان الأساسية</div>
+                    <div class="form-group" style="margin-bottom:14px;">
+                        <label class="form-label">اللون الذهبي الأساسي (Primary)</label>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <input type="color" id="d_primaryColor" value="#C8A84B" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
+                            <input type="text" id="d_primaryColorText" class="f-ctrl" placeholder="#C8A84B" style="max-width:130px;" oninput="document.getElementById('d_primaryColor').value=this.value">
+                            <span style="font-size:0.75rem;color:var(--text-3);">لون الأزرار والتمييز</span>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:14px;">
+                        <label class="form-label">خلفية الصفحة (Page Background)</label>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <input type="color" id="d_pageBg" value="#080808" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
+                            <input type="text" id="d_pageBgText" class="f-ctrl" placeholder="#080808" style="max-width:130px;" oninput="document.getElementById('d_pageBg').value=this.value">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">خلفية بطاقة الطبق (Card Background)</label>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <input type="color" id="d_cardBg" value="#121212" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
+                            <input type="text" id="d_cardBgText" class="f-ctrl" placeholder="#121212" style="max-width:130px;" oninput="document.getElementById('d_cardBg').value=this.value">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TYPOGRAPHY -->
+                <div class="table-wrap" style="padding:20px;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-font"></i> الخطوط والطباعة</div>
+                    <div class="form-group" style="margin-bottom:14px;">
+                        <label class="form-label">نوع الخط (Google Fonts)</label>
+                        <select id="d_fontFamily" class="f-ctrl">
+                            <option value="IBM Plex Sans Arabic">IBM Plex Sans Arabic — فخم وعصري ✨</option>
+                            <option value="Cairo">Cairo — كلاسيكي ورسمي</option>
+                            <option value="Tajawal">Tajawal — ناعم وبسيط</option>
+                            <option value="Almarai">Almarai — واضح للمجلات</option>
+                            <option value="Noto Kufi Arabic">Noto Kufi Arabic — كوفي أنيق</option>
+                            <option value="Reem Kufi">Reem Kufi — كوفي مودرن</option>
+                            <option value="Zain">Zain — رشيق ومختلف</option>
+                        </select>
+                    </div>
+                    <div class="toggle-row" style="margin-bottom:14px;">
+                        <div>
+                            <div class="toggle-label">تغليظ الخط (Bold)</div>
+                            <div class="toggle-sub">يجعل كل النصوص ثقيلة وواضحة</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="d_fontBold" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">نمط بطاقات الأطباق</label>
+                        <select id="d_cardStyle" class="f-ctrl">
+                            <option value="modern">Modern ✨ — عصري مع ظلال</option>
+                            <option value="classic">Classic 🏛️ — كلاسيكي بسيط</option>
+                            <option value="glass">Glass 💎 — زجاجي شفاف</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- LOGO & HEADER -->
+                <div class="table-wrap" style="padding:20px;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-image"></i> اللوجو والهيدر</div>
+                    <div class="form-group" style="margin-bottom:14px;">
+                        <label class="form-label">رابط اللوجو (URL)</label>
+                        <input type="url" id="d_logoUrl" class="f-ctrl" placeholder="https://... أو images/tallo-logo.png">
+                    </div>
+                    <div class="form-group" style="margin-bottom:14px;">
+                        <label class="form-label">رابط صورة خلفية الهيدر (Pattern)</label>
+                        <input type="url" id="d_headerBg" class="f-ctrl" placeholder="images/sadu-pattern.jpg">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr; gap:10px;">
+                        <div class="form-group">
+                            <label class="form-label">ارتفاع اللوجو (px)</label>
+                            <input type="number" id="d_logoHeight" class="f-ctrl" placeholder="62">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">تعتيم الخلفية (0-1)</label>
+                            <input type="number" id="d_headerOpacity" class="f-ctrl" step="0.05" min="0" max="1" placeholder="0.3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEARCH & TABS -->
+                <div class="table-wrap" style="padding:20px;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-compass"></i> التنقل والبحث</div>
+                    <div class="toggle-row" style="margin-bottom:14px;">
+                        <div>
+                            <div class="toggle-label">إظهار شريط البحث</div>
+                            <div class="toggle-sub">يتيح للزبائن البحث عن أي طبق</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="d_showSearch" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="form-section-label" style="margin:14px 0 10px;"><i class="fa-solid fa-tags"></i> مسميات التبويبات الرئيسية</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
+                        <div class="form-group">
+                            <label class="form-label">تبويب المنيو العربي</label>
+                            <input type="text" id="d_labelArabic" class="f-ctrl" placeholder="المنيو العربي">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">تبويب انترناشونل</label>
+                            <input type="text" id="d_labelIntl" class="f-ctrl" placeholder="انترناشونل">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">تبويب المشروبات</label>
+                            <input type="text" id="d_labelDrinks" class="f-ctrl" placeholder="المشروبات">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">تبويب الأراجيل</label>
+                            <input type="text" id="d_labelArgileh" class="f-ctrl" placeholder="أراجيل">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROMOTIONAL BANNER -->
+                <div class="table-wrap" style="padding:20px; grid-column: 1 / -1;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-bullhorn"></i> شريط الإعلانات الترويجي</div>
+                    <div class="toggle-row" style="margin-bottom:14px;">
+                        <div>
+                            <div class="toggle-label">تفعيل شريط الإعلانات</div>
+                            <div class="toggle-sub">يظهر في أعلى المنيو والصفحة الرئيسية</div>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="d_bannerActive"><span class="slider"></span></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">نص الإعلان</label>
+                        <textarea id="d_bannerText" class="f-ctrl" rows="2" placeholder="مثال: 🎉 استمتع بخصم 20% على جميع الوجبات اليوم فقط!"></textarea>
+                    </div>
+                </div>
+
+                <!-- SEO -->
+                <div class="table-wrap" style="padding:20px; grid-column: 1 / -1;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-globe"></i> إعدادات SEO ومحركات البحث</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label class="form-label">عنوان الموقع (Browser Tab)</label>
+                            <input type="text" id="d_siteTitle" class="f-ctrl" placeholder="طلوا حبابنا | مادبا">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">وصف الموقع (Meta Description)</label>
+                            <input type="text" id="d_siteDesc" class="f-ctrl" placeholder="مطعم طلوا حبابنا — مادبا، الأردن">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ─── HOME PAGE SETTINGS ─── -->
+        <div class="view" id="view-home">
+            <div class="page-hdr">
+                <div class="page-hdr-left">
+                    <h1>الصفحة الرئيسية</h1>
+                    <p>التحكم الكامل بمظهر وأزرار وروابط الصفحة الرئيسية</p>
+                </div>
+                <div class="page-hdr-right">
+                    <button class="btn btn-primary" onclick="saveHomeSettings()">
+                        <i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات
+                    </button>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:16px;">
+
+                <!-- BUTTONS VISIBILITY -->
+                <div class="table-wrap" style="padding:20px;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-toggle-on"></i> أزرار الصفحة الرئيسية</div>
+                    <div class="toggle-row" style="margin-bottom:10px;">
+                        <div><div class="toggle-label">زر المنيو العربي</div></div>
+                        <label class="switch"><input type="checkbox" id="h_btn_ar" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="toggle-row" style="margin-bottom:10px;">
+                        <div><div class="toggle-label">زر المنيو الإنجليزي</div></div>
+                        <label class="switch"><input type="checkbox" id="h_btn_en" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="toggle-row">
+                        <div><div class="toggle-label">أزرار التقييم (Feedback)</div></div>
+                        <label class="switch"><input type="checkbox" id="h_btn_feed" checked><span class="slider"></span></label>
+                    </div>
+                </div>
+
+                <!-- SOCIAL LINKS -->
+                <div class="table-wrap" style="padding:20px;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-share-nodes"></i> روابط التواصل الاجتماعي</div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> واتساب (رقم بدون +)</label>
+                        <input type="text" id="h_whatsapp" class="f-ctrl" placeholder="962779688633">
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> إنستغرام (رابط كامل)</label>
+                        <input type="url" id="h_instagram" class="f-ctrl" placeholder="https://instagram.com/...">
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label"><i class="fa-brands fa-facebook" style="color:#1877f2;"></i> فيسبوك (رابط كامل)</label>
+                        <input type="url" id="h_facebook" class="f-ctrl" placeholder="https://facebook.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-location-dot" style="color:#ea4335;"></i> خرائط جوجل (رابط)</label>
+                        <input type="url" id="h_maps" class="f-ctrl" placeholder="https://maps.app.goo.gl/...">
+                    </div>
+                </div>
+
+                <!-- HOME VISUALS -->
+                <div class="table-wrap" style="padding:20px;">
+                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-clapperboard"></i> الخلفية والهوية البصرية</div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label">رابط فيديو الخلفية (MP4)</label>
+                        <input type="text" id="h_video" class="f-ctrl" placeholder="images/tallo-video.mp4">
+                        <p style="font-size:0.7rem;color:var(--text-3);margin-top:4px;">فيديو صامت بحجم صغير يُفضّل</p>
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label">النص التعريفي (Tagline)</label>
+                        <input type="text" id="h_tagline" class="f-ctrl" placeholder="طلوا حبابنا - مادبا، الأردن">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr; gap:10px;">
+                        <div class="form-group">
+                            <label class="form-label">تعتيم الفيديو (0–1)</label>
+                            <input type="number" id="h_overlay" class="f-ctrl" step="0.05" min="0" max="1" placeholder="0.52">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">حجم اللوجو (px)</label>
+                            <input type="number" id="h_logoSize" class="f-ctrl" placeholder="300">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ─── ACCOUNT MANAGEMENT ─── -->
+        <div class="view" id="view-accounts">
+            <div class="page-hdr">
+                <div class="page-hdr-left">
+                    <h1>إدارة الحسابات</h1>
+                    <p>إنشاء مستخدمين بكلمات مرور وصلاحيات مختلفة</p>
+                </div>
+                <div class="page-hdr-right">
+                    <button class="btn btn-primary" onclick="openUserModal()">
+                        <i class="fa-solid fa-user-plus"></i> إضافة حساب
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>المستخدم</th>
+                            <th>الصلاحية</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-3);">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ─── AUDIT LOG ─── -->
+        <div class="view" id="view-audit">
+            <div class="page-hdr">
+                <div class="page-hdr-left">
+                    <h1>سجل التعديلات</h1>
+                    <p>جميع التغييرات مع إمكانية التراجع (Undo) عن أي تعديل على الأصناف</p>
+                </div>
+                <div class="page-hdr-right">
+                    <button class="btn btn-danger btn-sm" onclick="clearAuditLogs()">
+                        <i class="fa-solid fa-eraser"></i> مسح السجل
+                    </button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>الوقت</th>
+                            <th>المستخدم</th>
+                            <th>العملية</th>
+                            <th>التفاصيل</th>
+                            <th>تراجع</th>
+                        </tr>
+                    </thead>
+                    <tbody id="audit-tbody">
+                        <tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-3);">جاري تحميل السجل...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1548,13 +1874,52 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
     </div>
 </div>
 
+<!-- ═══ MODAL: Add / Edit User ═══ -->
+<div class="modal-overlay" id="userModal">
+    <div class="modal" style="max-width:480px;">
+        <div class="modal-hdr">
+            <h2 id="userModalTitle">إضافة حساب جديد</h2>
+            <button class="modal-close" onclick="closeUserModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="userForm" onsubmit="event.preventDefault(); saveUser();">
+                <div class="form-section">
+                    <div class="form-section-label"><i class="fa-solid fa-user"></i> بيانات الحساب</div>
+                    <div class="form-group" style="margin-bottom:14px;">
+                        <label class="form-label">اسم المستخدم <span class="req">*</span></label>
+                        <input type="text" id="userName" class="f-ctrl" placeholder="مثال: admin" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:14px;">
+                        <label class="form-label">كلمة المرور <span class="req">*</span></label>
+                        <input type="password" id="userPass" class="f-ctrl" placeholder="أدخل كلمة مرور قوية" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الصلاحية / الرتبة</label>
+                        <select id="userRole" class="f-ctrl">
+                            <option value="admin">👑 مدير نظام — كامل الصلاحيات</option>
+                            <option value="manager">🛠️ مدير فرع — تعديل الأطباق فقط</option>
+                            <option value="viewer">👁️ مشاهد — للعرض فقط</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-ftr">
+            <button class="btn btn-ghost" onclick="closeUserModal()">إلغاء</button>
+            <button class="btn btn-primary" onclick="saveUser()">
+                <i class="fa-solid fa-user-check"></i> حفظ الحساب
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Toast -->
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-<script src="js/admin.js?v=3.0"></script>
+<script src="js/admin.js?v=4.0"></script>
 
 </body>
 </html>
