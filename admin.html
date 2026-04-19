@@ -566,7 +566,45 @@ html, body {
 
 .status-pill.active  { background: rgba(46,204,113,0.1); color: var(--green); }
 .status-pill.active::before { background: var(--green); }
-.status-pill.hidden  { background: rgba(92,90,102,0.2); color: var(--text-3); }
+.status-pill.hidden { background: rgba(255,255,255,0.05); color: var(--text-3); }
+
+/* Audit Log Diff Styling */
+.log-diff-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+    padding-right: 10px;
+    border-right: 2px solid var(--border);
+}
+
+.log-diff-item {
+    font-size: 0.75rem;
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.log-diff-item .field {
+    font-weight: 700;
+    color: var(--gold);
+    margin-left: 6px;
+}
+
+.log-diff-item .old {
+    text-decoration: line-through;
+    color: var(--red);
+    opacity: 0.7;
+    font-size: 0.7rem;
+}
+
+.log-diff-item .new {
+    color: var(--green);
+    font-weight: 500;
+}
+
+/* ── MODALS ── */
 .status-pill.hidden::before { background: var(--text-3); }
 
 /* ── ROW ACTIONS ── */

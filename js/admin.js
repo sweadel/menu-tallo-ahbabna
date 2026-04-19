@@ -460,11 +460,26 @@ REFS.logs.limitToLast(100).on('value', snapshot => {
             undoBtn = `<button class="act-btn toggle" onclick="revertLog('${entry.itemKey}', '${logKey}')" title="تراجع عن التعديل"><i class="fa-solid fa-rotate-left"></i></button>`;
         }
 
+        // Detailed changes formatting
+        let detailsHtml = `<div style="font-weight:600;margin-bottom:4px;">${entry.details || ''}</div>`;
+        if (entry.diff && entry.diff.length > 0) {
+            detailsHtml += `<div class="log-diff-list">`;
+            entry.diff.forEach(d => {
+                detailsHtml += `<div class="log-diff-item">
+                    <span class="field">${d.label}:</span> 
+                    <span class="old">${d.old || 'فارغ'}</span> 
+                    <i class="fa-solid fa-arrow-left" style="font-size:0.6rem;margin:0 4px;opacity:0.5;"></i>
+                    <span class="new">${d.new || 'فارغ'}</span>
+                </div>`;
+            });
+            detailsHtml += `</div>`;
+        }
+
         tr.innerHTML = `
             <td style="color:var(--text-3);font-size:0.75rem;white-space:nowrap;">${date}</td>
             <td><span class="cat-chip">${entry.user || 'Admin'}</span></td>
             <td><span class="status-pill ${getLogClass(entry.action)}" style="font-size:0.72rem;">${entry.action}</span></td>
-            <td style="font-size:0.82rem;">${entry.details || ''}</td>
+            <td>${detailsHtml}</td>
             <td>${undoBtn}</td>
         `;
         tbody.appendChild(tr);
@@ -951,9 +966,57 @@ function log(action, details) {
     REFS.logs.push({ user, action, details, timestamp: Date.now() }).catch(() => {});
 }
 
-function logWithSnapshot(action, details, itemKey, snapshot) {
+function logWithSnapshot(action, details, itemKey, snapshot, diff = []) {
     const user = localStorage.getItem('admin_user') || 'Admin';
-    REFS.logs.push({ user, action, details, itemKey, snapshot, timestamp: Date.now() }).catch(() => {});
+    REFS.logs.push({ user, action, details, itemKey, snapshot, diff, timestamp: Date.now() }).catch(() => {});
+}
+
+function calculateItemDiff(oldObj, newObj) {
+    const fields = {
+        name:     'الاسم العربي',
+        nameEn:   'الاسم الإنجليزي',
+        category: 'القسم',
+        price:    'السعر',
+        status:   'الحالة',
+        desc:     'الوصف العربي',
+        descEn:   'الوصف الإنجليزي',
+        prepTime: 'وقت التحضير',
+        calories: 'السعرات',
+        featured: 'مميز'
+    };
+    const diff = [];
+    Object.keys(fields).forEach(key => {
+        let oldVal = oldObj[key];
+        let newVal = newObj[key];
+        
+        // Normalize for comparison
+        if (oldVal === undefined || oldVal === null) oldVal = '';
+        if (newVal === undefined || newVal === null) newVal = '';
+        
+        if (String(oldVal) !== String(newVal)) {
+            let oldDisp = oldVal;
+            let newDisp = newVal;
+            
+            // Map values for better readability
+            if (key === 'status') {
+                oldDisp = oldVal === 'inactive' ? 'مخفي' : 'نشط';
+                newDisp = newVal === 'inactive' ? 'مخفي' : 'نشط';
+            }
+            if (key === 'featured') {
+                oldDisp = oldVal ? 'نعم' : 'لا';
+                newDisp = newVal ? 'نعم' : 'لا';
+            }
+            if (key === 'category') {
+                const cOld = categoryItems.find(c => c.id === oldVal);
+                const cNew = categoryItems.find(c => c.id === newVal);
+                oldDisp = cOld ? cOld.nameAr : oldVal;
+                newDisp = cNew ? cNew.nameAr : newVal;
+            }
+
+            diff.push({ label: fields[key], old: oldDisp, new: newDisp });
+        }
+    });
+    return diff;
 }
 
 // ══════════════ 23. TOAST ══════════════
