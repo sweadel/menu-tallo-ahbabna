@@ -83,7 +83,14 @@ function renderTable() {
     const filtered = menuItems.filter(item => {
         const matchesText = (item.name && item.name.toLowerCase().includes(q)) || 
                             (item.nameEn && item.nameEn.toLowerCase().includes(q));
-        const matchesCat = (cat === 'all') || (item.category === cat);
+        
+        let matchesCat = false;
+        if (cat === 'all') matchesCat = true;
+        else if (cat === 'section_drinks') matchesCat = item.category && item.category.startsWith('s-');
+        else if (cat === 'section_arabic') matchesCat = item.category && item.category.startsWith('ar-');
+        else if (cat === 'section_intl')   matchesCat = item.category && item.category.startsWith('in-');
+        else matchesCat = (item.category === cat);
+
         return matchesText && matchesCat;
     });
 
@@ -270,4 +277,58 @@ function saveSettings() {
 // ── 16. Sync Info ─────────────────────────────────────────────────
 function syncData() {
     showToast('البيانات متزامنة تلقائياً مع Firebase');
+}
+
+// ── 17. Design & Appearance Settings ──────────────────────────────
+const designRef = db.ref('settings/design');
+const catNamesRef = db.ref('settings/categories');
+
+// Listen for Design Settings
+designRef.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+    if(document.getElementById('set_font_family')) document.getElementById('set_font_family').value = data.fontFamily || 'IBM Plex Sans Arabic';
+    if(document.getElementById('set_font_bold')) document.getElementById('set_font_bold').checked = data.fontBold !== false;
+    if(document.getElementById('set_page_bg')) document.getElementById('set_page_bg').value = data.pageBg || '#080808';
+    if(document.getElementById('set_card_bg')) document.getElementById('set_card_bg').value = data.cardBg || '#121212';
+    if(document.getElementById('set_banner_active')) document.getElementById('set_banner_active').checked = data.bannerActive || false;
+    if(document.getElementById('set_banner_text')) document.getElementById('set_banner_text').value = data.bannerText || '';
+});
+
+// Listen for custom category names
+catNamesRef.on('value', (snapshot) => {
+    const data = snapshot.val() || {};
+    document.querySelectorAll('.cat-rename').forEach(input => {
+        const catId = input.getAttribute('data-cat');
+        input.value = data[catId] || '';
+    });
+});
+
+function saveDesignSettings() {
+    // 1. Save Design
+    const designData = {
+        fontFamily: document.getElementById('set_font_family')?.value || 'IBM Plex Sans Arabic',
+        fontBold: document.getElementById('set_font_bold')?.checked ?? true,
+        pageBg: document.getElementById('set_page_bg')?.value || '#0a0a0a',
+        cardBg: document.getElementById('set_card_bg')?.value || '#121212',
+        bannerActive: document.getElementById('set_banner_active')?.checked ?? false,
+        bannerText: document.getElementById('set_banner_text')?.value || ''
+    };
+    
+    // 2. Save Categories
+    const catData = {};
+    document.querySelectorAll('.cat-rename').forEach(input => {
+        const val = input.value.trim();
+        if (val) {
+            const catId = input.getAttribute('data-cat');
+            catData[catId] = val;
+        }
+    });
+
+    Promise.all([
+        designRef.set(designData),
+        catNamesRef.set(catData)
+    ])
+    .then(() => showToast('تم حفظ إعدادات التصميم والأقسام بنجاح'))
+    .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }

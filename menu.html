@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&display=swap">
     <link rel="stylesheet" href="css/menu.css">
     <style>
         /* Arabic-specific overrides */
@@ -1510,6 +1510,58 @@
             if (waLink  && cfg.whatsapp)   waLink.href  = 'https://wa.me/' + cfg.whatsapp.replace(/\D/g,'');
             if (igLink  && cfg.instagram)  igLink.href  = cfg.instagram;
             if (mapLink && cfg.maps)       mapLink.href = cfg.maps;
+        });
+
+        // ── Design & Appearance Listener ──────────────────────────
+        db.ref('settings/design').on('value', (snapshot) => {
+            const d = snapshot.val();
+            if (!d) return;
+
+            // Typography
+            if (d.fontFamily) {
+                document.body.style.fontFamily = `"${d.fontFamily}", sans-serif`;
+                document.querySelectorAll('*').forEach(el => {
+                    if(!el.classList.contains('fa-solid') && !el.classList.contains('fa-brands')) {
+                        el.style.fontFamily = `"${d.fontFamily}", sans-serif`;
+                    }
+                });
+            }
+            if (typeof d.fontBold !== 'undefined') {
+                document.body.style.fontWeight = d.fontBold ? '700' : '400';
+            }
+            
+            // Background & Card Colors
+            if (d.pageBg) document.documentElement.style.setProperty('--bg', d.pageBg);
+            if (d.cardBg) document.documentElement.style.setProperty('--card-bg', d.cardBg);
+
+            // Promotional Banner
+            let banner = document.getElementById('offer-banner');
+            if (d.bannerActive && d.bannerText) {
+                if (!banner) {
+                    banner = document.createElement('div');
+                    banner.id = 'offer-banner';
+                    banner.style.cssText = 'background:var(--gold); color:var(--dark, #000); text-align:center; padding:12px; font-weight:bold; position:sticky; top:0; z-index:2000; box-shadow:0 4px 15px rgba(0,0,0,0.5); font-size:1.05rem;';
+                    // Insert before header
+                    const hdr = document.getElementById('hdr');
+                    if(hdr) hdr.parentNode.insertBefore(banner, hdr);
+                }
+                banner.textContent = d.bannerText;
+                banner.style.display = 'block';
+            } else if (banner) {
+                banner.style.display = 'none';
+            }
+        });
+
+        // ── Custom Categories Renaming Listener ───────────────────
+        db.ref('settings/categories').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+            Object.keys(data).forEach(catId => {
+                const headEl = document.getElementById(catId);
+                if (headEl && data[catId]) {
+                    headEl.textContent = data[catId];
+                }
+            });
         });
 
     </script>
