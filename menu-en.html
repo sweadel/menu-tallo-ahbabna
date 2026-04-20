@@ -694,7 +694,7 @@ function closeDishModal() {
                 <div class="card-img" style="${imgStyle}"></div>
                 <div class="card-body">
                     <h3 class="card-name">${name}</h3>
-                    <span class="card-price">${priceStr ? (priceStr.includes('JD') || priceStr.includes('د.أ') ? priceStr : priceStr + ' JD') : ''}</span>
+                    <span class="card-price">${priceStr ? priceStr + ' JD' : ''}</span>
                 </div>
             `;
             card.addEventListener('click', function(e) {
