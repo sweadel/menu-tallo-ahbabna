@@ -129,15 +129,18 @@ header {
  position: relative;
 }
 
-/* طبقة الخلفية الخاصة باللوجو (التي بها زخرفة عرضية) */
+/* طبقة الخلفية الخاصة باللوجو (الزخرفة الكاملة) */
 .logo-bg-layer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 120px; /* تم تكبيره لاستعادة الشكل التقليدي الفخم */
+    height: 120px;
     background: url('../img/sadu-pattern.png') center/cover repeat-x;
     z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* الحالة المضغوطة: تصغير اللوجو وإخفاء العناصر الإضافية */
