@@ -47,7 +47,17 @@
             }
 
             // 4. Page / Card backgrounds
-            if (d.pageBg) document.documentElement.style.setProperty('--bg', d.pageBg);
+            if (d.pageBg) {
+                document.documentElement.style.setProperty('--bg', d.pageBg);
+                document.body.style.backgroundColor = d.pageBg;
+            }
+            if (d.pageBgImage) {
+                document.body.style.backgroundImage = `url('${d.pageBgImage}')`;
+                document.body.style.backgroundSize = d.pageBgSize || 'cover';
+                document.body.style.backgroundAttachment = 'fixed';
+            } else {
+                document.body.style.backgroundImage = 'none';
+            }
             if (d.cardBg) document.documentElement.style.setProperty('--card-bg', d.cardBg);
 
             // 5. Card Style

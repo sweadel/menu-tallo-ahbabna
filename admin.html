@@ -1584,6 +1584,25 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                             <label class="form-label">وصف الموقع (Meta Description)</label>
                             <input type="text" id="d_siteDesc" class="f-ctrl" placeholder="مطعم طلوا حبابنا — مادبا، الأردن">
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">لون خلفية الموقع (Background Color)</label>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input type="color" id="d_pageBg" value="#080808" style="width:44px;height:36px;border:none;background:none;cursor:pointer;border-radius:6px;">
+                                <input type="text" id="d_pageBgText" class="f-ctrl" placeholder="#080808" oninput="document.getElementById('d_pageBg').value=this.value">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">صورة خلفية لكامل الموقع (Image URL)</label>
+                            <input type="text" id="d_pageBgImage" class="f-ctrl" placeholder="رابط الصورة (اتركه فارغاً للون سادة)">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">طريقة عرض الخلفية (Size)</label>
+                            <select id="d_pageBgSize" class="f-ctrl">
+                                <option value="cover">تغطية كاملة (Cover)</option>
+                                <option value="auto">تكرار الطبيعي (Auto / Repeat)</option>
+                                <option value="100% 100%">تمدد (Stretch)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 

@@ -165,6 +165,8 @@ REFS.design.on('value', snapshot => {
     sv('d_primaryColorText', d.primaryColor || '#C8A84B');
     sv('d_pageBg', d.pageBg || '#080808');
     sv('d_pageBgText', d.pageBg || '#080808');
+    sv('d_pageBgImage', d.pageBgImage || '');
+    sv('d_pageBgSize', d.pageBgSize || 'cover');
     sv('d_cardBg', d.cardBg || '#121212');
     sv('d_cardBgText', d.cardBg || '#121212');
     sv('d_fontFamily', d.fontFamily || 'IBM Plex Sans Arabic');
@@ -275,6 +277,8 @@ function saveDesign() {
         labelArgileh:  gv('d_labelArgileh'),
         siteTitle:     gv('d_siteTitle'),
         siteDesc:      gv('d_siteDesc'),
+        pageBgImage:   gv('d_pageBgImage'),
+        pageBgSize:    gv('d_pageBgSize'),
 
         // ── Menu Header ──
         menuHeader: {
