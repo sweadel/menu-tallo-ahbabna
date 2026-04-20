@@ -874,7 +874,8 @@ function saveItem() {
             .then(() => {
                 closeItemModal();
                 showToast('تم تحديث الصنف ✓');
-                logWithSnapshot('تعديل صنف', `تعديل: ${name}`, editingKey, oldSnapshot);
+                const diff = calculateItemDiff(oldSnapshot, itemData);
+                logWithSnapshot('تعديل صنف', `تعديل: ${name}`, editingKey, oldSnapshot, diff);
             })
             .catch(err => showToast('خطأ: ' + err.message, 'error'));
     } else {
@@ -1248,4 +1249,45 @@ function showToast(message, type = 'success') {
         toast.style.cssText = 'opacity:0;transform:translateX(20px);transition:0.3s;';
         setTimeout(() => toast.remove(), 300);
     }, 3500);
+}
+
+// ══════════════ 24. EXPORT TO CSV ══════════════
+function exportToCSV() {
+    if (!menuItems || menuItems.length === 0) {
+        showToast('لا توجد بيانات للتصدير', 'error');
+        return;
+    }
+    
+    // Create CSV header
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // Adding BOM for Arabic support
+    csvContent += "الاسم العربي,الاسم الانجليزي,القسم,السعر,الحالة,الفئة (الرئيسية)\r\n";
+
+    menuItems.forEach(item => {
+        const catObj = categoryItems.find(c => c.id === item.category);
+        const catName = catObj ? catObj.nameAr : '-';
+        const secName = catObj ? catObj.section : '-';
+        const price = item.price ? item.price : '0';
+        const status = item.status === 'inactive' ? 'مخفي' : 'نشط';
+        
+        let row = [
+            `"${item.name || ''}"`,
+            `"${item.nameEn || ''}"`,
+            `"${catName}"`,
+            `"${price}"`,
+            `"${status}"`,
+            `"${secName}"`
+        ];
+        csvContent += row.join(",") + "\r\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `menu_prices_export_${new Date().toLocaleDateString('ar-EG').replace(/\//g,'-')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast('تم تصدير ملف الأسعار ✓');
+    log('تصدير بيانات', 'تم تصدير ملف المنيو والأسعار');
 }

@@ -1334,7 +1334,10 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                     <h1>إدارة الأصناف</h1>
                     <p>إضافة، تعديل، إخفاء أو حذف الأطباق — التغييرات فورية</p>
                 </div>
-                <div class="page-hdr-right">
+                <div class="page-hdr-right" style="display:flex; gap:10px;">
+                    <button class="btn btn-secondary" onclick="exportToCSV()" title="تصدير كملف إكسيل (CSV)">
+                        <i class="fa-solid fa-file-export"></i> تصدير المنيو
+                    </button>
                     <button class="btn btn-primary" onclick="openItemModal()">
                         <i class="fa-solid fa-plus"></i> صنف جديد
                     </button>
