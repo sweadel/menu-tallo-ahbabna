@@ -242,7 +242,8 @@ header.compressed {
 
 .pill.active {
   background: var(--gold);
-  color: #000;
+  color: #fff; /* تحويل لون النص من الأسود إلى الأبيض بناءً على الطلب */
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9); /* إضافة ظل أسود واضح */
   border-color: var(--gold);
   box-shadow: 0 0 18px var(--gold-glow);
 }
@@ -288,10 +289,10 @@ header.compressed {
   top: 0;
   left: 0;
   width: 100%;
-  height: 4px; /* خط رفيع */
-  background: url('../images/wide-bg.png') center/cover repeat-x;
+  height: 6px; /* خط رفيع فخم */
+  background: url('../images/wide-bg.png') center/100% 100% no-repeat; /* ليكون نفس اللي فوق بالضبط مضغوط */
   z-index: 3;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.5);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.6);
 }
 
 .hdr-bottom::after {
