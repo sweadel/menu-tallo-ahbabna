@@ -155,14 +155,20 @@ REFS.design.on('value', snapshot => {
     const d = snapshot.val();
     if (!d) return;
     
-    // Improved helper: Only update if the user IS NOT typing in the field
-    const sv = (id, val) => { 
-        const el = document.getElementById(id); 
-        if(el && val !== undefined && document.activeElement !== el) el.value = val; 
+    // Improved helper: Only update if the user IS NOT typing in the field AND value changed
+    const sv = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) {
+            // Convert to string for safe comparison
+            const strVal = String(val);
+            if (document.activeElement !== el && el.value !== strVal) {
+                el.value = strVal;
+            }
+        }
     };
-    const sc = (id, val) => { 
-        const el = document.getElementById(id); 
-        if(el) el.checked = val !== false; 
+    const sc = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.checked = val !== false;
     };
 
     // Colors & Typography
@@ -419,7 +425,7 @@ function saveDesign() {
         })
         .catch(err => showToast('خطأ: ' + err.message, 'error'))
         .finally(() => {
-            isSavingDesign = false;
+            setTimeout(() => { isSavingDesign = false; }, 1000);
             if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> تطبيق التغييرات';
         });
 }
