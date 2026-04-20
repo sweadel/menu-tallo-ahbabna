@@ -131,13 +131,13 @@ header {
 
 /* طبقة الخلفية الخاصة باللوجو (التي بها زخرفة عرضية) */
 .logo-bg-layer {
- position: absolute;
- top: 0;
- left: 0;
- width: 100%;
- height: 75px; /* تكبير الارتفاع لإعطاء مساحة للوجو */
- background: url('../images/wide-bg.png') center/cover repeat-x;
- z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px; /* تم تكبيره لاستعادة الشكل التقليدي الفخم */
+    background: url('../img/sadu-pattern.png') center/cover repeat-x;
+    z-index: 1;
 }
 
 /* الحالة المضغوطة: تصغير اللوجو وإخفاء العناصر الإضافية */
