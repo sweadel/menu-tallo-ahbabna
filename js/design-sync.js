@@ -113,7 +113,7 @@
             if (!h) return;
 
             // Background sync for header-top and section heroes
-            const bgSize = h.bgSize || 120;
+            const bgSize = h.bgSize || 80;
             let bgStyle;
             if (h.bgImage) {
                 const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.1;

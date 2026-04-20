@@ -206,9 +206,9 @@ REFS.design.on('value', snapshot => {
     sv('hdr_overlay2',  h.overlay2  !== undefined ? h.overlay2 : '');
     sv('hdr_solidColor', h.solidColor || '#111111');
     sv('hdr_solidColorText', h.solidColor || '');
-    sv('hdr_bgSize',    h.bgSize    || '');
+    sv('hdr_bgSize',    h.bgSize    || 80);
     sv('hdr_logoUrl',   h.logoUrl   || '');
-    sv('hdr_logoHeight',h.logoHeight|| '');
+    sv('hdr_logoHeight',h.logoHeight|| 48);
     sv('hdr_logoOpacity',h.logoOpacity !== undefined ? h.logoOpacity : '');
     sv('hdr_logoShadow',h.logoShadow|| '');
     sc('hdr_showBack',  h.showBack !== false);
