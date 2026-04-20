@@ -135,7 +135,7 @@ header {
  top: 0;
  left: 0;
  width: 100%;
- height: 55px; /* تقليل الارتفاع قليلاً */
+ height: 75px; /* تكبير الارتفاع لإعطاء مساحة للوجو */
  background: url('../images/wide-bg.png') center/cover repeat-x;
  z-index: 1;
 }
@@ -157,20 +157,22 @@ header.compressed {
  display: flex;
  justify-content: center;
  align-items: center;
- padding: 4px 0 0;
+ padding: 8px 0 0;
  width: 100%;
- height: 55px; /* نفس ارتفاع الزخرفة الجديد */
+ height: 75px; 
  position: relative;
  z-index: 5;
 }
 
 .logo-wrap img {
- height: 32px; /* تصغير اللوجو بناءً على الطلب */
- width: 32px;
+ height: 50px; /* تكبير اللوجو ليكون واضحاً بناءً على طلبك */
+ width: 50px;
  object-fit: contain;
  opacity: 1;
- border-radius: 6px;
- filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .4));
+ border-radius: 50%; /* دائري ليكون متناسقاً */
+ background: rgba(0,0,0,0.4); /* خلفية داكنة خفيفة ليبرز من الألوان */
+ padding: 2px;
+ filter: drop-shadow(0 0 10px rgba(0,0,0,0.8));
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -223,25 +225,26 @@ header.compressed {
 .nav-row::-webkit-scrollbar { display: none; }
 
 .pill {
- background: rgba(255, 255, 255, .06);
- color: var(--text-dim);
- padding: 8px 20px;
- border-radius: 22px;
- text-decoration: none;
- font-size: .88rem;
- font-weight: 700;
- border: 1px solid rgba(255, 255, 255, .08);
- transition: all .2s;
- cursor: pointer;
- white-space: nowrap;
- flex-shrink: 0;
+  background: rgba(255, 255, 255, .06);
+  color: var(--text-dim);
+  padding: 8px 12px; /* تقليل الـ padding العرضي لتوفير مساحة */
+  border-radius: 22px;
+  text-decoration: none;
+  font-size: .82rem; /* تصغير طفيف للخط */
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, .08);
+  transition: all .2s;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-align: center;
 }
 
 .pill.active {
- background: var(--gold);
- color: #000;
- border-color: var(--gold);
- box-shadow: 0 0 18px var(--gold-glow);
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+  box-shadow: 0 0 18px var(--gold-glow);
 }
 
 /* ── شريط البحث ── */
@@ -273,17 +276,30 @@ header.compressed {
 
 /* ── شريط الأقسام الفرعية (يبقى ثابتاً دائماً) ── */
 .hdr-bottom {
- border-top: 1.5px solid var(--gold); /* الخط الرفيع بناءً على طلبك */
+ border-top: 1px solid rgba(255,255,255,0.1); 
  background: url('../images/sadu-pattern.jpg') center/cover no-repeat;
  position: relative;
 }
 
+/* الخط الموزاييك الرفيع الفاصل */
+.hdr-bottom::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px; /* خط رفيع */
+  background: url('../images/wide-bg.png') center/cover repeat-x;
+  z-index: 3;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.5);
+}
+
 .hdr-bottom::after {
- content: '';
- position: absolute;
- inset: 0;
- background: rgba(0,0,0,0.55); /* تعتيم لجعل الأزرار واضحة */
- z-index: 1;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); /* تعتيم لجعل الأزرار واضحة */
+  z-index: 1;
 }
 
 .sub-nav {
