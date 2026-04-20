@@ -113,7 +113,9 @@
             if (!h) return;
 
             // Background sync for header-top and section heroes
-            const bgSize = parseInt(h.bgSize) || 80;
+            let bgSize = parseInt(h.bgSize) || 80;
+            if (bgSize > 95) bgSize = 80; // حماية: منع التكبير التلقائي للزخرفة
+
             let bgStyle;
             if (h.bgImage && h.bgImage.trim()) {
                 const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.1;
@@ -134,10 +136,12 @@
             const logoImg = document.querySelector('.logo-wrap img');
             if (logoImg) {
                 if (h.logoUrl) logoImg.src = h.logoUrl;
-                if (h.logoHeight) logoImg.style.height = h.logoHeight + 'px';
-                logoImg.style.opacity = h.logoOpacity !== undefined ? h.logoOpacity : 0.93;
+                let lH = parseInt(h.logoHeight) || 48;
+                if (lH > 55) lH = 48; // حماية: منع اللوجو من تجاوز 55px 
+                logoImg.style.height = lH + 'px';
+                logoImg.style.opacity = h.logoOpacity !== undefined ? h.logoOpacity : 1;
                 const shadow = h.logoShadow !== undefined ? h.logoShadow : 8;
-                logoImg.style.filter = `drop-shadow(0 2px ${shadow}px rgba(0,0,0,.6))`;
+                logoImg.style.filter = `drop-shadow(0 2px ${shadow}px rgba(0,0,0,.3))`;
             }
 
             // Back button
