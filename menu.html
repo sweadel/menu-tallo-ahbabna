@@ -1272,13 +1272,13 @@
                 : '';
             
             const name = (document.documentElement.lang === 'en') ? (item.nameEn || item.nameAr || item.name || '') : (item.nameAr || item.name || '');
-            const price = item.price || '';
-
+            const priceRaw = item.price || '';
+            const priceStr = priceRaw.toString();
             card.innerHTML = `
                 <div class="card-img" style="${imgStyle}"></div>
                 <div class="card-body">
                     <h3 class="card-name">${name}</h3>
-                    <span class="card-price">${price ? price + ' د.أ' : ''}</span>
+                    <span class="card-price">${priceStr ? (priceStr.includes('د.أ') || priceStr.includes('JD') ? priceStr : priceStr + ' د.أ') : ''}</span>
                 </div>
             `;
             card.addEventListener('click', function(e) {

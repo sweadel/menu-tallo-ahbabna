@@ -688,12 +688,13 @@ function closeDishModal() {
                 : '';
             
             const name = item.nameEn || item.name || item.nameAr || '';
-            const price = item.price || '';
+            const priceRaw = item.price || '';
+            const priceStr = priceRaw.toString();
             card.innerHTML = `
                 <div class="card-img" style="${imgStyle}"></div>
                 <div class="card-body">
                     <h3 class="card-name">${name}</h3>
-                    <span class="card-price">${price ? (price.includes('JD') ? price : price + ' JD') : ''}</span>
+                    <span class="card-price">${priceStr ? (priceStr.includes('JD') || priceStr.includes('د.أ') ? priceStr : priceStr + ' JD') : ''}</span>
                 </div>
             `;
             card.addEventListener('click', function(e) {
