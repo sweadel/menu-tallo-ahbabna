@@ -1464,21 +1464,30 @@
             return grids;
         }
 
-        // ── Build a card element ──────────────────────────────────
+        // ── Cache for menu data to allow combined rendering ──
+        let _menuItems = null;
+        let _categoriesMeta = null;
+
+        // ── Helper: Build a card element ──────────────────────────
         function buildCard(item) {
             const card = document.createElement('a');
             card.className = 'menu-card';
-            card.setAttribute('data-t', item.name || '');
-            card.setAttribute('data-desc', item.desc || '');
             if (item.image) card.setAttribute('data-img', item.image);
+            card.setAttribute('data-t', item.nameAr || item.name || '');
+            card.setAttribute('data-desc', item.descAr || item.desc || '');
+            
             const imgStyle = item.image
                 ? `background-image:url('${item.image}');background-size:cover;background-position:center;`
                 : '';
+            
+            const name = (document.documentElement.lang === 'en') ? (item.nameEn || item.nameAr || item.name || '') : (item.nameAr || item.name || '');
+            const price = item.price || '';
+
             card.innerHTML = `
                 <div class="card-img" style="${imgStyle}"></div>
                 <div class="card-body">
-                    <h3 class="card-name">${item.name || ''}</h3>
-                    <span class="card-price">${item.price ? item.price + ' د.أ' : ''}</span>
+                    <h3 class="card-name">${name}</h3>
+                    <span class="card-price">${price ? price + ' د.أ' : ''}</span>
                 </div>
             `;
             card.addEventListener('click', function(e) {
@@ -1488,66 +1497,46 @@
             return card;
         }
 
-        // ── Real-Time Menu Listener ───────────────────────────────
-        db.ref('menu_items').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (!data) return;
+        // ── Core: Render everything dynamically ────────────────────
+        function renderFullMenu() {
+            if (!_menuItems || !_categoriesMeta) return;
 
-            // Group ACTIVE items by category
-            const grouped = {};
-            Object.values(data).forEach(item => {
+            // 1. Group active items by category
+            const itemsByCat = {};
+            Object.values(_menuItems).forEach(item => {
                 if (item.status === 'inactive') return;
                 if (!item.category) return;
-                if (!grouped[item.category]) grouped[item.category] = [];
-                grouped[item.category].push(item);
+                if (!itemsByCat[item.category]) itemsByCat[item.category] = [];
+                itemsByCat[item.category].push(item);
             });
 
-            // Inject into the right grids
-            Object.entries(grouped).forEach(([catId, items]) => {
-                const grids = prepareGridsForSection(catId);
-                if (grids.length === 0) return;
-                
-                // Put everything in the first grid of the section
-                items.forEach(item => grids[0].appendChild(buildCard(item)));
-            });
-        });
+            // 2. Clear and Render Sections & Sub-Navs
+            const sectionKeys = ['arabic', 'intl', 'drinks', 'argileh'];
+            sectionKeys.forEach(secKey => {
+                const navEl = document.getElementById(secKey + 'Nav');
+                const secEl = document.getElementById(secKey + '_sec');
+                if (!navEl || !secEl) return;
 
-        // ── Settings Listener REMOVED (Handled by design-sync.js) ───
-    </script>
+                // Clear previous content
+                navEl.innerHTML = '';
+                // Clear only the content part of the section (H2s and grids)
+                // Note: Keep the section hero if you want, but user said sync everything.
+                // We'll clear the sections' children except the hero if we find one? 
+                // Actually, let's keep it simple: section.innerHTML = "";
+                secEl.innerHTML = "";
 
-    <script src="js/design-sync.js"></script>
+                // Get categories for this section
+                const cats = Object.entries(_categoriesMeta)
+                    .map(([id, val]) => ({ id, ...val }))
+                    .filter(c => c.section === secKey)
+                    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-    <script>
-        // ── Real-Time Menu Listener ───────────────────────────────
-
-        // ── Dynamic Sub-Navigation & Category Titles ──────────────────
-        db.ref('categories_meta').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (!data) return;
-
-            // 1. Group categories by section
-            const sections = { arabic: [], intl: [], drinks: [], argileh: [] };
-            Object.keys(data).forEach(id => {
-                const cat = { id, ...data[id] };
-                if (sections[cat.section]) sections[cat.section].push(cat);
-            });
-
-            // 2. Render sub-nav buttons for each section
-            Object.keys(sections).forEach(secId => {
-                const nav = document.getElementById(secId + 'Nav');
-                if (!nav) return;
-                nav.innerHTML = '';
-                
-                // Sort by order
-                sections[secId].sort((a, b) => (a.order || 0) - (b.order || 0));
-
-                sections[secId].forEach(cat => {
+                cats.forEach(cat => {
+                    // A. Add to Sub-Nav
                     const btn = document.createElement('a');
                     btn.href = '#' + cat.id;
                     btn.className = 'cat-btn';
                     btn.textContent = (document.documentElement.lang === 'en') ? (cat.nameEn || cat.nameAr) : cat.nameAr;
-                    
-                    // Add icon if exists
                     if(cat.icon) {
                         const icon = document.createElement('i');
                         icon.className = `fa-solid ${cat.icon}`;
@@ -1555,25 +1544,49 @@
                         btn.prepend(icon);
                         btn.style.gap = '6px';
                     }
-                    
-                    nav.appendChild(btn);
+                    btn.addEventListener('click', function() {
+                        navEl.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                    navEl.appendChild(btn);
 
-                    // 3. Update the H2 title in the menu if it exists
-                    const titleEl = document.getElementById(cat.id);
-                    if (titleEl) {
-                        titleEl.textContent = (document.documentElement.lang === 'en') ? (cat.nameEn || cat.nameAr) : cat.nameAr;
+                    // B. Add to Section Content
+                    const h2 = document.createElement('h2');
+                    h2.id = cat.id;
+                    h2.className = 'sec-title';
+                    h2.textContent = (document.documentElement.lang === 'en') ? (cat.nameEn || cat.nameAr) : cat.nameAr;
+                    if(cat.icon) {
+                        const icon = document.createElement('i');
+                        icon.className = `fa-solid ${cat.icon} sec-icon`;
+                        h2.prepend(icon);
                     }
-                });
-            });
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'menu-grid';
+                    
+                    // Fill with items
+                    const items = itemsByCat[cat.id] || [];
+                    items.forEach(item => grid.appendChild(buildCard(item)));
 
-            // Re-apply click listeners to new buttons
-            document.querySelectorAll('.sub-nav .cat-btn').forEach(function(btn){
-                btn.addEventListener('click', function(){
-                    var pn = this.closest('.sub-nav');
-                    if(pn) pn.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active')});
-                    this.classList.add('active');
+                    // Don't show empty categories if preferred, but usually better to show title
+                    secEl.appendChild(h2);
+                    secEl.appendChild(grid);
                 });
             });
+            
+            // Adjust body padding after content changes
+            if (typeof adjustBodyPadding === 'function') adjustBodyPadding();
+        }
+
+        // ── Firebase Listeners ────────────────────────────────────
+        db.ref('menu_items').on('value', (snapshot) => {
+            _menuItems = snapshot.val() || {};
+            renderFullMenu();
+        });
+
+        db.ref('categories_meta').on('value', (snapshot) => {
+            _categoriesMeta = snapshot.val() || {};
+            renderFullMenu();
         });
 
     </script>
