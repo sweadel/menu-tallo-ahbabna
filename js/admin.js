@@ -51,6 +51,8 @@ let editingCatKey = null;
 let editingUserKey = null;
 let viewMode      = 'table';
 let catFilter     = 'all';
+let isSavingDesign = false;
+let isSavingHome   = false;
 
 // ══════════════ 3. NAVIGATION ══════════════
 document.querySelectorAll('[data-view]').forEach(btn => {
@@ -144,10 +146,19 @@ REFS.deleted.on('value', snapshot => {
 
 // ══════════════ 7. DESIGN SETTINGS LISTENER ══════════════
 REFS.design.on('value', snapshot => {
+    if (isSavingDesign) return; // Don't overwrite while user is saving
     const d = snapshot.val();
     if (!d) return;
-    const sv = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined) el.value = val; };
-    const sc = (id, val) => { const el = document.getElementById(id); if(el) el.checked = val !== false; };
+    
+    // Improved helper: Only update if the user IS NOT typing in the field
+    const sv = (id, val) => { 
+        const el = document.getElementById(id); 
+        if(el && val !== undefined && document.activeElement !== el) el.value = val; 
+    };
+    const sc = (id, val) => { 
+        const el = document.getElementById(id); 
+        if(el) el.checked = val !== false; 
+    };
 
     // Colors & Typography
     sv('d_primaryColor', d.primaryColor || '#C8A84B');
@@ -233,8 +244,16 @@ REFS.design.on('value', snapshot => {
 });
 
 function saveDesign() {
-    const gv = id => document.getElementById(id)?.value || '';
-    const gc = id => document.getElementById(id)?.checked ?? true;
+    const gv  = id => document.getElementById(id)?.value || '';
+    const gc  = id => document.getElementById(id)?.checked ?? true;
+    const gnf = (id, def) => { 
+        const val = parseFloat(document.getElementById(id)?.value);
+        return isNaN(val) ? def : val;
+    };
+    const gni = (id, def) => { 
+        const val = parseInt(document.getElementById(id)?.value);
+        return isNaN(val) ? def : val;
+    };
 
     const designData = {
         primaryColor:  gv('d_primaryColor'),
@@ -260,22 +279,22 @@ function saveDesign() {
         // ── Menu Header ──
         menuHeader: {
             bgImage:    gv('hdr_bgImage'),
-            overlay1:   parseFloat(gv('hdr_overlay1')) || 0.1,
-            overlay2:   parseFloat(gv('hdr_overlay2')) || 0.3,
+            overlay1:   gnf('hdr_overlay1', 0.1),
+            overlay2:   gnf('hdr_overlay2', 0.3),
             solidColor: gv('hdr_solidColor'),
-            bgSize:     parseInt(gv('hdr_bgSize')) || 120,
+            bgSize:     gni('hdr_bgSize', 120),
             logoUrl:    gv('hdr_logoUrl'),
-            logoHeight: parseInt(gv('hdr_logoHeight')) || 62,
-            logoOpacity: parseFloat(gv('hdr_logoOpacity')) || 0.93,
-            logoShadow: parseInt(gv('hdr_logoShadow')) || 8,
+            logoHeight: gni('hdr_logoHeight', 62),
+            logoOpacity: gnf('hdr_logoOpacity', 0.93),
+            logoShadow: gni('hdr_logoShadow', 8),
             showBack:   gc('hdr_showBack'),
             backText:   gv('hdr_backText') || '→',
             backColor:  gv('hdr_backColor'),
             pills: {
-                fontSize:   parseFloat(gv('pill_fontSize'))  || 0.9,
-                radius:     parseInt(gv('pill_radius'))      || 22,
-                padV:       parseInt(gv('pill_padV'))        || 9,
-                padH:       parseInt(gv('pill_padH'))        || 22,
+                fontSize:   gnf('pill_fontSize', 0.9),
+                radius:     gni('pill_radius', 22),
+                padV:       gni('pill_padV', 9),
+                padH:       gni('pill_padH', 22),
                 textColor:  gv('pill_textColor')             || '#8a8580',
                 bgColor:    gv('pill_bgColor')               || 'rgba(255,255,255,.06)',
                 activeText: gv('pill_activeText')            || '#000000',
@@ -283,35 +302,50 @@ function saveDesign() {
             },
             search: {
                 bg:          gv('srch_bg')          || 'rgba(255,255,255,.05)',
-                radius:      parseInt(gv('srch_radius'))     || 12,
+                radius:      gni('srch_radius', 12),
                 placeholder: gv('srch_placeholder') || 'ابحث في القائمة...',
                 iconColor:   gv('srch_iconColor')   || '#E5C467',
             },
             catbtn: {
-                fontSize:    parseFloat(gv('catbtn_fontSize'))  || 0.78,
-                radius:      parseInt(gv('catbtn_radius'))      || 50,
-                padV:        parseInt(gv('catbtn_padV'))        || 5,
-                padH:        parseInt(gv('catbtn_padH'))        || 14,
+                fontSize:    gnf('catbtn_fontSize', 0.78),
+                radius:      gni('catbtn_radius', 50),
+                padV:        gni('catbtn_padV', 5),
+                padH:        gni('catbtn_padH', 14),
                 color:       gv('catbtn_color')                 || '#8a8580',
                 activeColor: gv('catbtn_activeColor')           || '#E5C467',
             },
         }
     };
 
+    isSavingDesign = true;
+    const btn = document.querySelector('[onclick="saveDesign()"]');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
+
     REFS.design.set(designData)
         .then(() => {
             showToast('✓ تم تطبيق جميع إعدادات التصميم والهيدر على الموقع');
             log('تحديث التصميم', 'تعديل شامل لإعدادات المظهر والهيدر');
         })
-        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+        .catch(err => showToast('خطأ: ' + err.message, 'error'))
+        .finally(() => {
+            isSavingDesign = false;
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> تطبيق التغييرات';
+        });
 }
 
 // ══════════════ 8. HOME SETTINGS LISTENER ══════════════
 REFS.home.on('value', snapshot => {
+    if (isSavingHome) return;
     const d = snapshot.val();
     if (!d) return;
-    const sv = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
-    const sc = (id, val) => { const el = document.getElementById(id); if(el) el.checked = val !== false; };
+    const sv = (id, val) => { 
+        const el = document.getElementById(id); 
+        if(el && document.activeElement !== el) el.value = val || ''; 
+    };
+    const sc = (id, val) => { 
+        const el = document.getElementById(id); 
+        if(el) el.checked = val !== false; 
+    };
 
     sc('h_btn_ar', d.showBtnAr);
     sc('h_btn_en', d.showBtnEn);
@@ -344,12 +378,20 @@ function saveHomeSettings() {
         homeLogoSize: gv('h_logoSize'),
     };
 
+    isSavingHome = true;
+    const btn = document.querySelector('[onclick="saveHomeSettings()"]');
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
+
     REFS.home.set(data)
         .then(() => {
             showToast('✓ تم حفظ إعدادات الصفحة الرئيسية');
             log('تحديث الرئيسية', 'تعديل إعدادات الصفحة الرئيسية');
         })
-        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+        .catch(err => showToast('خطأ: ' + err.message, 'error'))
+        .finally(() => {
+            isSavingHome = false;
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-check"></i> حفظ الإعدادات';
+        });
 }
 
 // ══════════════ 9. USERS LISTENER ══════════════
