@@ -129,14 +129,14 @@ header {
  position: relative;
 }
 
-/* طبقة الخلفية الخاصة باللوجو (التي بها مربع) */
+/* طبقة الخلفية الخاصة باللوجو (التي بها زخرفة عرضية) */
 .logo-bg-layer {
  position: absolute;
  top: 0;
  left: 0;
  width: 100%;
- height: 65px; /* ارتفاع منطقة المربع */
- background: url('../images/square-bg.png') center/contain no-repeat;
+ height: 55px; /* تقليل الارتفاع قليلاً */
+ background: url('../images/wide-bg.png') center/cover repeat-x;
  z-index: 1;
 }
 
@@ -157,19 +157,19 @@ header.compressed {
  display: flex;
  justify-content: center;
  align-items: center;
- padding: 8px 0 0;
+ padding: 4px 0 0;
  width: 100%;
- height: 65px; /* نفس ارتفاع المربع */
+ height: 55px; /* نفس ارتفاع الزخرفة الجديد */
  position: relative;
  z-index: 5;
 }
 
 .logo-wrap img {
- height: 38px; /* حجم دقيق ليناسب المربع الأبيض في الصورة */
- width: 38px;
+ height: 32px; /* تصغير اللوجو بناءً على الطلب */
+ width: 32px;
  object-fit: contain;
  opacity: 1;
- border-radius: 8px;
+ border-radius: 6px;
  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, .4));
  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -273,8 +273,8 @@ header.compressed {
 
 /* ── شريط الأقسام الفرعية (يبقى ثابتاً دائماً) ── */
 .hdr-bottom {
- border-top: 1px solid rgba(255, 255, 255, .1);
- background: url('../images/wide-bg.png') center/cover no-repeat;
+ border-top: 1.5px solid var(--gold); /* الخط الرفيع بناءً على طلبك */
+ background: url('../images/sadu-pattern.jpg') center/cover no-repeat;
  position: relative;
 }
 
@@ -282,7 +282,7 @@ header.compressed {
  content: '';
  position: absolute;
  inset: 0;
- background: rgba(0,0,0,0.4); /* تعتيم خفيف لتوضيح الأزرار */
+ background: rgba(0,0,0,0.55); /* تعتيم لجعل الأزرار واضحة */
  z-index: 1;
 }
 
