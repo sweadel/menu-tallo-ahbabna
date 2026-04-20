@@ -101,10 +101,7 @@ header {
  left: 0;
  width: 100%;
  z-index: 1000;
- /* خلفية الهيدر: لتغيير الصورة غير sado-pattern والنسب الشفافة (0.1 و 0.3) للتحكم في تعتيم الصورة */
- background:
-  linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3)),
-  url('../images/sadu-pattern.jpg') center/120px repeat;
+ background: #111111;
  border-bottom: 1px solid var(--border);
  box-shadow: 0 2px 24px rgba(0, 0, 0, 80);
  backdrop-filter: blur(12px);
@@ -303,9 +300,7 @@ section.active {
  position: relative;
  width: 100%;
  padding: 20px 18px 16px;
- background:
-  linear-gradient(135deg, rgba(6, 6, 6, .2), rgba(100, 20, 20, .15)),
-  url('../images/sadu-pattern.jpg') center/120px repeat;
+ background: #151515;
  border-bottom: 1px solid var(--border);
  margin-bottom: 12px;
  display: flex;
