@@ -175,9 +175,14 @@ header {
 }
 
 .logo-wrap img {
-  height: 90px; /* حجم متناسق للموبايل */
+  height: 105px;
   width: auto;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 10px rgba(229, 196, 103, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.logo-wrap:hover img {
+  transform: scale(1.05);
 }
 
 /* أزرار الأقسام الرئيسية */
@@ -233,21 +238,23 @@ header {
 .search-box {
   width: 100%;
   max-width: 450px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1.5px solid rgba(212, 175, 55, 0.3); /* حدود ذهبية خفيفة */
-  border-radius: 14px;
+  background: rgba(10, 5, 5, 0.7);
+  border: 1px solid rgba(229, 196, 103, 0.4);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   padding: 0 18px;
   gap: 12px;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   transition: all 0.3s ease;
 }
 
 .search-box:focus-within {
   border-color: var(--gold);
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 0 20px rgba(229, 196, 103, 0.25);
+  transform: translateY(-2px);
 }
 
 .search-box input {
@@ -256,13 +263,13 @@ header {
   outline: none;
   color: #fff;
   font-size: 0.95rem;
-  height: 48px;
+  height: 54px;
   width: 100%;
   font-weight: 500;
 }
 
 .search-box input::placeholder {
-  color: rgba(255, 255, 255, 0.6); /* تفتيح نص البحث */
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* شريط الأقسام الفرعية */
