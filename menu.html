@@ -1163,52 +1163,7 @@
             if (e.key === 'Escape') closeDishModal();
         });
 
-        /*  Header scroll behavior  */
-        var hdrEl = document.getElementById('mainHeader'); // Fixed: was 'hdr', now 'mainHeader'
-        var isComp = false, ticking = false;
-        var SCROLL_THRESHOLD = 60;
-
-        function syncHeaderState() {
-            var y = window.scrollY;
-            var shouldCompress = y > SCROLL_THRESHOLD;
-            if (shouldCompress !== isComp) {
-                if (hdrEl) {
-                    if (shouldCompress) {
-                        hdrEl.classList.add('compressed');
-                    } else {
-                        hdrEl.classList.remove('compressed');
-                    }
-                }
-                isComp = shouldCompress;
-            }
-            adjustBodyPadding();
-        }
-
-        window.addEventListener('scroll', function () {
-            if (!ticking) {
-                window.requestAnimationFrame(function () {
-                    syncHeaderState();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        }, { passive: true });
-
-        function adjustBodyPadding() {
-            var hdr = document.getElementById('mainHeader'); // Fixed: was 'hdr'
-            if (!hdr) return;
-            var h = hdr.offsetHeight;
-            document.body.style.paddingTop = h + 'px';
-            document.querySelectorAll('.sec-title').forEach(function (el) {
-                el.style.scrollMarginTop = (h + 10) + 'px';
-            });
-        }
-
-        window.addEventListener('load', function() {
-            syncHeaderState();
-            adjustBodyPadding();
-        });
-        window.addEventListener('resize', adjustBodyPadding, { passive: true });
+        /* Dynamic Header Adjustments Removed */
 
         var initialTab = 'arabic';
         var hash = window.location.hash.replace('#', '');
@@ -1360,9 +1315,6 @@
                     secEl.appendChild(grid);
                 });
             });
-            
-            // Adjust body padding after content changes
-            if (typeof adjustBodyPadding === 'function') adjustBodyPadding();
         }
 
         // ── Firebase Listeners ────────────────────────────────────
