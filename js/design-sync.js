@@ -127,10 +127,12 @@
             }
 
             // Apply to header top section and section heroes
-            const hdrTop = document.querySelector('.hdr-top') || document.getElementById('hdr') || document.querySelector('header');
-            if (hdrTop && h.bgImage && h.bgImage.trim()) {
-                hdrTop.style.background = bgStyle;
-                // Also apply to section hero banners (same background as header)
+            // Apply to header top section and section heroes
+            const hdrTop = document.querySelector('.hdr-top');
+            if (hdrTop && h.bgImage && h.bgImage.trim() && !h.bgImage.includes('mosaic-header')) {
+                hdrTop.style.backgroundImage = `url('${h.bgImage.trim()}')`;
+                hdrTop.style.backgroundSize = 'cover';
+                hdrTop.style.backgroundPosition = 'center';
                 document.querySelectorAll('.section-hero').forEach(el => el.style.background = bgStyle);
             }
 
@@ -138,9 +140,7 @@
             const logoImg = document.querySelector('.logo-wrap img');
             if (logoImg) {
                 if (h.logoUrl) logoImg.src = h.logoUrl;
-                let lH = parseInt(h.logoHeight) || 44; 
-                if (lH > 52) lH = 44; 
-                logoImg.style.height = lH + 'px';
+                // Removed JS height override to allow CSS control (Audit Fix)
                 logoImg.style.opacity = h.logoOpacity !== undefined ? h.logoOpacity : 1;
                 const shadow = h.logoShadow !== undefined ? h.logoShadow : 10;
                 logoImg.style.filter = `drop-shadow(0 2px ${shadow}px rgba(0,0,0,.4))`;
