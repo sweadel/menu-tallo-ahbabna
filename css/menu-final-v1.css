@@ -114,7 +114,7 @@ header {
 .hdr-top {
   position: relative;
   width: 100%;
-  min-height: 420px; /* زيادة الارتفاع قليلاً لفك الاشتباك بين العناصر */
+  min-height: 420px;
   background-color: #1a0505;
   background-image: url('../images/header-sadu-final.png') !important;
   background-size: 280px;
@@ -123,9 +123,11 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end; /* دفع العناصر للأسفل لتتمركز مع القوس */
+  justify-content: flex-end;
   padding-bottom: 30px;
-  overflow: hidden; 
+  /* إزالة overflow hidden للسماح بالعناصر بالتحرك بسلاسة */
+  z-index: 10;
+  transition: transform 0.3s ease-out; /* حركة تدريجية خفيفة */
 }
 
 /* طبقة التعتيم لضمان تباين النصوص مع بقاء السدو واضحاً */
