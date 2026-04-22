@@ -107,44 +107,14 @@
             }
 
             // ══════════════════════════════════════════════════
-            // 10. MENU HEADER — Full Control
+            // 10. MENU HEADER — LOCKED (Manual CSS Control Only)
             // ══════════════════════════════════════════════════
-            const h = d.menuHeader;
-            if (!h) return;
-
-            // Background sync for header-top and section heroes
-            let bgSize = parseInt(h.bgSize) || 80;
-            if (bgSize > 95) bgSize = 80; 
-
-            let bgStyle;
-            if (h.bgImage && h.bgImage.trim()) {
-                const o1 = h.overlay1 !== undefined ? h.overlay1 : 0.5; // تعتيم أقوى للخلفية
-                const o2 = h.overlay2 !== undefined ? h.overlay2 : 0.7;
-                // تغيير Repeat إلى No-Repeat أو Cover لضمان عدم تكرار اللوجو في الخلفية
-                bgStyle = `linear-gradient(rgba(0,0,0,${o1}), rgba(0,0,0,${o2})), url('${h.bgImage.trim()}') center/cover no-repeat`;
-            } else {
-                bgStyle = h.solidColor || '#111111';
-            }
-
-            // Apply to header top section and section heroes
-            // Apply to header top section and section heroes
-            // Background sync logic refined: Only override if a NEW valid image is provided.
-            const hdrTop = document.querySelector('.hdr-top');
-            if (hdrTop && h.bgImage && h.bgImage.trim() && h.bgImage.includes('http')) {
-                hdrTop.style.backgroundImage = `url('${h.bgImage.trim()}')`;
-                hdrTop.style.backgroundSize = 'cover';
-                hdrTop.style.backgroundPosition = 'center';
-                document.querySelectorAll('.section-hero').forEach(el => el.style.background = bgStyle);
-            }
-
-            // Logo in header
+            // Removed JS overrides to prevent Firebase from messing up the Sadu/Arch design.
+            
+            // Logo URL sync (only if valid)
             const logoImg = document.querySelector('.logo-wrap img');
-            if (logoImg) {
-                if (h.logoUrl && h.logoUrl.trim().length > 5) logoImg.src = h.logoUrl;
-                // LOCKDOWN: Letting CSS control the logo size to prevent shrinking issues.
-                logoImg.style.opacity = h.logoOpacity !== undefined ? h.logoOpacity : 1;
-                const shadow = h.logoShadow !== undefined ? h.logoShadow : 10;
-                logoImg.style.filter = `drop-shadow(0 2px ${shadow}px rgba(0,0,0,.4))`;
+            if (logoImg && h.logoUrl && h.logoUrl.trim().length > 10) {
+                logoImg.src = h.logoUrl;
             }
 
             // Back button
@@ -175,21 +145,12 @@
                 injectStyle('ds-pills', pillCSS);
             }
 
-            // Search box
+            // Search box — LOCKED (CSS ONLY)
+            /*
             if (h.search) {
-                const s = h.search;
-                const searchCSS = `
-                    .search-box {
-                        background: ${s.bg || 'rgba(255,255,255,.05)'} !important;
-                        border-radius: ${s.radius || 12}px !important;
-                    }
-                    .search-box svg path { fill: ${s.iconColor || 'var(--gold)'} !important; }
-                    .search-box svg { color: ${s.iconColor || 'var(--gold)'} !important; }
-                `;
-                injectStyle('ds-search', searchCSS);
-                const srchInput = document.getElementById('srch');
-                if (srchInput && s.placeholder) srchInput.placeholder = s.placeholder;
+                // Disabled JS styling for search to prevent conflicts
             }
+            */
 
             // Sub-nav category buttons
             if (h.catbtn) {
