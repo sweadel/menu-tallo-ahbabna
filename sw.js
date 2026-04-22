@@ -1,4 +1,4 @@
-const CACHE = 'tallo-v5'; // تحديث النسخة لمسح الكاش القديم
+const CACHE = 'tallo-v100-final'; // كاش جديد لإجبار المتصفح على التحديث التام
 
 const ASSETS = [
   'index.html',
