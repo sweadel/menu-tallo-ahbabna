@@ -114,77 +114,128 @@ header {
 .hdr-top {
   position: relative;
   width: 100%;
-  min-height: 240px;
-  /* طبقات الخلفية: صورة السدو + تدرج لوني غني كـ fallback */
-  background-color: #2d0a0a;
-  background-image: 
-    url('../images/sadu-pattern.jpg');
+  min-height: 300px;
+  /* نمط السدو يغطي الهيدر كاملاً */
+  background-color: #3a0808;
+  background-image: url('../images/sadu-pattern.jpg');
   background-size: cover;
-  background-position: center top;
+  background-position: center center;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 20px;
-  padding-bottom: 85px;
+  padding-top: 22px;
+  padding-bottom: 100px;
   overflow: visible;
 }
 
-/* طبقة التعتيم الذكي - تبرز الألوان وتجعل النص واضحاً */
+/* طبقة التعتيم الخفيف فقط لإبراز ألوان السدو */
 .hdr-top::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.25) 0%,
-    rgba(0, 0, 0, 0.1) 40%,
-    rgba(0, 0, 0, 0.4) 100%
+    rgba(0, 0, 0, 0.10) 0%,
+    rgba(0, 0, 0, 0.05) 50%,
+    rgba(0, 0, 0, 0.35) 100%
   );
   z-index: 1;
 }
 
-/* القوس الذهبي الديكوري - خلف اللوجو فقط */
+/* ══════════════════════════════════════════════
+   القوس الإسلامي الذهبي الفخم
+   ══════════════════════════════════════════════
+   الهيكل:
+   .arch-overlay          → الإطار الذهبي الخارجي
+   .arch-overlay::before  → الخلفية الداكنة الداخلية
+   .arch-overlay::after   → الزخرفة الذهبية في قمة القوس
+   ══════════════════════════════════════════════ */
 .arch-overlay {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 300px;
-  height: 180px;
-  background: #000;
-  border: 3px solid var(--gold);
-  border-bottom: none;
-  border-radius: 150px 150px 0 0;
-  z-index: 2; /* خلف اللوجو وليس فوقه */
-  box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
+  width: 214px;
+  height: 268px;
+  z-index: 2;
+  overflow: visible;
+
+  /* الإطار الذهبي الخارجي = gradient ذهبي كخلفية */
+  background: linear-gradient(160deg,
+    #f7e07a 0%,
+    #e5c467 20%,
+    #c8a02a 45%,
+    #f5d470 60%,
+    #b8860b 80%,
+    #e5c467 100%
+  );
+  border-radius: 107px 107px 0 0;
+
+  /* توهج ذهبي خارجي */
+  box-shadow:
+    0 0 0 4px rgba(229,196,103,0.25),
+    0 0 35px rgba(229,196,103,0.45),
+    0 0 80px rgba(0,0,0,0.95),
+    0 8px 40px rgba(0,0,0,0.8);
+}
+
+/* الفراغ الداكن داخل القوس */
+.arch-overlay::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  background: rgba(4, 4, 6, 0.93);
+  border-radius: 99px 99px 0 0;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
+  z-index: 0;
+}
+
+/* قمة القوس المدببة — الزخرفة العلوية */
+.arch-overlay::after {
+  content: '';
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 22px solid transparent;
+  border-right: 22px solid transparent;
+  border-bottom: 34px solid #e5c467;
+  filter: drop-shadow(0 -4px 8px rgba(229,196,103,0.7));
+  z-index: 3;
 }
 
 /* اللوجو فوق القوس مباشرة */
 .logo-wrap {
   position: relative;
-  z-index: 5; /* فوق arch-overlay (z:2) وfore hdr-top::before (z:1) */
-  margin-bottom: 10px;
+  z-index: 5;
+  margin-bottom: 14px;
+  margin-top: 8px;
 }
 
 .logo-wrap img {
-  height: 110px;
+  height: 120px;
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.7));
+  filter: drop-shadow(0 2px 16px rgba(0,0,0,0.85));
 }
 
 /* أزرار الأقسام الرئيسية */
 .nav-row {
   position: absolute;
-  bottom: 50px;
+  bottom: 52px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
   gap: 8px;
-  padding: 0 12px;
+  padding: 0 14px;
   z-index: 10;
   overflow-x: auto;
   scrollbar-width: none;
@@ -192,16 +243,16 @@ header {
 .nav-row::-webkit-scrollbar { display: none; }
 
 .pill {
-  background: rgba(30, 30, 30, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(20, 20, 22, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   color: #fff;
-  padding: 9px 18px;
+  padding: 9px 17px;
   border-radius: 50px;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 800;
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
   transition: all 0.25s;
   white-space: nowrap;
   flex-shrink: 0;
@@ -211,7 +262,7 @@ header {
   background: var(--gold);
   color: #000;
   border-color: var(--gold);
-  box-shadow: 0 0 18px rgba(229, 196, 103, 0.55);
+  box-shadow: 0 0 22px rgba(229, 196, 103, 0.65);
 }
 
 /* شريط البحث */
