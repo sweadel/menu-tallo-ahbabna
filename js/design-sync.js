@@ -128,10 +128,11 @@
 
             // Apply to header top section and section heroes
             const hdrTop = document.querySelector('.hdr-top') || document.getElementById('hdr') || document.querySelector('header');
-            if (hdrTop) hdrTop.style.background = bgStyle;
-
-            // Also apply to section hero banners (same background as header)
-            document.querySelectorAll('.section-hero').forEach(el => el.style.background = bgStyle);
+            if (hdrTop && h.bgImage && h.bgImage.trim()) {
+                hdrTop.style.background = bgStyle;
+                // Also apply to section hero banners (same background as header)
+                document.querySelectorAll('.section-hero').forEach(el => el.style.background = bgStyle);
+            }
 
             // Logo in header
             const logoImg = document.querySelector('.logo-wrap img');

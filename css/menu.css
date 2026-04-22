@@ -114,53 +114,53 @@ header {
 .hdr-top {
   position: relative;
   width: 100%;
-  min-height: 460px; /* Taller to fit the large ornate logo/arch */
-  background-color: #3d0e0e;
-  background-image: url('../images/sadu-v4.png');
-  background-size: 320px; /* Adjusted size for visibility */
+  min-height: 440px; /* Reduced slightly for better balance */
+  background-color: #2a0808;
+  background-image: url('../images/sadu-v5.png') !important; /* Force visibility */
+  background-size: 300px;
   background-position: center top;
   background-repeat: repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 25px;
-  padding-bottom: 70px;
+  padding-top: 20px;
+  padding-bottom: 80px;
   overflow: hidden; 
 }
 
-/* طبقة التعتيم الخفيف لإبراز ألوان السدو - جعلناها أفتح لضمان ظهور النقشة */
+/* طبقة التعتيم - جعلناها خفيفة جداً لتظهر النقشة بوضوح */
 .hdr-top::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.05) 50%,
-    rgba(0, 0, 0, 0.5) 100%
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.0) 50%,
+    rgba(0, 0, 0, 0.4) 100%
   );
   z-index: 1;
 }
 
 /* ══════════════════════════════════════════════
 /* ══════════════════════════════════════════════
-   القوس الإسلامي الذهبي الفخم (الآن بشفافية كاملة وبدون خلفية مربعات)
+   القوس الإسلامي الذهبي الفخم (نسخة شفافة 100% بدون خلفية)
    ══════════════════════════════════════════════ */
 .arch-overlay {
   display: block;
   position: absolute;
-  bottom: 0px; /* Adjusted to sit perfectly */
+  bottom: -5px;
   left: 50%;
   transform: translateX(-50%);
-  width: 440px;
-  height: 440px;
-  background-image: url('../images/arch-v4.png');
+  width: 420px;
+  height: 420px;
+  background-image: url('../images/arch-v5.png') !important;
   background-size: contain;
   background-position: bottom center;
   background-repeat: no-repeat;
   z-index: 2;
-  filter: drop-shadow(0 0 30px rgba(0,0,0,0.7));
+  filter: drop-shadow(0 0 25px rgba(0,0,0,0.5));
 }
 
 /* اللوجو فوق القوس مباشرة */
@@ -186,12 +186,12 @@ header {
 /* أزرار الأقسام الرئيسية */
 .nav-row {
   position: absolute;
-  bottom: 85px; /* رفع الأزرار قليلاً لتتداخل مع الصورة بشكل جميل */
+  bottom: 95px; /* رفع الأزرار أكثر لتجنب التداخل مع القوس */
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   padding: 0 14px;
   z-index: 10;
   overflow-x: auto;
