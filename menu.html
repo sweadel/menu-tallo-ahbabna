@@ -9,18 +9,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&display=swap">
-    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/menu-final-v1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* FORCE STYLE OVERRIDE - لضمان عدم تغير التصميم مهما حدث */
+        .hdr-top {
+            background-image: url('images/header-sadu-final.png') !important;
+            background-color: #1a0505 !important;
+            min-height: 360px !important;
+        }
+        .arch-overlay {
+            background-image: url('images/header-arch-final.png') !important;
+            display: block !important;
+        }
+        .logo-wrap img {
+            height: 105px !important;
+            filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
+        }
         /* Arabic-specific overrides */
-        body {
-            direction: rtl;
-            font-weight: 700;
-        }
-
-        .sec-title::after {
-            background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25));
-        }
+        body { direction: rtl; font-weight: 700; }
+        .sec-title::after { background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25)); }
     </style>
 </head>
 
@@ -1386,7 +1394,7 @@
         initListeners();
 
     </script>
-    <script src="js/design-sync.js"></script>
+    <script src="js/design-sync-v1.js"></script>
     <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
 </body>
 
