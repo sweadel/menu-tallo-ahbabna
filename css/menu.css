@@ -163,24 +163,19 @@ header {
   filter: drop-shadow(0 0 25px rgba(0,0,0,0.5));
 }
 
-/* اللوجو فوق القوس مباشرة */
 .logo-wrap {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -115%); /* المركز العلوي داخل القوس */
   z-index: 5;
-  margin-bottom: 20px;
-  margin-top: 30px; /* Push logo down to sit centrally inside the floral arch */
-  width: 100%;
-  display: flex;
-  justify-content: center;
+  pointer-events: none;
 }
 
 .logo-wrap img {
-  height: auto;
-  max-height: 220px; /* Reduced to fit nicely inside the background */
+  height: 140px; /* الحجم المثالي داخل القوس */
   width: auto;
-  max-width: 80%;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.9));
+  filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4)) brightness(1.1); /* توهج ذهبي خفيف للوجو */
 }
 
 /* أزرار الأقسام الرئيسية */
@@ -200,26 +195,27 @@ header {
 .nav-row::-webkit-scrollbar { display: none; }
 
 .pill {
-  background: rgba(20, 20, 22, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  color: #fff;
-  padding: 9px 17px;
-  border-radius: 50px;
+  flex: 0 0 auto;
+  padding: 10px 22px;
+  background: rgba(255, 255, 255, 0.15); /* تفتيح الخلفية للأزرار غير النشطة */
+  color: rgba(255, 255, 255, 0.8); /* تفتيح لون النص */
+  border-radius: 25px;
   text-decoration: none;
-  font-size: 0.84rem;
-  font-weight: 800;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  transition: all 0.25s;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
-  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .pill.active {
-  background: var(--gold);
-  color: #000;
+  background: var(--gold) !important;
+  color: #000 !important;
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+  transform: scale(1.05);
   border-color: var(--gold);
-  box-shadow: 0 0 22px rgba(229, 196, 103, 0.65);
 }
 
 /* شريط البحث */
@@ -233,28 +229,39 @@ header {
 }
 
 .search-box {
-  background: rgba(10, 10, 10, 0.92);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50px;
-  padding: 8px 18px;
+  width: 100%;
+  max-width: 450px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1.5px solid rgba(212, 175, 55, 0.3); /* حدود ذهبية خفيفة */
+  border-radius: 14px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  padding: 0 18px;
+  gap: 12px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
 }
 
 .search-box input {
-  background: transparent;
+  background: none;
   border: none;
-  color: #fff;
-  width: 100%;
   outline: none;
-  font-size: 0.92rem;
-  font-family: inherit;
-  text-align: right;
+  color: #fff;
+  font-size: 0.95rem;
+  height: 48px;
+  width: 100%;
+  font-weight: 500;
 }
 
-.search-box input::placeholder { color: rgba(255,255,255,0.5); }
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.6); /* تفتيح نص البحث */
+}
 
 /* شريط الأقسام الفرعية */
 .hdr-bottom {
@@ -272,21 +279,17 @@ header {
 .sub-nav::-webkit-scrollbar { display: none; }
 
 .cat-btn {
-  color: rgba(255,255,255,0.55);
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  color: rgba(255, 255, 255, 0.7); /* تفتيح اللون */
   text-decoration: none;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 700;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
   white-space: nowrap;
-  transition: color 0.25s;
-  border: none;
-  background: none;
-  padding: 4px 10px;
-  border-radius: 20px;
-  cursor: pointer;
-  flex-shrink: 0;
 }
 
-.cat-btn.active,
 .cat-btn:hover {
   color: var(--gold);
   background: rgba(197, 160, 34, 0.12);
