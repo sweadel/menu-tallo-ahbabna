@@ -107,67 +107,9 @@
             }
 
             // ══════════════════════════════════════════════════
-            // 10. MENU HEADER — LOCKED (Manual CSS Control Only)
+            // 10. MENU HEADER — TOTALLY DISABLED (Decoupled)
             // ══════════════════════════════════════════════════
-            // Removed JS overrides to prevent Firebase from messing up the Sadu/Arch design.
-            
-            // Logo URL sync (only if valid)
-            const logoImg = document.querySelector('.logo-wrap img');
-            if (logoImg && h.logoUrl && h.logoUrl.trim().length > 10) {
-                logoImg.src = h.logoUrl;
-            }
-
-            // Back button
-            const backBtn = document.querySelector('.back-btn');
-            if (backBtn) {
-                backBtn.style.display = (h.showBack === false) ? 'none' : 'flex';
-                if (h.backText) backBtn.textContent = h.backText;
-                if (h.backColor) backBtn.style.color = h.backColor;
-            }
-
-            // Pills (main tabs)
-            if (h.pills) {
-                const p = h.pills;
-                const pillCSS = `
-                    .pill {
-                        font-size: ${p.fontSize || 0.9}rem !important;
-                        border-radius: ${p.radius || 22}px !important;
-                        padding: ${p.padV || 9}px ${p.padH || 22}px !important;
-                        color: ${p.textColor || 'var(--text-dim)'} !important;
-                        background: ${p.bgColor || 'rgba(255,255,255,.06)'} !important;
-                    }
-                    .pill.active {
-                        background: ${p.activeBg || 'var(--gold)'} !important;
-                        color: ${p.activeText || '#000'} !important;
-                        border-color: ${p.activeBg || 'var(--gold)'} !important;
-                    }
-                `;
-                injectStyle('ds-pills', pillCSS);
-            }
-
-            // Search box — LOCKED (CSS ONLY)
-            /*
-            if (h.search) {
-                // Disabled JS styling for search to prevent conflicts
-            }
-            */
-
-            // Sub-nav category buttons
-            if (h.catbtn) {
-                const cb = h.catbtn;
-                const catCSS = `
-                    .cat-btn {
-                        font-size: ${cb.fontSize || 0.78}rem !important;
-                        border-radius: ${cb.radius || 50}px !important;
-                        padding: ${cb.padV || 5}px ${cb.padH || 14}px !important;
-                        color: ${cb.color || 'var(--text-dim)'} !important;
-                    }
-                    .cat-btn:hover, .cat-btn.active {
-                        color: ${cb.activeColor || 'var(--gold)'} !important;
-                    }
-                `;
-                injectStyle('ds-catbtn', catCSS);
-            }
+            // Removed all header, logo, and search logic to prevent overrides.
         });
 
         // ══════════════════════════════════════════════════════
