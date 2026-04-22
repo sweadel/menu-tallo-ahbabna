@@ -114,9 +114,9 @@ header {
 .hdr-top {
   position: relative;
   width: 100%;
-  min-height: 440px; /* Reduced slightly for better balance */
-  background-color: #2a0808;
-  background-image: url('../images/sadu-v5.png') !important; /* Force visibility */
+  min-height: 440px; 
+  background-color: #1a0505;
+  background-image: url('../images/header-sadu-final.png') !important; /* النسخة النهائية المثبتة */
   background-size: 300px;
   background-position: center top;
   background-repeat: repeat;
@@ -129,23 +129,23 @@ header {
   overflow: hidden; 
 }
 
-/* طبقة التعتيم - جعلناها خفيفة جداً لتظهر النقشة بوضوح */
+/* طبقة التعتيم لضمان تباين النصوص مع بقاء السدو واضحاً */
 .hdr-top::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.15) 0%,
     rgba(0, 0, 0, 0.0) 50%,
-    rgba(0, 0, 0, 0.4) 100%
+    rgba(0, 0, 0, 0.45) 100%
   );
   z-index: 1;
 }
 
 /* ══════════════════════════════════════════════
 /* ══════════════════════════════════════════════
-   القوس الإسلامي الذهبي الفخم (نسخة شفافة 100% بدون خلفية)
+   القوس الإسلامي الذهبي الفخم (النسخة النهائية الشفافة تماماً)
    ══════════════════════════════════════════════ */
 .arch-overlay {
   display: block;
@@ -155,7 +155,7 @@ header {
   transform: translateX(-50%);
   width: 420px;
   height: 420px;
-  background-image: url('../images/arch-v5.png') !important;
+  background-image: url('../images/header-arch-final.png') !important;
   background-size: contain;
   background-position: bottom center;
   background-repeat: no-repeat;
