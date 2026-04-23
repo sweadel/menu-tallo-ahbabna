@@ -346,19 +346,18 @@ header {
 
 /* ── الجزء السفلي: شريط الأقسام الفرعية ── */
 .hdr-bottom {
-  background: rgba(10, 10, 10, 0.95);
+  background: rgba(10, 10, 10, 0.98);
   /* خلفية داكنة جداً لدعم القراءة */
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   border-top: 1px solid rgba(197, 160, 34, 0.15);
   border-bottom: 1px solid rgba(197, 160, 34, 0.15);
 
-  /* السر هنا: هذا الشريط فقط من سيثبت في الأعلى */
+  /* تثبيت شريط الأقسام الفرعية في أعلى الشاشة */
   position: sticky;
   top: 0;
-  z-index: 1001;
-  /* يجب أن يكون أعلى من أي عنصر لضمان بقائه مرئياً */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  z-index: 1100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
 .sub-nav {
@@ -508,6 +507,8 @@ section.active {
   font-weight: 800;
   padding: 0 4px;
   text-shadow: 0 0 10px rgba(197, 160, 34, 0.2);
+  /* لمنع اختفاء العنوان خلف الشريط المثبت عند النقر على الأقسام */
+  scroll-margin-top: 100px;
 }
 
 .sec-title .sec-icon {
