@@ -299,7 +299,7 @@
             card.setAttribute('data-t', item.nameAr || item.name || '');
             card.setAttribute('data-desc', item.descAr || item.desc || '');
             
-            const imgStyle = item.image ? `background-image:url('${item.image}')` : '';
+            const imgStyle = item.image ? `background-image:url('${item.image}'); background-size: cover; background-position: center;` : '';
             const price = (item.price || '').toString().trim();
             
             card.innerHTML = `
