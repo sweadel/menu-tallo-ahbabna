@@ -166,6 +166,36 @@ header {
   filter: drop-shadow(0 0 25px rgba(0,0,0,0.5));
 }
 
+.back-btn {
+  position: absolute;
+  top: 20px;
+  inset-inline-start: 20px; /* Adapts to LTR/RTL automatically */
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(10, 10, 10, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(197, 160, 34, 0.25);
+  border-radius: 50%;
+  color: var(--gold);
+  font-size: 1.15rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.back-btn:hover {
+  background: rgba(197, 160, 34, 0.15);
+  border-color: rgba(197, 160, 34, 0.5);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(197, 160, 34, 0.2);
+}
+
 .logo-wrap {
   position: absolute;
   top: 15%; /* وضع اللوجو في الجزء العلوي من القوس */

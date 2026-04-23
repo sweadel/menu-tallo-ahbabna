@@ -1460,440 +1460,169 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
             <div class="page-hdr">
                 <div class="page-hdr-left">
                     <h1>التصميم والمظهر</h1>
-                    <p>تحكم كامل في كل جزئية بصرية في الموقع والمنيو</p>
+                    <p>تحكم كامل في كل جزئية بصرية في الموقع والمنيو (مع شرح مفصل لكل عنصر)</p>
                 </div>
                 <div class="page-hdr-right">
                     <button class="btn btn-primary" onclick="saveDesign()">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> حفظ وتطبيق
+                        <i class="fa-solid fa-cloud-arrow-up"></i> حفظ وتطبيق التصميم
                     </button>
                 </div>
             </div>
 
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px,1fr)); gap:16px;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px,1fr)); gap:20px;">
 
                 <!-- BRAND COLORS -->
-                <div class="table-wrap" style="padding:20px;">
-                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-palette"></i> الألوان الأساسية</div>
-                    <div class="form-group" style="margin-bottom:14px;">
-                        <label class="form-label">اللون الذهبي الأساسي (Primary)</label>
+                <div class="table-wrap" style="padding:24px;">
+                    <div class="form-section-label" style="margin-bottom:20px; font-size:1.1rem; color:var(--gold);"><i class="fa-solid fa-palette"></i> 1. الألوان الأساسية للموقع</div>
+                    
+                    <div class="form-group" style="margin-bottom:20px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                        <label class="form-label" style="font-size:1rem;">اللون الأساسي (الذهبي غالباً)</label>
+                        <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 <b>أين يظهر؟</b> هذا اللون سيُستخدم في الأزرار النشطة، الأيقونات، الخطوط التجميلية، وأي عنصر يحتاج إبراز في المنيو.</p>
                         <div style="display:flex;align-items:center;gap:10px;">
-                            <input type="color" id="d_primaryColor" value="#C8A84B" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
-                            <input type="text" id="d_primaryColorText" class="f-ctrl" placeholder="#C8A84B" style="max-width:130px;" oninput="document.getElementById('d_primaryColor').value=this.value">
-                            <span style="font-size:0.75rem;color:var(--text-3);">لون الأزرار والتمييز</span>
+                            <input type="color" id="d_primaryColor" value="#E5C467" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
+                            <input type="text" id="d_primaryColorText" class="f-ctrl" placeholder="#E5C467" style="max-width:130px;" oninput="document.getElementById('d_primaryColor').value=this.value">
                         </div>
                     </div>
-                    <div class="form-group" style="margin-bottom:14px;">
-                        <label class="form-label">خلفية الصفحة (Page Background)</label>
+
+                    <div class="form-group" style="margin-bottom:20px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                        <label class="form-label" style="font-size:1rem;">لون خلفية الموقع كاملة</label>
+                        <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 <b>أين يظهر؟</b> هو اللون الذي يملأ الشاشة بالكامل خلف الأطباق والقوائم (الخلفية العميقة).</p>
                         <div style="display:flex;align-items:center;gap:10px;">
-                            <input type="color" id="d_pageBg" value="#080808" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
-                            <input type="text" id="d_pageBgText" class="f-ctrl" placeholder="#080808" style="max-width:130px;" oninput="document.getElementById('d_pageBg').value=this.value">
+                            <input type="color" id="d_pageBg" value="#14110e" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
+                            <input type="text" id="d_pageBgText" class="f-ctrl" placeholder="#14110e" style="max-width:130px;" oninput="document.getElementById('d_pageBg').value=this.value">
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">خلفية بطاقة الطبق (Card Background)</label>
+                        <label class="form-label" style="font-size:1rem;">لون خلفية بطاقة الطبق (Card)</label>
+                        <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 <b>أين يظهر؟</b> هو لون المربع (البطاقة) الذي يحتوي على صورة واسم وسعر كل وجبة.</p>
                         <div style="display:flex;align-items:center;gap:10px;">
-                            <input type="color" id="d_cardBg" value="#121212" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
-                            <input type="text" id="d_cardBgText" class="f-ctrl" placeholder="#121212" style="max-width:130px;" oninput="document.getElementById('d_cardBg').value=this.value">
+                            <input type="color" id="d_cardBg" value="#26221f" style="width:50px;height:40px;border:none;background:none;cursor:pointer;border-radius:8px;">
+                            <input type="text" id="d_cardBgText" class="f-ctrl" placeholder="#26221f" style="max-width:130px;" oninput="document.getElementById('d_cardBg').value=this.value">
                         </div>
                     </div>
                 </div>
 
                 <!-- TYPOGRAPHY -->
-                <div class="table-wrap" style="padding:20px;">
-                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-font"></i> الخطوط والطباعة</div>
-                    <div class="form-group" style="margin-bottom:14px;">
-                        <label class="form-label">نوع الخط (Google Fonts)</label>
+                <div class="table-wrap" style="padding:24px;">
+                    <div class="form-section-label" style="margin-bottom:20px; font-size:1.1rem; color:var(--gold);"><i class="fa-solid fa-font"></i> 2. الخطوط (Typography)</div>
+                    
+                    <div class="form-group" style="margin-bottom:20px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                        <label class="form-label" style="font-size:1rem;">نوع الخط (Font Family)</label>
+                        <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 <b>أين يظهر؟</b> سيُطبق على كافة نصوص المنيو، من أسماء الأطباق إلى الأسعار والوصف.</p>
                         <select id="d_fontFamily" class="f-ctrl">
                             <option value="IBM Plex Sans Arabic">IBM Plex Sans Arabic — فخم وعصري ✨</option>
                             <option value="Cairo">Cairo — كلاسيكي ورسمي</option>
                             <option value="Tajawal">Tajawal — ناعم وبسيط</option>
                             <option value="Almarai">Almarai — واضح للمجلات</option>
-                            <option value="Noto Kufi Arabic">Noto Kufi Arabic — كوفي أنيق</option>
-                            <option value="Reem Kufi">Reem Kufi — كوفي مودرن</option>
                             <option value="Zain">Zain — رشيق ومختلف</option>
                         </select>
                     </div>
-                    <div class="toggle-row" style="margin-bottom:14px;">
+
+                    <div class="toggle-row" style="margin-bottom:20px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
                         <div>
-                            <div class="toggle-label">تغليظ الخط (Bold)</div>
-                            <div class="toggle-sub">يجعل كل النصوص ثقيلة وواضحة</div>
+                            <div class="toggle-label" style="font-size:1rem;">تغليظ الخط (Bold Text)</div>
+                            <div class="toggle-sub" style="font-size:0.75rem;">💡 <b>النتيجة:</b> يجعل كل النصوص سميكة وواضحة (يُفضل تفعيله لسهولة القراءة).</div>
                         </div>
                         <label class="switch"><input type="checkbox" id="d_fontBold" checked><span class="slider"></span></label>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">نمط بطاقات الأطباق</label>
+                        <label class="form-label" style="font-size:1rem;">شكل بطاقة الطبق (Card Style)</label>
+                        <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 <b>النتيجة:</b> يحدد ما إذا كانت البطاقة التي تحمل صورة واسم الطبق ستكون بارزة بظلال أو زجاجية شفافة.</p>
                         <select id="d_cardStyle" class="f-ctrl">
-                            <option value="modern">Modern ✨ — عصري مع ظلال</option>
-                            <option value="classic">Classic 🏛️ — كلاسيكي بسيط</option>
-                            <option value="glass">Glass 💎 — زجاجي شفاف</option>
+                            <option value="modern">عصري بارز (Modern) — مع ظلال أنيقة ✨</option>
+                            <option value="glass">زجاجي شفاف (Glass) — تأثير غائم 💎</option>
+                            <option value="classic">كلاسيكي (Classic) — مسطح وبسيط 🏛️</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- LOGO & HEADER -->
-                <div class="table-wrap" style="padding:20px;">
-                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-image"></i> اللوجو والهيدر</div>
-                    <div class="form-group" style="margin-bottom:14px;">
-                        <label class="form-label">رابط اللوجو (URL)</label>
-                        <input type="url" id="d_logoUrl" class="f-ctrl" placeholder="https://... أو images/tallo-logo.png">
-                    </div>
-                    <div class="form-group" style="margin-bottom:14px;">
-                        <label class="form-label">رابط صورة خلفية الهيدر (Pattern)</label>
-                        <input type="url" id="d_headerBg" class="f-ctrl" placeholder="images/sadu-pattern.jpg">
-                    </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr; gap:10px;">
-                        <div class="form-group">
-                            <label class="form-label">ارتفاع اللوجو (px)</label>
-                            <input type="number" id="d_logoHeight" class="f-ctrl" placeholder="62">
+                <!-- HEADER LOGO & BG -->
+                <div class="table-wrap" style="padding:24px; grid-column: 1 / -1;">
+                    <div class="form-section-label" style="margin-bottom:20px; font-size:1.1rem; color:var(--gold);"><i class="fa-solid fa-rectangle-ad"></i> 3. الجزء العلوي (الهيدر واللوجو)</div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:20px;">
+                        
+                        <div class="form-group" style="padding-right:15px; border-left: 1px solid var(--border);">
+                            <label class="form-label" style="font-size:1rem;">شعار المطعم (اللوجو)</label>
+                            <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 <b>ما هذا؟</b> رابط الصورة الخاصة بلوجو المطعم التي تظهر في أعلى المنيو.</p>
+                            <input type="url" id="d_logoUrl" class="f-ctrl" placeholder="مثال: images/tallo-logo.png" style="margin-bottom:10px;">
+                            <label class="form-label" style="font-size:0.85rem; margin-top:10px;">حجم اللوجو (ارتفاع بالبيكسل)</label>
+                            <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 كبّر أو صغّر اللوجو. (الافتراضي: 105).</p>
+                            <input type="number" id="d_logoHeight" class="f-ctrl" placeholder="105">
                         </div>
+
                         <div class="form-group">
-                            <label class="form-label">تعتيم الخلفية (0-1)</label>
+                            <label class="form-label" style="font-size:1rem;">صورة خلفية الهيدر النقش (Pattern)</label>
+                            <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 <b>أين تظهر؟</b> هي النقشة أو الصورة التي تملأ المساحة العلوية خلف اللوجو (حالياً السدو).</p>
+                            <input type="url" id="d_headerBg" class="f-ctrl" placeholder="مثال: images/sadu-pattern.jpg" style="margin-bottom:10px;">
+                            <label class="form-label" style="font-size:0.85rem; margin-top:10px;">تعتيم خلفية الهيدر (0 إلى 1)</label>
+                            <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 لزيادة سواد الخلفية حتى يبرز اللوجو أكثر (0 = شفاف، 1 = أسود غامق جداً).</p>
                             <input type="number" id="d_headerOpacity" class="f-ctrl" step="0.05" min="0" max="1" placeholder="0.3">
                         </div>
                     </div>
                 </div>
 
-                <!-- SEARCH & TABS -->
-                <div class="table-wrap" style="padding:20px;">
-                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-compass"></i> التنقل والبحث</div>
-                    <div class="toggle-row" style="margin-bottom:14px;">
+                <!-- NAVIGATION TABS -->
+                <div class="table-wrap" style="padding:24px; grid-column: 1 / -1;">
+                    <div class="form-section-label" style="margin-bottom:20px; font-size:1.1rem; color:var(--gold);"><i class="fa-solid fa-list"></i> 4. أشرطة الأقسام (التبويبات) والبحث</div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:20px;">
+                        
+                        <div class="form-group" style="padding-right:15px; border-left: 1px solid var(--border);">
+                            <label class="form-label" style="font-size:1rem;">مسميات التبويبات الرئيسية العلوية</label>
+                            <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:8px;">💡 <b>أين تظهر؟</b> هذه هي الأزرار الكبيرة في أعلى القائمة لتغيير القسم بالكامل.</p>
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <input type="text" id="d_labelArabic" class="f-ctrl" placeholder="المنيو العربي">
+                                <input type="text" id="d_labelIntl" class="f-ctrl" placeholder="الانترناشونال">
+                                <input type="text" id="d_labelDrinks" class="f-ctrl" placeholder="المشروبات">
+                                <input type="text" id="d_labelArgileh" class="f-ctrl" placeholder="الأراجيل">
+                            </div>
+                        </div>
+
                         <div>
-                            <div class="toggle-label">إظهار شريط البحث</div>
-                            <div class="toggle-sub">يتيح للزبائن البحث عن أي طبق</div>
+                            <div class="toggle-row" style="margin-bottom:20px;">
+                                <div>
+                                    <div class="toggle-label" style="font-size:1rem;">إظهار شريط البحث 🔍</div>
+                                    <div class="toggle-sub" style="font-size:0.75rem;">💡 يُظهر مربع للزبائن للبحث السريع عن اسم طبق (مثل "منسف").</div>
+                                </div>
+                                <label class="switch"><input type="checkbox" id="d_showSearch" checked><span class="slider"></span></label>
+                            </div>
+
+                            <label class="form-label" style="font-size:1rem;">ألوان التبويبات الفرعية (Sub-nav)</label>
+                            <p style="font-size:0.75rem; color:var(--text-3); margin-bottom:12px;">💡 <b>أين تظهر؟</b> هذا هو الشريط الذي يتحرك معك أثناء النزول ويحتوي (مقبلات، مشاوي... الخ).</p>
+                            
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <span style="font-size:0.85rem;">لون الزر <b>النشط</b> (الذي تفتحه حالياً):</span>
+                                <input type="color" id="pill_activeBg" value="#E5C467" style="width:50px;height:30px;border:none;border-radius:4px;">
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:0.85rem;">لون الزر <b>الغير نشط</b>:</span>
+                                <input type="color" id="pill_textColor" value="#8a8580" style="width:50px;height:30px;border:none;border-radius:4px;">
+                            </div>
                         </div>
-                        <label class="switch"><input type="checkbox" id="d_showSearch" checked><span class="slider"></span></label>
-                    </div>
-                    <div class="form-section-label" style="margin:14px 0 10px;"><i class="fa-solid fa-tags"></i> مسميات التبويبات الرئيسية</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
-                        <div class="form-group">
-                            <label class="form-label">تبويب المنيو العربي</label>
-                            <input type="text" id="d_labelArabic" class="f-ctrl" placeholder="المنيو العربي">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">تبويب انترناشونل</label>
-                            <input type="text" id="d_labelIntl" class="f-ctrl" placeholder="انترناشونل">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">تبويب المشروبات</label>
-                            <input type="text" id="d_labelDrinks" class="f-ctrl" placeholder="المشروبات">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">تبويب الأراجيل</label>
-                            <input type="text" id="d_labelArgileh" class="f-ctrl" placeholder="أراجيل">
-                        </div>
+
                     </div>
                 </div>
 
-                <!-- PROMOTIONAL BANNER -->
-                <div class="table-wrap" style="padding:20px; grid-column: 1 / -1;">
-                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-bullhorn"></i> شريط الإعلانات الترويجي</div>
-                    <div class="toggle-row" style="margin-bottom:14px;">
+                <!-- PROMO BANNER -->
+                <div class="table-wrap" style="padding:24px; grid-column: 1 / -1;">
+                    <div class="form-section-label" style="margin-bottom:20px; font-size:1.1rem; color:var(--gold);"><i class="fa-solid fa-bullhorn"></i> 5. شريط الإعلانات الترويجي</div>
+                    
+                    <div class="toggle-row" style="margin-bottom:15px;">
                         <div>
-                            <div class="toggle-label">تفعيل شريط الإعلانات</div>
-                            <div class="toggle-sub">يظهر في أعلى المنيو والصفحة الرئيسية</div>
+                            <div class="toggle-label" style="font-size:1rem;">تفعيل الشريط الإعلاني</div>
+                            <div class="toggle-sub" style="font-size:0.75rem;">💡 <b>أين يظهر؟</b> شريط يمر في أعلى الشاشة تماماً ليعرض العروض الحالية لزبائنك.</div>
                         </div>
                         <label class="switch"><input type="checkbox" id="d_bannerActive"><span class="slider"></span></label>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">نص الإعلان</label>
-                        <textarea id="d_bannerText" class="f-ctrl" rows="2" placeholder="مثال: 🎉 استمتع بخصم 20% على جميع الوجبات اليوم فقط!"></textarea>
+                        <label class="form-label">نص الإعلان (ماذا تريد أن تقول للزبائن؟)</label>
+                        <textarea id="d_bannerText" class="f-ctrl" rows="2" placeholder="مثال: 🎉 خصم 20% بمناسبة الافتتاح!"></textarea>
                     </div>
                 </div>
 
-                <!-- SEO -->
-                <div class="table-wrap" style="padding:20px; grid-column: 1 / -1;">
-                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-globe"></i> إعدادات SEO ومحركات البحث</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr; gap:12px;">
-                        <div class="form-group">
-                            <label class="form-label">عنوان الموقع (Browser Tab)</label>
-                            <input type="text" id="d_siteTitle" class="f-ctrl" placeholder="طلوا حبابنا | مادبا">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">وصف الموقع (Meta Description)</label>
-                            <input type="text" id="d_siteDesc" class="f-ctrl" placeholder="مطعم طلوا حبابنا — مادبا، الأردن">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">لون خلفية الموقع (Background Color)</label>
-                            <div style="display:flex;gap:8px;align-items:center;">
-                                <input type="color" id="d_pageBg" value="#080808" style="width:44px;height:36px;border:none;background:none;cursor:pointer;border-radius:6px;">
-                                <input type="text" id="d_pageBgText" class="f-ctrl" placeholder="#080808" oninput="document.getElementById('d_pageBg').value=this.value">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">صورة خلفية لكامل الموقع (Image URL)</label>
-                            <input type="text" id="d_pageBgImage" class="f-ctrl" placeholder="رابط الصورة (اتركه فارغاً للون سادة)">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">طريقة عرض الخلفية (Size)</label>
-                            <select id="d_pageBgSize" class="f-ctrl">
-                                <option value="cover">تغطية كاملة (Cover)</option>
-                                <option value="auto">تكرار الطبيعي (Auto / Repeat)</option>
-                                <option value="100% 100%">تمدد (Stretch)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PREVIEW CARD (Sticky) -->
-                <div id="sticky-preview" class="table-wrap" style="padding:20px; grid-column: 1 / -1; background: var(--bg-1); border: 2px dashed var(--border-g); position: sticky; top: 10px; z-index: 100; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-                    <div class="form-section-label" style="margin-bottom:12px;"><i class="fa-solid fa-eye"></i> معاينة حية للتصميم والعلامة التجارية</div>
-                    <div id="design-preview-box" style="border-radius:12px; padding:30px; text-align:center; transition: all 0.4s ease; border: 1px solid var(--border); background-size: cover; background-position: center;">
-                        <img id="preview-logo" src="images/tallo-logo.png" style="height:50px; margin-bottom:15px; transition: all 0.3s ease;">
-                        <h2 id="preview-text" style="font-size:1.5rem; margin-bottom:10px;">طلوا حبابنا - Tallo Ahbabna</h2>
-                        <p style="opacity:0.75; font-size:0.92rem; max-width: 400px; margin: 0 auto;">هكذا سيبدو نمط الخط والألوان والخلفية في الموقع الرئيسي.</p>
-                        <div style="margin-top:24px; display:flex; gap:10px; justify-content:center;">
-                            <span class="pill active" id="preview-pill-active" style="font-size:0.8rem; padding: 10px 20px;">القسم النشط</span>
-                            <span class="pill" id="preview-pill-dim" style="font-size:0.8rem; padding: 10px 20px;">قسم آخر</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- COLORS & TYPOGRAPHY -->
-                <div class="table-wrap" style="padding:20px;">
-                    <div class="form-section-label" style="margin-bottom:16px;"><i class="fa-solid fa-palette"></i> الألوان والخطوط الرئيسية</div>
-                    <div style="display:flex; flex-direction:column; gap:12px;">
-                        <div class="form-group">
-                            <label class="form-label">لون الهوية الرئيسي (Primary Color)</label>
-                            <div style="display:flex;gap:8px;align-items:center;">
-                                <input type="color" id="d_primaryColor" value="#C8A84B" style="width:44px;height:36px;border:none;background:none;cursor:pointer;border-radius:8px;">
-                                <input type="text" id="d_primaryColorText" class="f-ctrl" placeholder="#C8A84B" oninput="document.getElementById('d_primaryColor').value=this.value">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">نوع الخط المعتمد (Font Family)</label>
-                            <select id="d_fontFamily" class="f-ctrl">
-                                <option value="IBM Plex Sans Arabic">IBM Plex Sans (افتراضي)</option>
-                                <option value="Zain">زين (Zain) - فخم وعريض</option>
-                                <option value="Cairo">كايرو (Cairo) - عصري</option>
-                                <option value="Tajawal">تجول (Tajawal) - ناعم</option>
-                                <option value="Almarai">المراعي (Almarai) - رسمي</option>
-                            </select>
-                        </div>
-                        <div class="toggle-row" style="margin-top:5px;">
-                            <div>
-                                <div class="toggle-label">خط عريض جداً (Heavy Bold)</div>
-                                <div class="toggle-sub">تفعيل سمك الخط 800 للعناوين</div>
-                            </div>
-                            <label class="switch"><input type="checkbox" id="d_fontBold"><span class="slider"></span></label>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-wrap" style="padding:20px; grid-column: 1 / -1; border-top: 3px solid var(--gold);">
-                    <div class="form-section-label" style="margin-bottom:6px; font-size:0.85rem;">
-                        <i class="fa-solid fa-rectangle-ad"></i> هيدر المنيو — تحكم كامل بكل جزئية
-                    </div>
-                    <p style="font-size:0.72rem; color:var(--text-3); margin-bottom:20px;">يشمل: الخلفية، اللوجو، أزرار التبويبات، شريط البحث، والأزرار الفرعية — كل شيء حرفياً</p>
-
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:20px;">
-
-                        <!-- 1. BACKGROUND & OVERLAY -->
-                        <div>
-                            <div class="form-section-label" style="font-size:0.72rem; margin-bottom:12px;"><i class="fa-solid fa-image"></i> الخلفية والتعتيم</div>
-                            <div class="form-group" style="margin-bottom:10px;">
-                                <label class="form-label">📸 صورة خلفية الهيدر والأقسام</label>
-                                <div style="display:flex; gap:8px; align-items:center;">
-                                    <input type="text" id="hdr_bgImage" class="f-ctrl" placeholder="images/sadu-pattern.jpg"
-                                        oninput="updateBgPreview(this.value)" style="flex:1;">
-                                    <button class="icon-btn danger" title="حذف الصورة"
-                                        onclick="document.getElementById('hdr_bgImage').value=''; updateBgPreview('')">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </div>
-                                <!-- معاينة الخلفية -->
-                                <div id="bg-preview-box" style="margin-top:8px; height:60px; border-radius:8px; border:1px dashed var(--border); background:#111; transition:all 0.3s; display:flex; align-items:center; justify-content:center;">
-                                    <span style="font-size:0.7rem; color:var(--text-3);">معاينة — أدخل رابط صورة أعلاه</span>
-                                </div>
-                                <p style="font-size:0.68rem;color:var(--text-3);margin-top:3px;">💡 اتركه فارغاً لعرض لون سادة فقط</p>
-                            </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
-                                <div class="form-group">
-                                    <label class="form-label">تعتيم (طبقة أولى 0-1)</label>
-                                    <input type="number" id="hdr_overlay1" class="f-ctrl" step="0.05" min="0" max="1" placeholder="0.1">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">تعتيم (طبقة ثانية 0-1)</label>
-                                    <input type="number" id="hdr_overlay2" class="f-ctrl" step="0.05" min="0" max="1" placeholder="0.3">
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-top:10px;">
-                                <label class="form-label">لون خلفية بديل للصورة (hex)</label>
-                                <div style="display:flex;gap:8px;align-items:center;">
-                                    <input type="color" id="hdr_solidColor" value="#111111" style="width:44px;height:36px;border:none;background:none;cursor:pointer;border-radius:6px;">
-                                    <input type="text" id="hdr_solidColorText" class="f-ctrl" placeholder="#111111 (إذا لم تضع صورة)" oninput="document.getElementById('hdr_solidColor').value=this.value">
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-top:10px;">
-                                <label class="form-label">حجم pattern التكرار (px)</label>
-                                <input type="number" id="hdr_bgSize" class="f-ctrl" placeholder="120">
-                                <p style="font-size:0.68rem;color:var(--text-3);margin-top:2px;">الافتراضي 120px</p>
-                            </div>
-                        </div>
-
-                        <!-- 2. LOGO -->
-                        <div>
-                            <div class="form-section-label" style="font-size:0.72rem; margin-bottom:12px;"><i class="fa-solid fa-image"></i> اللوجو في الهيدر</div>
-                            <div class="form-group" style="margin-bottom:10px;">
-                                <label class="form-label">رابط اللوجو (URL)</label>
-                                <input type="text" id="hdr_logoUrl" class="f-ctrl" placeholder="images/tallo-logo.png">
-                            </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
-                                <div class="form-group">
-                                    <label class="form-label">ارتفاع اللوجو (px)</label>
-                                    <input type="number" id="hdr_logoHeight" class="f-ctrl" placeholder="62">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">شفافية اللوجو (0-1)</label>
-                                    <input type="number" id="hdr_logoOpacity" class="f-ctrl" step="0.05" min="0" max="1" placeholder="0.93">
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-top:10px;">
-                                <label class="form-label">ظل اللوجو (blur px)</label>
-                                <input type="number" id="hdr_logoShadow" class="f-ctrl" placeholder="8">
-                            </div>
-                        </div>
-
-                        <!-- 3. MAIN TABS (PILLS) -->
-                        <div>
-                            <div class="form-section-label" style="font-size:0.72rem; margin-bottom:12px;"><i class="fa-solid fa-pills"></i> أزرار التبويبات الرئيسية</div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-                                <div class="form-group">
-                                    <label class="form-label">حجم الخط (rem)</label>
-                                    <input type="number" id="pill_fontSize" class="f-ctrl" step="0.05" placeholder="0.9">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">الحواف (border-radius px)</label>
-                                    <input type="number" id="pill_radius" class="f-ctrl" placeholder="22">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">padding عمودي (px)</label>
-                                    <input type="number" id="pill_padV" class="f-ctrl" placeholder="9">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">padding أفقي (px)</label>
-                                    <input type="number" id="pill_padH" class="f-ctrl" placeholder="22">
-                                </div>
-                            </div>
-                            <div class="form-section-label" style="font-size:0.65rem; margin-bottom:8px; color:var(--text-2);">الزر <strong>الغير النشط</strong></div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-                                <div class="form-group">
-                                    <label class="form-label">لون النص</label>
-                                    <div style="display:flex;gap:6px;">
-                                        <input type="color" id="pill_textColor" value="#8a8580" style="width:36px;height:32px;border:none;background:none;cursor:pointer;border-radius:5px;">
-                                        <input type="text" id="pill_textColorTxt" class="f-ctrl" placeholder="#8a8580" style="font-size:0.75rem;" oninput="document.getElementById('pill_textColor').value=this.value">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">لون الخلفية (rgba)</label>
-                                    <input type="text" id="pill_bgColor" class="f-ctrl" placeholder="rgba(255,255,255,.06)" style="font-size:0.75rem;">
-                                </div>
-                            </div>
-                            <div class="form-section-label" style="font-size:0.65rem; margin-bottom:8px; color:var(--gold);">الزر <strong>النشط</strong></div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
-                                <div class="form-group">
-                                    <label class="form-label">لون النص النشط</label>
-                                    <div style="display:flex;gap:6px;">
-                                        <input type="color" id="pill_activeText" value="#000000" style="width:36px;height:32px;border:none;background:none;cursor:pointer;border-radius:5px;">
-                                        <input type="text" id="pill_activeTextTxt" class="f-ctrl" placeholder="#000" style="font-size:0.75rem;" oninput="document.getElementById('pill_activeText').value=this.value">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">لون خلفية النشط</label>
-                                    <div style="display:flex;gap:6px;">
-                                        <input type="color" id="pill_activeBg" value="#E5C467" style="width:36px;height:32px;border:none;background:none;cursor:pointer;border-radius:5px;">
-                                        <input type="text" id="pill_activeBgTxt" class="f-ctrl" placeholder="#E5C467" style="font-size:0.75rem;" oninput="document.getElementById('pill_activeBg').value=this.value">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 4. SEARCH BAR -->
-                        <div>
-                            <div class="form-section-label" style="font-size:0.72rem; margin-bottom:12px;"><i class="fa-solid fa-magnifying-glass"></i> شريط البحث</div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-                                <div class="form-group">
-                                    <label class="form-label">لون خلفية البحث (rgba)</label>
-                                    <input type="text" id="srch_bg" class="f-ctrl" placeholder="rgba(255,255,255,.05)" style="font-size:0.78rem;">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">حواف البحث (px)</label>
-                                    <input type="number" id="srch_radius" class="f-ctrl" placeholder="12">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">نص placeholder</label>
-                                    <input type="text" id="srch_placeholder" class="f-ctrl" placeholder="ابحث في القائمة...">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">لون أيقونة البحث</label>
-                                    <div style="display:flex;gap:6px;">
-                                        <input type="color" id="srch_iconColor" value="#E5C467" style="width:36px;height:32px;border:none;background:none;cursor:pointer;border-radius:5px;">
-                                        <input type="text" id="srch_iconColorTxt" class="f-ctrl" placeholder="#E5C467" style="font-size:0.75rem;" oninput="document.getElementById('srch_iconColor').value=this.value">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 5. SUB-NAV BUTTONS -->
-                        <div>
-                            <div class="form-section-label" style="font-size:0.72rem; margin-bottom:12px;"><i class="fa-solid fa-list"></i> أزرار التصنيف الفرعي (sub-nav)</div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-                                <div class="form-group">
-                                    <label class="form-label">حجم الخط (rem)</label>
-                                    <input type="number" id="catbtn_fontSize" class="f-ctrl" step="0.05" placeholder="0.78">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">الحواف (px)</label>
-                                    <input type="number" id="catbtn_radius" class="f-ctrl" placeholder="50">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">padding عمودي (px)</label>
-                                    <input type="number" id="catbtn_padV" class="f-ctrl" placeholder="5">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">padding أفقي (px)</label>
-                                    <input type="number" id="catbtn_padH" class="f-ctrl" placeholder="14">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">لون النص</label>
-                                    <div style="display:flex;gap:6px;">
-                                        <input type="color" id="catbtn_color" value="#8a8580" style="width:36px;height:32px;border:none;background:none;cursor:pointer;border-radius:5px;">
-                                        <input type="text" id="catbtn_colorTxt" class="f-ctrl" placeholder="#8a8580" style="font-size:0.75rem;" oninput="document.getElementById('catbtn_color').value=this.value">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">لون النص النشط</label>
-                                    <div style="display:flex;gap:6px;">
-                                        <input type="color" id="catbtn_activeColor" value="#E5C467" style="width:36px;height:32px;border:none;background:none;cursor:pointer;border-radius:5px;">
-                                        <input type="text" id="catbtn_activeColorTxt" class="f-ctrl" placeholder="#E5C467" style="font-size:0.75rem;" oninput="document.getElementById('catbtn_activeColor').value=this.value">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 6. BACK BUTTON -->
-                        <div>
-                            <div class="form-section-label" style="font-size:0.72rem; margin-bottom:12px;"><i class="fa-solid fa-arrow-right"></i> زر الرجوع (←)</div>
-                            <div class="toggle-row" style="margin-bottom:10px;">
-                                <div><div class="toggle-label">إظهار زر الرجوع</div></div>
-                                <label class="switch"><input type="checkbox" id="hdr_showBack" checked><span class="slider"></span></label>
-                            </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr; gap:8px;">
-                                <div class="form-group">
-                                    <label class="form-label">نص الزر</label>
-                                    <input type="text" id="hdr_backText" class="f-ctrl" placeholder="→">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">لون الزر</label>
-                                    <div style="display:flex;gap:6px;">
-                                        <input type="color" id="hdr_backColor" value="#E5C467" style="width:36px;height:32px;border:none;background:none;cursor:pointer;border-radius:5px;">
-                                        <input type="text" id="hdr_backColorTxt" class="f-ctrl" style="font-size:0.75rem;" oninput="document.getElementById('hdr_backColor').value=this.value">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <!-- ══ END MENU HEADER CONTROL ══ -->
+            </div>
+        </div>
 
             </div>
         </div>
