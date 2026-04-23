@@ -111,6 +111,13 @@
                     <div class="hero-sub">إفطار · شعبيات · مشاوي · والمزيد</div>
                 </div>
             </div>
+            <!-- Skeletons (Visible while loading) -->
+            <div id="skeletons-arabic" class="menu-grid">
+                <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-price"></div></div>
+                <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-price"></div></div>
+                <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-price"></div></div>
+                <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-price"></div></div>
+            </div>
             <!-- Dynamic Category Groups (h2 + grid) go here -->
         </section>
 
@@ -308,6 +315,10 @@
 
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta) return;
+
+            // Hide Skeletons
+            const skel = document.getElementById('skeletons-arabic');
+            if (skel) skel.style.display = 'none';
 
             const itemsByCat = {};
             Object.values(_menuItems).forEach(item => {

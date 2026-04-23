@@ -2,8 +2,15 @@ const CACHE = 'tallo-v100-final'; // كاش جديد لإجبار المتصفح
 
 const ASSETS = [
   'index.html',
+  'menu.html',
+  'menu-en.html',
+  'css/menu-final-v1.css',
+  'js/design-sync.js',
   'images/tallo-logo.png',
-  'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap'
+  'images/header-sadu-final.png',
+  'images/header-arch-final.png',
+  'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
 ];
 
 /* Install */
