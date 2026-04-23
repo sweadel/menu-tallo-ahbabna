@@ -17,46 +17,38 @@
  ════════════════════════════════════════════════════════════════════ */
 :root {
   /* ── الألوان الأساسية ── */
-  --gold: #E5C467;
-  /* الذهبي الفاتح — اللون الجديد الراقي */
-  --gold-light: #f2d68c;
-  /* ذهبي أفتح للـ hover */
-  --gold-dim: rgba(229, 196, 103, .14);
-  /* ذهبي شفاف للخلفيات */
-  --gold-glow: rgba(229, 196, 103, .28);
-  /* توهج ذهبي للـ box-shadow */
+  --gold: #FFD700;
+  /* ذهبي ملكي ساطع */
+  --gold-light: #fff0a3;
+  /* ذهبي أفتح */
+  --gold-dim: rgba(255, 215, 0, .18);
+  /* ذهبي شفاف */
+  --gold-glow: rgba(255, 215, 0, .35);
 
-  /* ── الخلفيات ── */
-  --bg: #14110e;
-  /* خلفية الصفحة — رمادي داكن دافئ */
-  --surface: #1e1a17;
-  /* أسطح البطاقات الخارجية */
-  --card: #26221f;
-  /* خلفية البطاقة */
-  --card-hover: #322d28;
-  /* خلفية البطاقة عند التمرير */
+  /* ── الخلفيات (العنابي الملكي) ── */
+  --bg: #1a0505;
+  /* عنابي داكن جداً */
+  --surface: #2d0b0b;
+  /* أسطح البطاقات */
+  --card: rgba(45, 11, 11, 0.6);
+  /* بطاقات شبه شفافة */
+  --card-hover: rgba(65, 15, 15, 0.8);
 
-  /* ── النصوص ── */
-  --text: #f0ece4;
-  /* نص رئيسي — أبيض دافئ (أفضل على الأسود) */
-  --text-dim: #8a8580;
-  /* نص ثانوي — رمادي دافئ */
+  /* ── نصوص ── */
+  --text: #ffffff;
+  --text-dim: #d1c1c1;
 
   /* ── حدود وفواصل ── */
-  --border: rgba(197, 160, 34, .13);
-  /* حد ذهبي خفيف */
+  --border: rgba(255, 215, 0, .25);
 
-  /* ── ألوان الشارات (Badges) ── */
-  --badge-hot: #6e1a1a;
-  /* مميز — أحمر داكن */
-  --badge-star: #4a3500;
-  /* الأكثر طلباً — ذهبي داكن */
-  --badge-new: #1a4a2e;
-  /* جديد — أخضر داكن */
+  /* ── ألوان الشارات ── */
+  --badge-hot: #e63946;
+  --badge-star: #ffb703;
+  --badge-new: #2a9d8f;
 
   /* ── Skeleton Colors ── */
-  --skeleton: #2a2522;
-  --skeleton-highlight: #3a3430;
+  --skeleton: #3d1414;
+  --skeleton-highlight: #4d1a1a;
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -475,13 +467,13 @@ section.active {
 .section-hero {
   padding: 35px 20px;
   text-align: center;
-  background: linear-gradient(180deg, rgba(20, 10, 5, 0.95) 0%, rgba(10, 5, 5, 0.8) 100%);
+  background: linear-gradient(180deg, rgba(45, 11, 11, 0.95) 0%, rgba(26, 5, 5, 0.8) 100%);
   position: relative;
   margin: 15px 0 25px;
   border-radius: 20px;
-  border: 1px solid rgba(197, 160, 34, 0.15);
+  border: 1px solid var(--border);
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .section-hero::before {
@@ -581,23 +573,23 @@ section.active {
  └─────────────────────────────────────────────────┘
  ════════════════════════════════════════════════════════════════════ */
 .menu-card {
-  background: rgba(30, 26, 23, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  border: 1px solid rgba(197, 160, 34, 0.15);
+  border: 1px solid var(--border);
   cursor: pointer;
   position: relative;
   transform: translateZ(0);
   will-change: transform;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .menu-card:hover {
@@ -654,7 +646,8 @@ section.active {
 */
 .card-img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
+  /* تم تعديله ليصبح مربعاً وأكبر ليملأ البطاقة */
   background:
     var(--surface) url('../images/tallo-logo.png') center / 44% no-repeat;
 
@@ -823,7 +816,8 @@ section.active {
 /* صورة الطبق داخل المودال */
 .modal-img {
   width: 100%;
-  min-height: 250px;
+  aspect-ratio: 1 / 1;
+  /* جعل الصورة مربعة لتملأ المساحة بشكل ممتاز */
   background: #000;
   display: flex;
   align-items: center;
@@ -831,17 +825,16 @@ section.active {
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-  padding-top: 15px;
-  /* مسافة علوية لمنع الحواف المستديرة من قص الصورة */
 }
 
 .modal-actual-img {
   width: 100%;
-  height: auto;
-  max-height: 60vh;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
+  /* ملء الشريحة بالكامل كما هو مطلوب */
   display: block;
 }
+
 
 
 /* محتوى المودال */
