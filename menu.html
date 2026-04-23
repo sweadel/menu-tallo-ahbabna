@@ -33,6 +33,14 @@
 </head>
 
 <body>
+    <!-- Promo Banner -->
+    <div id="promo-banner" class="promo-banner" style="display: none;">
+        <div class="promo-content">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span class="promo-text"></span>
+        </div>
+    </div>
+
     <header id="mainHeader">
         <!-- ─── HDR TOP: Arched Design ─── -->
         <div class="hdr-top">
@@ -1184,7 +1192,16 @@
             if (e.key === 'Escape') closeDishModal();
         });
 
-        /* Dynamic Header Adjustments Removed */
+        /* Smart Header Scroll Logic */
+        window.addEventListener('scroll', function() {
+            var hdr = document.getElementById('mainHeader');
+            if (!hdr) return;
+            if (window.scrollY > 100) {
+                hdr.classList.add('compressed');
+            } else {
+                hdr.classList.remove('compressed');
+            }
+        });
 
         var initialTab = 'arabic';
         var hash = window.location.hash.replace('#', '');
@@ -1367,9 +1384,8 @@
         initListeners();
 
     </script>
-    <!-- REMOVED DESIGN-SYNC TO PREVENT OVERRIDES -->
-    <script>/* design-sync disabled */</script>
-    <script>/* Service Worker Disabled to force update */ // if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
+    <!-- Firebase Design Sync -->
+    <script src="js/design-sync.js"></script>
+    <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
 </body>
-
 </html>

@@ -151,115 +151,54 @@ REFS.deleted.on('value', snapshot => {
 
 // ══════════════ 7. DESIGN SETTINGS LISTENER ══════════════
 REFS.design.on('value', snapshot => {
-    if (isSavingDesign) return; // Don't overwrite while user is saving
+    if (isSavingDesign) return; 
     const d = snapshot.val();
     if (!d) return;
     
-    // Improved helper: Only update if the user IS NOT typing in the field AND value changed
     const sv = (id, val) => {
         const el = document.getElementById(id);
         if (el && val !== undefined) {
-            // Convert to string for safe comparison
             const strVal = String(val);
-            if (document.activeElement !== el && el.value !== strVal) {
-                el.value = strVal;
-            }
+            if (document.activeElement !== el && el.value !== strVal) el.value = strVal;
         }
     };
     const sc = (id, val) => {
         const el = document.getElementById(id);
-        if (el) el.checked = val !== false;
+        if (el) el.checked = val === true;
     };
 
-    // Colors & Typography
-    sv('d_primaryColor', d.primaryColor || '#C8A84B');
-    sv('d_primaryColorText', d.primaryColor || '#C8A84B');
-    sv('d_pageBg', d.pageBg || '#080808');
-    sv('d_pageBgText', d.pageBg || '#080808');
-    sv('d_pageBgImage', d.pageBgImage || '');
-    sv('d_pageBgSize', d.pageBgSize || 'cover');
-    sv('d_cardBg', d.cardBg || '#121212');
-    sv('d_cardBgText', d.cardBg || '#121212');
+    // 1. Colors
+    sv('d_primaryColor', d.primaryColor || '#E5C467');
+    sv('d_primaryColorText', d.primaryColor || '#E5C467');
+    sv('d_pageBg', d.pageBg || '#14110e');
+    sv('d_pageBgText', d.pageBg || '#14110e');
+    sv('d_cardBg', d.cardBg || '#26221f');
+    sv('d_cardBgText', d.cardBg || '#26221f');
+
+    // 2. Typography
     sv('d_fontFamily', d.fontFamily || 'IBM Plex Sans Arabic');
+    sc('d_fontBold', d.fontBold !== false);
     sv('d_cardStyle', d.cardStyle || 'modern');
-    sc('d_fontBold', d.fontBold);
+
+    // 3. Header
+    sv('d_logoUrl', d.logoUrl || 'images/tallo-logo.png');
+    sv('d_logoHeight', d.logoHeight || 105);
+    sv('d_headerBg', d.headerBg || 'images/header-sadu-final.png');
+    sv('d_headerOpacity', d.headerOpacity || 0.3);
+
+    // 4. Tabs & Search
+    sv('d_labelArabic', d.labelArabic || 'المنيو العربي');
+    sv('d_labelIntl', d.labelIntl || 'الانترناشونال');
+    sv('d_labelDesserts', d.labelDesserts || 'الحلويات');
+    sv('d_labelDrinks', d.labelDrinks || 'المشروبات');
+    sv('d_labelArgileh', d.labelArgileh || 'الأراجيل');
     sc('d_showSearch', d.showSearch !== false);
+    sv('pill_activeBg', d.pillActiveBg || '#E5C467');
+    sv('pill_textColor', d.pillTextColor || '#8a8580');
 
-    // Logo & Header (legacy fields)
-    sv('d_logoUrl', d.logoUrl || '');
-    sv('d_headerBg', d.headerBg || '');
-    sv('d_logoHeight', d.logoHeight || '');
-    sv('d_headerOpacity', d.headerOpacity || '');
-
-    // Tabs Labels
-    sv('d_labelArabic', d.labelArabic || '');
-    sv('d_labelIntl', d.labelIntl || '');
-    sv('d_labelDrinks', d.labelDrinks || '');
-    sv('d_labelArgileh', d.labelArgileh || '');
-
-    // Promo Banner
-    sv('d_bannerText', d.bannerText || '');
+    // 5. Promo Banner
     sc('d_bannerActive', d.bannerActive || false);
-
-    // SEO
-    sv('d_siteTitle', d.siteTitle || '');
-    sv('d_siteDesc', d.siteDesc || '');
-
-    // ── Menu Header Controls ──
-    const h = d.menuHeader || {};
-    sv('hdr_bgImage',   h.bgImage   || '');
-    sv('hdr_overlay1',  h.overlay1  !== undefined ? h.overlay1 : '');
-    sv('hdr_overlay2',  h.overlay2  !== undefined ? h.overlay2 : '');
-    sv('hdr_solidColor', h.solidColor || '#111111');
-    sv('hdr_solidColorText', h.solidColor || '');
-    sv('hdr_bgSize',    h.bgSize    || 80);
-    sv('hdr_logoUrl',   h.logoUrl   || '');
-    sv('hdr_logoHeight',h.logoHeight|| 48);
-    sv('hdr_logoOpacity',h.logoOpacity !== undefined ? h.logoOpacity : '');
-    sv('hdr_logoShadow',h.logoShadow|| '');
-    sc('hdr_showBack',  h.showBack !== false);
-    sv('hdr_backText',  h.backText  || '');
-    sv('hdr_backColor', h.backColor || '#E5C467');
-    sv('hdr_backColorTxt', h.backColor || '');
-
-    // تحديث معاينة الخلفية بعد التحميل
-    setTimeout(() => updateBgPreview(h.bgImage || ''), 200);
-
-    // Pills
-    const p = h.pills || {};
-    sv('pill_fontSize',    p.fontSize    || '');
-    sv('pill_radius',      p.radius      || '');
-    sv('pill_padV',        p.padV        || '');
-    sv('pill_padH',        p.padH        || '');
-    sv('pill_textColor',   p.textColor   || '#8a8580');
-    sv('pill_textColorTxt',p.textColor   || '');
-    sv('pill_bgColor',     p.bgColor     || '');
-    sv('pill_activeText',  p.activeText  || '#000000');
-    sv('pill_activeTextTxt', p.activeText || '');
-    sv('pill_activeBg',    p.activeBg    || '#E5C467');
-    sv('pill_activeBgTxt', p.activeBg    || '');
-
-    // Search
-    const s = h.search || {};
-    sv('srch_bg',          s.bg          || '');
-    sv('srch_radius',      s.radius      || '');
-    sv('srch_placeholder', s.placeholder || '');
-    sv('srch_iconColor',   s.iconColor   || '#E5C467');
-    sv('srch_iconColorTxt',s.iconColor   || '');
-
-    // Cat Buttons
-    const cb = h.catbtn || {};
-    sv('catbtn_fontSize',    cb.fontSize    || '');
-    sv('catbtn_radius',      cb.radius      || '');
-    sv('catbtn_padV',        cb.padV        || '');
-    sv('catbtn_padH',        cb.padH        || '');
-    sv('catbtn_color',       cb.color       || '#8a8580');
-    sv('catbtn_colorTxt',    cb.color       || '');
-    sv('catbtn_activeColor', cb.activeColor || '#E5C467');
-    sv('catbtn_activeColorTxt', cb.activeColor || '');
-
-    // Reset preview on load
-    setTimeout(previewDesign, 100);
+    sv('d_bannerText', d.bannerText || '');
 });
 
 // ── Live Preview Engine ──
@@ -341,15 +280,7 @@ function updateBgPreview(url) {
 function saveDesign() {
     const gv  = id => document.getElementById(id)?.value || '';
     const gc  = id => document.getElementById(id)?.checked ?? true;
-    const gnf = (id, def) => { 
-        const val = parseFloat(document.getElementById(id)?.value);
-        return isNaN(val) ? def : val;
-    };
-    const gni = (id, def) => { 
-        const val = parseInt(document.getElementById(id)?.value);
-        return isNaN(val) ? def : val;
-    };
-
+    
     const designData = {
         primaryColor:  gv('d_primaryColor'),
         pageBg:        gv('d_pageBg'),
@@ -358,60 +289,20 @@ function saveDesign() {
         fontBold:      gc('d_fontBold'),
         cardStyle:     gv('d_cardStyle'),
         logoUrl:       gv('d_logoUrl'),
-        headerBg:      gv('d_headerBg'),
         logoHeight:    gv('d_logoHeight'),
+        headerBg:      gv('d_headerBg'),
         headerOpacity: gv('d_headerOpacity'),
-        showSearch:    gc('d_showSearch'),
-        bannerActive:  gc('d_bannerActive'),
-        bannerText:    gv('d_bannerText'),
         labelArabic:   gv('d_labelArabic'),
         labelIntl:     gv('d_labelIntl'),
+        labelDesserts: gv('d_labelDesserts'),
         labelDrinks:   gv('d_labelDrinks'),
         labelArgileh:  gv('d_labelArgileh'),
-        siteTitle:     gv('d_siteTitle'),
-        siteDesc:      gv('d_siteDesc'),
-        pageBgImage:   gv('d_pageBgImage'),
-        pageBgSize:    gv('d_pageBgSize'),
-
-        // ── Menu Header ──
-        menuHeader: {
-            bgImage:    gv('hdr_bgImage'),
-            overlay1:   gnf('hdr_overlay1', 0.1),
-            overlay2:   gnf('hdr_overlay2', 0.3),
-            solidColor: gv('hdr_solidColor'),
-            bgSize:     gni('hdr_bgSize', 80),
-            logoUrl:    gv('hdr_logoUrl'),
-            logoHeight: gni('hdr_logoHeight', 48),
-            logoOpacity: gnf('hdr_logoOpacity', 0.93),
-            logoShadow: gni('hdr_logoShadow', 8),
-            showBack:   gc('hdr_showBack'),
-            backText:   gv('hdr_backText') || '→',
-            backColor:  gv('hdr_backColor'),
-            pills: {
-                fontSize:   gnf('pill_fontSize', 0.9),
-                radius:     gni('pill_radius', 22),
-                padV:       gni('pill_padV', 9),
-                padH:       gni('pill_padH', 22),
-                textColor:  gv('pill_textColor')             || '#8a8580',
-                bgColor:    gv('pill_bgColor')               || 'rgba(255,255,255,.06)',
-                activeText: gv('pill_activeText')            || '#000000',
-                activeBg:   gv('pill_activeBg')              || '#E5C467',
-            },
-            search: {
-                bg:          gv('srch_bg')          || 'rgba(255,255,255,.05)',
-                radius:      gni('srch_radius', 12),
-                placeholder: gv('srch_placeholder') || 'ابحث في القائمة...',
-                iconColor:   gv('srch_iconColor')   || '#E5C467',
-            },
-            catbtn: {
-                fontSize:    gnf('catbtn_fontSize', 0.78),
-                radius:      gni('catbtn_radius', 50),
-                padV:        gni('catbtn_padV', 5),
-                padH:        gni('catbtn_padH', 14),
-                color:       gv('catbtn_color')                 || '#8a8580',
-                activeColor: gv('catbtn_activeColor')           || '#E5C467',
-            },
-        }
+        showSearch:    gc('d_showSearch'),
+        pillActiveBg:  gv('pill_activeBg'),
+        pillTextColor: gv('pill_textColor'),
+        bannerActive:  gc('d_bannerActive'),
+        bannerText:    gv('d_bannerText'),
+        updatedAt:     Date.now()
     };
 
     isSavingDesign = true;
@@ -420,13 +311,13 @@ function saveDesign() {
 
     REFS.design.set(designData)
         .then(() => {
-            showToast('✓ تم تطبيق جميع إعدادات التصميم والهيدر على الموقع');
-            log('تحديث التصميم', 'تعديل شامل لإعدادات المظهر والهيدر');
+            showToast('✓ تم تطبيق وحفظ إعدادات التصميم بنجاح');
+            log('تحديث التصميم', 'تعديل شامل للمظهر من لوحة التحكم');
         })
         .catch(err => showToast('خطأ: ' + err.message, 'error'))
         .finally(() => {
             setTimeout(() => { isSavingDesign = false; }, 1000);
-            if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> تطبيق التغييرات';
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ وتطبيق التصميم';
         });
 }
 

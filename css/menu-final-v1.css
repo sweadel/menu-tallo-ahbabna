@@ -104,11 +104,12 @@ body {
  - .hdr-bottom : شريط الأقسام الفرعية (يبقى ثابتاً دائماً)
 */
 header {
- position: relative;
- width: 100%;
- z-index: 1000;
- background: #000;
- transition: all 0.3s ease;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background: #000;
+  transition: all 0.3s ease;
 }
 
 /* ── الجزء العلوي: الهيدر الملكي الفخم ── */
@@ -219,41 +220,48 @@ header {
 /* أزرار الأقسام الرئيسية */
 .nav-row {
   position: absolute;
-  bottom: 95px; /* رفع الأزرار أكثر لتجنب التداخل مع القوس */
+  bottom: 85px; 
   left: 0;
   right: 0;
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 0 14px;
-  z-index: 10;
+  justify-content: flex-start; 
+  gap: 12px;
+  padding: 0 20px;
+  z-index: 15;
   overflow-x: auto;
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .nav-row::-webkit-scrollbar { display: none; }
 
 .pill {
   flex: 0 0 auto;
-  padding: 8px 18px; /* تصغير الحجم والتباعد */
-  background: rgba(20, 20, 20, 0.6); 
-  color: rgba(255, 255, 255, 0.9); 
-  border-radius: 20px;
+  padding: 12px 26px;
+  background: rgba(15, 15, 15, 0.7); 
+  color: #fff; /* High contrast white */
+  border-radius: 12px;
   text-decoration: none;
-  font-size: 0.88rem; /* تصغير الخط قليلاً للأزرار */
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 800; /* Extra bold for clarity */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 160, 34, 0.3); /* Subtle gold border */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.pill:hover {
+  background: rgba(197, 160, 34, 0.1);
+  border-color: var(--gold);
 }
 
 .pill.active {
-  background: var(--gold) !important;
+  background: linear-gradient(135deg, var(--gold), #d4af37) !important;
   color: #000 !important;
-  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
-  transform: scale(1.05);
-  border-color: var(--gold);
+  box-shadow: 0 10px 30px rgba(229, 196, 103, 0.5);
+  transform: translateY(-2px);
+  border-color: #fff;
 }
 
 /* شريط البحث */
@@ -364,19 +372,45 @@ header {
 }
 
 /* الهيدر عند الضغط للأسفل - يتصغر */
+header.compressed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
 header.compressed .hdr-top {
   min-height: 0;
-  height: 50px;
+  height: 60px; /* Small bar height */
   padding: 0;
+  background-image: none !important; /* Hide sadu to keep it clean */
+  background: rgba(8, 8, 8, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(197, 160, 34, 0.2);
 }
+
 header.compressed .arch-overlay,
 header.compressed .nav-row,
-header.compressed .search-row,
-header.compressed .logo-wrap {
+header.compressed .search-row {
   display: none;
 }
+
+header.compressed .logo-wrap {
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  margin: 0;
+}
+
+header.compressed .logo-wrap img {
+  height: 38px;
+}
+
 header.compressed .hdr-bottom {
   border-top: none;
+  background: rgba(10, 10, 10, 0.98);
 }
 
 /* ════════════════════════════════════════════════════════════════════

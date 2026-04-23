@@ -351,22 +351,61 @@
 	<!-- Firebase SDKs -->
 	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+	<script src="js/design-sync.js"></script>
 
 	<script>
-		// Initialize Firebase
-		const firebaseConfig = {
-			apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
-			authDomain: "tallow-ahbabna.firebaseapp.com",
-			projectId: "tallow-ahbabna",
-			storageBucket: "tallow-ahbabna.firebasestorage.app",
-			messagingSenderId: "1025966646494",
-			appId: "1:1025966646494:web:f89373fad63d988f298e4f",
-			databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
-		};
-		if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-		const db = firebase.database();
+		// --- Home Settings Listener ---
+		const homeRef = firebase.database().ref('settings/home');
+		homeRef.on('value', snap => {
+			const d = snap.val();
+			if (!d) return;
+
+			// Video
+			const video = document.querySelector('.vid-bg video');
+			const source = video.querySelector('source');
+			if (d.homeVideo && source.src !== d.homeVideo) {
+				source.src = d.homeVideo;
+				video.load();
+			}
+
+			// Overlay
+			if (d.homeOverlay) {
+				document.documentElement.style.setProperty('--overlay-op', d.homeOverlay);
+			}
+
+			// Logo Size
+			if (d.homeLogoSize) {
+				document.querySelector('.logo-wrap img').style.height = d.homeLogoSize + 'px';
+			}
+
+			// Tagline
+			if (d.homeTagline) {
+				document.querySelector('.tagline').textContent = d.homeTagline;
+			}
+
+			// Buttons Visibility
+			document.getElementById('btn_arabic').style.display = d.showBtnAr ? 'flex' : 'none';
+			document.getElementById('btn_english').style.display = d.showBtnEn ? 'flex' : 'none';
+			
+			const feedBtnAr = document.getElementById('btn_feedback_ar');
+			const feedBtnEn = document.getElementById('btn_feedback_en');
+			if(feedBtnAr) feedBtnAr.style.display = d.showBtnFeed ? 'flex' : 'none';
+			if(feedBtnEn) feedBtnEn.style.display = d.showBtnFeed ? 'flex' : 'none';
+
+			// Social Links
+			const setLink = (id, url) => {
+				const el = document.getElementById(id);
+				if (el) {
+					if (url) { el.href = url; el.style.display = 'flex'; }
+					else { el.style.display = 'none'; }
+				}
+			};
+			setLink('link_whatsapp', d.whatsapp ? `https://wa.me/${d.whatsapp}` : '');
+			setLink('link_instagram', d.instagram);
+			setLink('link_facebook', d.facebook);
+			setLink('link_maps', d.maps);
+		});
 	</script>
-	<script src="js/design-sync.js"></script>
 	<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
 </body>
 
