@@ -233,8 +233,46 @@
         });
 
         function submitFeedback() {
-            alert('Thank you for your feedback! Your notes have been sent successfully.');
-            window.location.href = 'index.html';
+            const form = document.getElementById('feedbackForm');
+            const name = form.querySelector('input[type="text"]').value;
+            const table = form.querySelectorAll('input[type="text"]')[1].value;
+            const phone = form.querySelector('input[type="tel"]').value;
+            const comments = form.querySelector('textarea').value;
+            
+            const ratings = {};
+            document.querySelectorAll('.stars').forEach(s => {
+                const cat = s.getAttribute('data-category');
+                const active = s.querySelectorAll('i.active').length;
+                ratings[cat] = active;
+            });
+
+            if (!name) { alert('Please enter your name'); return; }
+
+            const data = {
+                name,
+                table,
+                phone,
+                comments,
+                ratings,
+                timestamp: Date.now(),
+                dateStr: document.getElementById('dateTime').value,
+                lang: 'en'
+            };
+
+            const btn = document.querySelector('.submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            firebase.database().ref('feedback').push(data)
+                .then(() => {
+                    alert('Thank you for your feedback! Your notes have been sent successfully.');
+                    window.location.href = 'index.html';
+                })
+                .catch(err => {
+                    alert('An error occurred: ' + err.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Send Feedback';
+                });
         }
     </script>
 </body>

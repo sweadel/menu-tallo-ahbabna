@@ -41,6 +41,7 @@ const REFS = {
     users:      db.ref('users'),
     design:     db.ref('settings/design'),
     home:       db.ref('settings/home'),
+    feedback:   db.ref('feedback'),
 };
 
 // ══════════════ 2. STATE ══════════════
@@ -324,8 +325,9 @@ function saveDesign() {
 // ══════════════ 8. HOME SETTINGS LISTENER ══════════════
 REFS.home.on('value', snapshot => {
     if (isSavingHome) return;
-    const d = snapshot.val();
-    if (!d) return;
+    const h = snapshot.val();
+    if (!h) return;
+    
     const sv = (id, val) => { 
         const el = document.getElementById(id); 
         if(el && document.activeElement !== el) el.value = val || ''; 
@@ -335,17 +337,17 @@ REFS.home.on('value', snapshot => {
         if(el) el.checked = val !== false; 
     };
 
-    sc('h_btn_ar', d.showBtnAr);
-    sc('h_btn_en', d.showBtnEn);
-    sc('h_btn_feed', d.showBtnFeed);
-    sv('h_whatsapp', d.whatsapp || '');
-    sv('h_instagram', d.instagram || '');
-    sv('h_facebook', d.facebook || '');
-    sv('h_maps', d.maps || '');
-    sv('h_video', d.homeVideo || '');
-    sv('h_tagline', d.homeTagline || '');
-    sv('h_overlay', d.homeOverlay || '');
-    sv('h_logoSize', d.homeLogoSize || '');
+    sc('h_btn_ar', h.showBtnAr);
+    sc('h_btn_en', h.showBtnEn);
+    sc('h_btn_feed', h.showBtnFeed);
+    sv('h_whatsapp', h.whatsapp);
+    sv('h_instagram', h.instagram);
+    sv('h_facebook', h.facebook);
+    sv('h_maps', h.maps);
+    sv('h_video', h.homeVideo);
+    sv('h_tagline', h.homeTagline);
+    sv('h_overlay', h.homeOverlay);
+    sv('h_logoSize', h.homeLogoSize);
 });
 
 function saveHomeSettings() {
@@ -1192,4 +1194,65 @@ function exportToCSV() {
     
     showToast('تم تصدير ملف الأسعار ✓');
     log('تصدير بيانات', 'تم تصدير ملف المنيو والأسعار');
+}
+
+// ══════════════ 25. FEEDBACK MANAGEMENT ══════════════
+REFS.feedback.on('value', snapshot => {
+    const data = snapshot.val();
+    const tbody = document.getElementById('feedback-tbody');
+    const badge = document.getElementById('feedback-count-badge');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!data) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-comment-dots"></i><h3>لا توجد آراء حالياً</h3><p>ستظهر هنا التقييمات المرسلة من الزبائن</p></div></td></tr>`;
+        if(badge) badge.textContent = '0';
+        return;
+    }
+
+    const entries = Object.entries(data).reverse(); // Newest first
+    if(badge) badge.textContent = entries.length;
+
+    entries.forEach(([key, f]) => {
+        const date = f.timestamp ? new Date(f.timestamp).toLocaleString('ar-EG') : (f.dateStr || '-');
+        const tr = document.createElement('tr');
+        
+        let ratingsHtml = '<div style="display:flex;flex-direction:column;gap:4px;font-size:0.7rem;">';
+        if(f.ratings) {
+            Object.entries(f.ratings).forEach(([label, val]) => {
+                const labelAr = { service: 'الخدمة', food: 'الطعام', atmosphere: 'الأجواء' }[label] || label;
+                ratingsHtml += `<div>${labelAr}: ${'⭐'.repeat(val)}</div>`;
+            });
+        }
+        ratingsHtml += '</div>';
+
+        tr.innerHTML = `
+            <td style="color:var(--text-3);font-size:0.75rem;">${date}</td>
+            <td>
+                <div style="font-weight:700;">${f.name || 'مجهول'}</div>
+                <div style="font-size:0.75rem;color:var(--text-2);">${f.phone || ''}</div>
+                <div style="font-size:0.7rem;color:var(--text-3);">طاولة: ${f.table || '-'}</div>
+            </td>
+            <td>${ratingsHtml}</td>
+            <td style="font-size:0.85rem;max-width:300px;white-space:normal;">${f.comments || '<span style="color:var(--text-3);">لا توجد ملاحظات</span>'}</td>
+            <td>
+                <button class="act-btn del" onclick="deleteFeedback('${key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+});
+
+function deleteFeedback(key) {
+    if(!confirm('هل تريد حذف هذا التقييم؟')) return;
+    REFS.feedback.child(key).remove()
+        .then(() => showToast('تم حذف التقييم'))
+        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+
+function clearFeedback() {
+    if(!confirm('تحذير: سيتم مسح كافة التقييمات نهائياً. هل أنت متأكد؟')) return;
+    REFS.feedback.remove()
+        .then(() => showToast('تم مسح جميع التقييمات'))
+        .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }

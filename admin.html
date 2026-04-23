@@ -1186,7 +1186,12 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
         <button class="nav-link active" data-view="view-dashboard">
             <i class="fa-solid fa-gauge-high"></i> نظرة عامة
         </button>
-        <button class="nav-link" data-view="view-menu">
+            <button class="nav-link" data-view="view-feedback">
+                <i class="fa-solid fa-comment-dots"></i>
+                <span>آراء الزبائن</span>
+                <span class="badge" id="feedback-count-badge">0</span>
+            </button>
+            <button class="nav-link" data-view="view-menu">
             <i class="fa-solid fa-utensils"></i> الأصناف والأطباق
             <span class="badge" id="menu-count-badge">—</span>
         </button>
@@ -1256,6 +1261,37 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
     <div class="views" id="mainViews">
 
         <!-- ─── DASHBOARD ─── -->
+        <div class="view" id="view-feedback">
+            <div class="page-hdr">
+                <div class="page-hdr-left">
+                    <h1>آراء وتقييمات الزبائن</h1>
+                    <p>الملاحظات المرسلة عبر نموذج "شاركنا تجربتك"</p>
+                </div>
+                <div class="page-hdr-right">
+                    <button class="btn" style="background:var(--red); color:#fff;" onclick="clearFeedback()">
+                        <i class="fa-solid fa-trash-can"></i> مسح الكل
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>الزبون</th>
+                            <th>التقييمات</th>
+                            <th>الملاحظات</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feedback-tbody">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="view active" id="view-dashboard">
             <div class="page-hdr">
                 <div class="page-hdr-left">

@@ -234,8 +234,45 @@
         });
 
         function submitFeedback() {
-            alert('شكراً لتقييمك! تم إرسال ملاحظاتك بنجاح.');
-            window.location.href = 'index.html';
+            const form = document.getElementById('feedbackForm');
+            const name = form.querySelector('input[type="text"]').value;
+            const table = form.querySelectorAll('input[type="text"]')[1].value;
+            const phone = form.querySelector('input[type="tel"]').value;
+            const comments = form.querySelector('textarea').value;
+            
+            const ratings = {};
+            document.querySelectorAll('.stars').forEach(s => {
+                const cat = s.getAttribute('data-category');
+                const active = s.querySelectorAll('i.active').length;
+                ratings[cat] = active;
+            });
+
+            if (!name) { alert('يرجى إدخال الاسم'); return; }
+
+            const data = {
+                name,
+                table,
+                phone,
+                comments,
+                ratings,
+                timestamp: Date.now(),
+                dateStr: document.getElementById('dateTime').value
+            };
+
+            const btn = document.querySelector('.submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'جاري الإرسال...';
+
+            firebase.database().ref('feedback').push(data)
+                .then(() => {
+                    alert('شكراً لتقييمك! تم إرسال ملاحظاتك بنجاح.');
+                    window.location.href = 'index.html';
+                })
+                .catch(err => {
+                    alert('حدث خطأ: ' + err.message);
+                    btn.disabled = false;
+                    btn.textContent = 'إرسال التقييم';
+                });
         }
     </script>
 </body>
