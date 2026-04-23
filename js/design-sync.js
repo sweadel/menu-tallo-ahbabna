@@ -41,28 +41,20 @@
         // --- A. CSS Variables ---
         let css = `
             :root {
-                --gold: ${d.primaryColor || '#E5C467'} !important;
-                --bg: ${d.pageBg || '#14110e'} !important;
-                --card: ${d.cardBg || '#26221f'} !important;
-                --font-main: '${d.fontFamily || 'IBM Plex Sans Arabic'}', sans-serif !important;
+                --gold: ${d.primaryColor || '#E5C467'};
+                --bg: ${d.pageBg || '#14110e'};
+                --card: ${d.cardBg || '#26221f'};
+                --font-main: '${d.fontFamily || 'IBM Plex Sans Arabic'}', sans-serif;
             }
             body { 
-                background-color: var(--bg) !important;
-                font-family: var(--font-main) !important;
-                font-weight: ${d.fontBold ? '800' : '400'} !important;
+                background-color: var(--bg);
+                font-family: var(--font-main);
+                font-weight: ${d.fontBold ? '800' : '400'};
             }
-            .hdr-top {
-                background-image: url('${d.headerBg || 'images/header-sadu-final.png'}') !important;
-            }
-            header:not(.compressed) .hdr-top::before {
-                background: rgba(0, 0, 0, ${d.headerOpacity || 0.35}) !important;
-            }
-            .logo-wrap img {
-                height: ${d.logoHeight || 105}px !important;
-            }
+            /* تمت إزالة التعديلات الإجبارية (!important) للوجو والهيدر لمنع التعارض مع التصميم الأصلي */
             .promo-banner {
-                background: var(--gold) !important;
-                color: #000 !important;
+                background: var(--gold);
+                color: #000;
             }
         `;
         style.innerHTML = css;
