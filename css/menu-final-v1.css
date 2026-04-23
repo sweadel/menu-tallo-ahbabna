@@ -232,8 +232,8 @@ header {
 }
 .nav-row::-webkit-scrollbar { display: none; }
 
-.pill:first-child { margin-inline-start: 12px; } /* Small gap for the first item */
-.pill:last-child { margin-inline-end: 12px; }
+.pill:first-child { margin-inline-start: 0; } 
+.pill:last-child { margin-inline-end: 0; }
 
 .pill {
   flex: 0 0 auto;
@@ -373,11 +373,8 @@ header {
   font-weight: 700;
 }
 
-/* الهيدر المصغر - نسخة محسنة وأكثر نعومة */
+/* الهيدر المصغر - يتم التحكم بارتفاعه عبر الجافاسكربت لنعومة فائقة */
 header.compressed .hdr-top {
-  min-height: 0;
-  height: 64px; /* ارتفاع أنيق للبار العلوي */
-  padding: 0;
   background-image: none !important; 
   background: #080808 !important; 
   backdrop-filter: blur(25px);
@@ -389,7 +386,7 @@ header.compressed .logo-wrap {
   top: 50%;
   left: 20px;
   transform: translateY(-50%);
-  opacity: 1 !important; /* التأكد من بقاء اللوجو الصغير واضحاً */
+  opacity: 1 !important; 
 }
 
 header.compressed .logo-wrap img {
@@ -397,13 +394,11 @@ header.compressed .logo-wrap img {
   filter: none;
 }
 
-/* إخفاء تدريجي للعناصر */
+/* إخفاء تدريجي عبر الجافاسكربت، هنا فقط لضمان الإخفاء النهائي */
 header.compressed .arch-overlay,
 header.compressed .nav-row,
 header.compressed .search-row {
-  opacity: 0;
   pointer-events: none;
-  transform: translateY(-10px);
 }
 
 header.compressed .hdr-bottom {

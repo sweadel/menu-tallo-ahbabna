@@ -202,26 +202,48 @@
             var maxScroll = 150; // Distance over which transition happens
             var ratio = Math.min(scrollY / maxScroll, 1);
             
-            if (scrollY > 50) {
+            var hdrTop = hdr.querySelector('.hdr-top');
+            var navRow = hdr.querySelector('.nav-row');
+            var searchRow = hdr.querySelector('.search-row');
+            var arch = hdr.querySelector('.arch-overlay');
+            var logo = hdr.querySelector('.logo-wrap');
+            var logoImg = hdr.querySelector('.logo-wrap img');
+
+            // Calculate dynamic height
+            var baseHeight = 360;
+            var minHeight = 64;
+            var currentHeight = baseHeight - (scrollY * 1.5);
+            if (currentHeight < minHeight) currentHeight = minHeight;
+            if (currentHeight > baseHeight) currentHeight = baseHeight;
+
+            if (scrollY > 10) {
                 hdr.classList.add('compressed');
+                if(hdrTop) hdrTop.style.height = currentHeight + 'px';
+                
                 var opacity = 1 - ratio;
-                var navRow = hdr.querySelector('.nav-row');
-                var searchRow = hdr.querySelector('.search-row');
-                var arch = hdr.querySelector('.arch-overlay');
                 if(navRow) navRow.style.opacity = opacity;
                 if(searchRow) searchRow.style.opacity = opacity;
                 if(arch) arch.style.opacity = opacity;
+
                 var move = ratio * -20;
                 if(navRow) navRow.style.transform = `translateY(${move}px)`;
                 if(searchRow) searchRow.style.transform = `translateY(${move}px)`;
+
+                var scale = 1 - (ratio * 0.5);
+                if(logoImg) {
+                    logoImg.style.transform = `scale(${scale})`;
+                    logoImg.style.transformOrigin = 'center right'; // LTR
+                }
             } else {
                 hdr.classList.remove('compressed');
-                var navRow = hdr.querySelector('.nav-row');
-                var searchRow = hdr.querySelector('.search-row');
-                var arch = hdr.querySelector('.arch-overlay');
+                if(hdrTop) hdrTop.style.height = ''; 
+                
                 if(navRow) { navRow.style.opacity = 1; navRow.style.transform = 'translateY(0)'; }
                 if(searchRow) { searchRow.style.opacity = 1; searchRow.style.transform = 'translateY(0)'; }
                 if(arch) arch.style.opacity = 1;
+                if(logoImg) {
+                    logoImg.style.transform = 'scale(1)';
+                }
             }
         });
 
