@@ -46,7 +46,7 @@
             --dark: #080808;        /* True Black Background */
             --glass: rgba(8, 8, 8, .75); /* Dark Glassmorphism Effect */
             --overlay-op: .52;      /* Default Video Overlay Opacity */
-            --home-logo-h: 140px;   /* Explicitly set to 140px as requested */
+            --home-logo-h: 240px;   /* Increased back to 240px for better visibility */
         }
 
         /* Global Reset */
@@ -110,7 +110,7 @@
             z-index: 10;
             display: flex;
             justify-content: center;
-            padding-top: 4vh; /* Moved up from 7vh */
+            padding-top: 5vh; /* Balanced position */
             pointer-events: none;
         }
 
@@ -132,8 +132,8 @@
             left: 0;
             width: 100%;
             z-index: 10;
-            background: linear-gradient(transparent, var(--glass) 25%, rgba(4, 4, 4, .85));
-            padding: 40px 20px 0; /* Increased top padding to move buttons down */
+            background: linear-gradient(to top, rgba(4, 4, 4, 0.95), rgba(8, 8, 8, 0.5) 70%, transparent);
+            padding: 25px 20px 10px; /* More compact padding */
             border-radius: 28px 28px 0 0;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
