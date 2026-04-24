@@ -42,6 +42,7 @@
             :root {
                 --gold: ${d.primaryColor !== undefined ? d.primaryColor : '#C5A022'};
                 --gold-dark: ${d.primaryColor !== undefined ? d.primaryColor : '#a8841c'};
+                --btn-active-bg: ${d.pillActiveBg !== undefined ? d.pillActiveBg : (d.primaryColor || '#C5A022')};
                 --bg: ${d.pageBg !== undefined ? d.pageBg : '#0B0B0E'};
                 --card-bg: ${d.cardBg !== undefined ? d.cardBg : 'rgba(255, 255, 255, 0.03)'};
                 --font-main: '${d.fontFamily !== undefined ? d.fontFamily : 'IBM Plex Sans Arabic'}', sans-serif;
@@ -65,8 +66,8 @@
             }
             .logo-wrap img { height: ${d.logoHeight || 145}px !important; }
             .sec-title { color: var(--gold); }
-            .pill.active { background: var(--gold); color: #000; }
-            .promo-banner { background: var(--gold); color: #000; }
+            .pill.active { background: var(--btn-active-bg); color: #000; }
+            .promo-banner { background: var(--btn-active-bg); color: #000; }
         `;
         style.innerHTML = css;
 

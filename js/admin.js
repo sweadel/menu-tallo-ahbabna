@@ -54,6 +54,8 @@ let viewMode      = 'table';
 let catFilter     = 'all';
 let isSavingDesign = false;
 let isSavingHome   = false;
+let lastDesignSavedAt = 0;
+let lastHomeSavedAt   = 0;
 
 const FONTS = [
     'Zain', 'Tajawal', 'Cairo', 'Almarai', 'IBM Plex Sans Arabic', 
@@ -214,6 +216,9 @@ REFS.design.on('value', snapshot => {
     if (isSavingDesign) return; 
     const d = snapshot.val();
     if (!d) return;
+
+    // Timestamp Lock: Ignore updates older than our last save
+    if (d.updatedAt && d.updatedAt < lastDesignSavedAt) return;
     
     const sv = (id, val) => {
         const el = document.getElementById(id);
@@ -228,43 +233,52 @@ REFS.design.on('value', snapshot => {
     };
 
     // 1. Colors
-    sv('d_primaryColor', d.primaryColor !== undefined ? d.primaryColor : '#E5C467');
-    sv('d_primaryColorText', d.primaryColor !== undefined ? d.primaryColor : '#E5C467');
-    sv('d_pageBg', d.pageBg !== undefined ? d.pageBg : '#14110e');
-    sv('d_pageBgText', d.pageBg !== undefined ? d.pageBg : '#14110e');
-    sv('d_cardBg', d.cardBg !== undefined ? d.cardBg : '#26221f');
-    sv('d_cardBgText', d.cardBg !== undefined ? d.cardBg : '#26221f');
+    const primary = d.primaryColor || '#E5C467';
+    sv('d_primaryColor', primary);
+    sv('d_primaryColorText', primary);
+    
+    const pillBg = d.pillActiveBg || '#E5C467';
+    sv('pill_activeBg', pillBg);
+    sv('pill_activeBgText', pillBg);
+
+    const pageBg = d.pageBg || '#14110e';
+    sv('d_pageBg', pageBg);
+    sv('d_pageBgText', pageBg);
+
+    const cardBg = d.cardBg || '#26221f';
+    sv('d_cardBg', cardBg);
+    sv('d_cardBgText', cardBg);
 
     // 2. Typography
-    sv('d_fontFamily', d.fontFamily !== undefined ? d.fontFamily : 'IBM Plex Sans Arabic');
+    sv('d_fontFamily', d.fontFamily || 'IBM Plex Sans Arabic');
     sc('d_fontBold', d.fontBold !== false);
-    sv('d_cardStyle', d.cardStyle !== undefined ? d.cardStyle : 'modern');
+    sv('d_cardStyle', d.cardStyle || 'modern');
 
     // 3. Header
-    sv('d_logoUrl', d.logoUrl !== undefined ? d.logoUrl : 'images/tallo-logo.png');
-    sv('d_logoHeight', d.logoHeight !== undefined ? d.logoHeight : 145);
-    sv('d_headerBg', d.headerBg !== undefined ? d.headerBg : 'images/header-sadu-final.png');
-    sv('d_headerOpacity', d.headerOpacity !== undefined ? d.headerOpacity : 0.15);
+    sv('d_logoUrl', d.logoUrl || 'images/tallo-logo.png');
+    sv('d_logoHeight', d.logoHeight || 145);
+    sv('d_headerBg', d.headerBg || 'images/header-sadu-final.png');
+    sv('d_headerOpacity', d.headerOpacity || 0.15);
 
     // 4. Tabs & Search
-    sv('d_labelArabic', d.labelArabic !== undefined ? d.labelArabic : 'المنيو العربي');
-    sv('d_labelIntl', d.labelIntl !== undefined ? d.labelIntl : 'الانترناشونال');
-    sv('d_labelDesserts', d.labelDesserts !== undefined ? d.labelDesserts : 'الحلويات');
-    sv('d_labelDrinks', d.labelDrinks !== undefined ? d.labelDrinks : 'المشروبات');
-    sv('d_labelArgileh', d.labelArgileh !== undefined ? d.labelArgileh : 'الأراجيل');
+    sv('d_labelArabic', d.labelArabic || 'المنيو العربي');
+    sv('d_labelIntl', d.labelIntl || 'الانترناشونال');
+    sv('d_labelDesserts', d.labelDesserts || 'الحلويات');
+    sv('d_labelDrinks', d.labelDrinks || 'المشروبات');
+    sv('d_labelArgileh', d.labelArgileh || 'الأراجيل');
     sc('d_showSearch', d.showSearch !== false);
-    sv('pill_activeBg', d.pillActiveBg !== undefined ? d.pillActiveBg : '#E5C467');
-    sv('pill_textColor', d.pillTextColor !== undefined ? d.pillTextColor : '#8a8580');
+    sv('pill_textColor', d.pillTextColor || '#8a8580');
 
     // 5. Promo Banner
     sc('d_bannerActive', d.bannerActive === true);
-    sv('d_bannerText', d.bannerText !== undefined ? d.bannerText : '');
+    sv('d_bannerText', d.bannerText || '');
 });
 
 // ── Live Preview Engine ──
 function previewDesign() {
     const d = {
         primaryColor: document.getElementById('d_primaryColor')?.value,
+        pillActiveBg: document.getElementById('pill_activeBg')?.value,
         fontFamily:   document.getElementById('d_fontFamily')?.value,
         fontBold:     document.getElementById('d_fontBold')?.checked,
         pageBg:       document.getElementById('d_pageBg')?.value,
@@ -294,7 +308,9 @@ function previewDesign() {
     // Apply colors
     if (d.primaryColor) {
         document.documentElement.style.setProperty('--gold', d.primaryColor);
-        if (pills[0]) pills[0].style.background = d.primaryColor;
+    }
+    if (d.pillActiveBg && pills[0]) {
+        pills[0].style.background = d.pillActiveBg;
     }
 
     // Apply background
@@ -312,11 +328,27 @@ function previewDesign() {
 
 // Add live listeners
 document.addEventListener('DOMContentLoaded', () => {
-    const ids = ['d_primaryColor', 'd_fontFamily', 'd_fontBold', 'd_pageBg', 'd_pageBgImage', 'd_pageBgSize', 'd_logoUrl', 'hdr_logoUrl'];
+    const ids = ['d_primaryColor', 'd_fontFamily', 'd_fontBold', 'd_pageBg', 'd_pageBgImage', 'd_pageBgSize', 'd_logoUrl', 'hdr_logoUrl', 'pill_activeBg'];
     ids.forEach(id => {
         document.getElementById(id)?.addEventListener('input', previewDesign);
         document.getElementById(id)?.addEventListener('change', previewDesign);
     });
+
+    // Bidirectional Color Sync
+    const sync = (pickerId, textId) => {
+        const picker = document.getElementById(pickerId);
+        const text = document.getElementById(textId);
+        if (!picker || !text) return;
+        picker.addEventListener('input', () => { text.value = picker.value.toUpperCase(); });
+        text.addEventListener('input', () => { 
+            const val = text.value.trim();
+            if (/^#[0-9A-F]{6}$/i.test(val)) picker.value = val;
+        });
+    };
+    sync('d_primaryColor', 'd_primaryColorText');
+    sync('pill_activeBg', 'pill_activeBgText');
+    sync('d_pageBg', 'd_pageBgText');
+    sync('d_cardBg', 'd_cardBgText');
 });
 
 // ── Background Image Preview in Admin ──
@@ -341,6 +373,7 @@ function saveDesign() {
     const gv  = id => document.getElementById(id)?.value || '';
     const gc  = id => document.getElementById(id)?.checked ?? true;
     
+    lastDesignSavedAt = Date.now();
     const designData = {
         primaryColor:  gv('d_primaryColor'),
         pageBg:        gv('d_pageBg'),
@@ -364,7 +397,7 @@ function saveDesign() {
         pillTextColor: gv('pill_textColor'),
         bannerActive:  gc('d_bannerActive'),
         bannerText:    gv('d_bannerText'),
-        updatedAt:     Date.now()
+        updatedAt:     lastDesignSavedAt
     };
 
     isSavingDesign = true;
@@ -378,7 +411,7 @@ function saveDesign() {
         })
         .catch(err => showToast('خطأ: ' + err.message, 'error'))
         .finally(() => {
-            setTimeout(() => { isSavingDesign = false; }, 1000);
+            setTimeout(() => { isSavingDesign = false; }, 1500);
             if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ وتطبيق التصميم';
         });
 }
@@ -388,6 +421,9 @@ REFS.home.on('value', snapshot => {
     if (isSavingHome) return;
     const h = snapshot.val();
     if (!h) return;
+
+    // Timestamp Lock
+    if (h.updatedAt && h.updatedAt < lastHomeSavedAt) return;
     
     const sv = (id, val) => { 
         const el = document.getElementById(id); 
@@ -415,6 +451,7 @@ function saveHomeSettings() {
     const gv = id => document.getElementById(id)?.value || '';
     const gc = id => document.getElementById(id)?.checked ?? true;
 
+    lastHomeSavedAt = Date.now();
     const data = {
         showBtnAr:   gc('h_btn_ar'),
         showBtnEn:   gc('h_btn_en'),
@@ -427,6 +464,7 @@ function saveHomeSettings() {
         homeTagline: gv('h_tagline'),
         homeOverlay: gv('h_overlay'),
         homeLogoSize: gv('h_logoSize'),
+        updatedAt:   lastHomeSavedAt
     };
 
     isSavingHome = true;
@@ -440,7 +478,7 @@ function saveHomeSettings() {
         })
         .catch(err => showToast('خطأ: ' + err.message, 'error'))
         .finally(() => {
-            setTimeout(() => { isSavingHome = false; }, 1500);
+            setTimeout(() => { isSavingHome = false; }, 2000);
             if (btn) btn.innerHTML = '<i class="fa-solid fa-check"></i> حفظ الإعدادات';
         });
 }

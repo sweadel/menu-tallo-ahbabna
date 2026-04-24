@@ -1794,7 +1794,16 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <p class="f-hint">يظهر في الأيقونات، الحواف، والعناصر النشطة</p>
                         <div style="display:flex; gap:10px;">
                             <input type="color" id="d_primaryColor" class="f-ctrl" style="width:60px; height:45px; padding:2px;">
-                            <input type="text" id="d_primaryColorText" class="f-ctrl" placeholder="#E5C467" oninput="document.getElementById('d_primaryColor').value=this.value">
+                            <input type="text" id="d_primaryColorText" class="f-ctrl" placeholder="#E5C467">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:20px;">
+                        <label class="form-label">لون الأزرار (Buttons Color)</label>
+                        <p class="f-hint">يتحكم في لون أزرار الأقسام والطلبات</p>
+                        <div style="display:flex; gap:10px;">
+                            <input type="color" id="pill_activeBg" class="f-ctrl" style="width:60px; height:45px; padding:2px;">
+                            <input type="text" id="pill_activeBgText" class="f-ctrl" placeholder="#E5C467">
                         </div>
                     </div>
 
@@ -1803,7 +1812,7 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <p class="f-hint">اللون الأساسي الذي يملأ خلفية الموقع بالكامل</p>
                         <div style="display:flex; gap:10px;">
                             <input type="color" id="d_pageBg" class="f-ctrl" style="width:60px; height:45px; padding:2px;">
-                            <input type="text" id="d_pageBgText" class="f-ctrl" placeholder="#14110e" oninput="document.getElementById('d_pageBg').value=this.value">
+                            <input type="text" id="d_pageBgText" class="f-ctrl" placeholder="#14110e">
                         </div>
                     </div>
 
@@ -1812,7 +1821,7 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <p class="f-hint">لون المربع الذي يحتوي على صورة واسم الوجبة</p>
                         <div style="display:flex; gap:10px;">
                             <input type="color" id="d_cardBg" class="f-ctrl" style="width:60px; height:45px; padding:2px;">
-                            <input type="text" id="d_cardBgText" class="f-ctrl" placeholder="#26221f" oninput="document.getElementById('d_cardBg').value=this.value">
+                            <input type="text" id="d_cardBgText" class="f-ctrl" placeholder="#26221f">
                         </div>
                     </div>
                 </div>
