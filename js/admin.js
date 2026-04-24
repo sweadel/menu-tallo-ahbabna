@@ -228,37 +228,37 @@ REFS.design.on('value', snapshot => {
     };
 
     // 1. Colors
-    sv('d_primaryColor', d.primaryColor || '#E5C467');
-    sv('d_primaryColorText', d.primaryColor || '#E5C467');
-    sv('d_pageBg', d.pageBg || '#14110e');
-    sv('d_pageBgText', d.pageBg || '#14110e');
-    sv('d_cardBg', d.cardBg || '#26221f');
-    sv('d_cardBgText', d.cardBg || '#26221f');
+    sv('d_primaryColor', d.primaryColor !== undefined ? d.primaryColor : '#E5C467');
+    sv('d_primaryColorText', d.primaryColor !== undefined ? d.primaryColor : '#E5C467');
+    sv('d_pageBg', d.pageBg !== undefined ? d.pageBg : '#14110e');
+    sv('d_pageBgText', d.pageBg !== undefined ? d.pageBg : '#14110e');
+    sv('d_cardBg', d.cardBg !== undefined ? d.cardBg : '#26221f');
+    sv('d_cardBgText', d.cardBg !== undefined ? d.cardBg : '#26221f');
 
     // 2. Typography
-    sv('d_fontFamily', d.fontFamily || 'IBM Plex Sans Arabic');
+    sv('d_fontFamily', d.fontFamily !== undefined ? d.fontFamily : 'IBM Plex Sans Arabic');
     sc('d_fontBold', d.fontBold !== false);
-    sv('d_cardStyle', d.cardStyle || 'modern');
+    sv('d_cardStyle', d.cardStyle !== undefined ? d.cardStyle : 'modern');
 
     // 3. Header
-    sv('d_logoUrl', d.logoUrl || 'images/tallo-logo.png');
-    sv('d_logoHeight', d.logoHeight || 145);
-    sv('d_headerBg', d.headerBg || 'images/header-sadu-final.png');
-    sv('d_headerOpacity', d.headerOpacity || 0.15);
+    sv('d_logoUrl', d.logoUrl !== undefined ? d.logoUrl : 'images/tallo-logo.png');
+    sv('d_logoHeight', d.logoHeight !== undefined ? d.logoHeight : 145);
+    sv('d_headerBg', d.headerBg !== undefined ? d.headerBg : 'images/header-sadu-final.png');
+    sv('d_headerOpacity', d.headerOpacity !== undefined ? d.headerOpacity : 0.15);
 
     // 4. Tabs & Search
-    sv('d_labelArabic', d.labelArabic || 'المنيو العربي');
-    sv('d_labelIntl', d.labelIntl || 'الانترناشونال');
-    sv('d_labelDesserts', d.labelDesserts || 'الحلويات');
-    sv('d_labelDrinks', d.labelDrinks || 'المشروبات');
-    sv('d_labelArgileh', d.labelArgileh || 'الأراجيل');
+    sv('d_labelArabic', d.labelArabic !== undefined ? d.labelArabic : 'المنيو العربي');
+    sv('d_labelIntl', d.labelIntl !== undefined ? d.labelIntl : 'الانترناشونال');
+    sv('d_labelDesserts', d.labelDesserts !== undefined ? d.labelDesserts : 'الحلويات');
+    sv('d_labelDrinks', d.labelDrinks !== undefined ? d.labelDrinks : 'المشروبات');
+    sv('d_labelArgileh', d.labelArgileh !== undefined ? d.labelArgileh : 'الأراجيل');
     sc('d_showSearch', d.showSearch !== false);
-    sv('pill_activeBg', d.pillActiveBg || '#E5C467');
-    sv('pill_textColor', d.pillTextColor || '#8a8580');
+    sv('pill_activeBg', d.pillActiveBg !== undefined ? d.pillActiveBg : '#E5C467');
+    sv('pill_textColor', d.pillTextColor !== undefined ? d.pillTextColor : '#8a8580');
 
     // 5. Promo Banner
-    sc('d_bannerActive', d.bannerActive || false);
-    sv('d_bannerText', d.bannerText || '');
+    sc('d_bannerActive', d.bannerActive === true);
+    sv('d_bannerText', d.bannerText !== undefined ? d.bannerText : '');
 });
 
 // ── Live Preview Engine ──
@@ -398,17 +398,17 @@ REFS.home.on('value', snapshot => {
         if(el) el.checked = val !== false; 
     };
 
-    sc('h_btn_ar', h.showBtnAr);
-    sc('h_btn_en', h.showBtnEn);
-    sc('h_btn_feed', h.showBtnFeed);
-    sv('h_whatsapp', h.whatsapp);
-    sv('h_instagram', h.instagram);
-    sv('h_facebook', h.facebook);
-    sv('h_maps', h.maps);
-    sv('h_video', h.homeVideo);
-    sv('h_tagline', h.homeTagline);
-    sv('h_overlay', h.homeOverlay);
-    sv('h_logoSize', h.homeLogoSize);
+    sc('h_btn_ar', h.showBtnAr !== false);
+    sc('h_btn_en', h.showBtnEn !== false);
+    sc('h_btn_feed', h.showBtnFeed !== false);
+    sv('h_whatsapp', h.whatsapp !== undefined ? h.whatsapp : '');
+    sv('h_instagram', h.instagram !== undefined ? h.instagram : '');
+    sv('h_facebook', h.facebook !== undefined ? h.facebook : '');
+    sv('h_maps', h.maps !== undefined ? h.maps : '');
+    sv('h_video', h.homeVideo !== undefined ? h.homeVideo : '');
+    sv('h_tagline', h.homeTagline !== undefined ? h.homeTagline : '');
+    sv('h_overlay', h.homeOverlay !== undefined ? h.homeOverlay : '');
+    sv('h_logoSize', h.homeLogoSize !== undefined ? h.homeLogoSize : '');
 });
 
 function saveHomeSettings() {
@@ -440,7 +440,7 @@ function saveHomeSettings() {
         })
         .catch(err => showToast('خطأ: ' + err.message, 'error'))
         .finally(() => {
-            isSavingHome = false;
+            setTimeout(() => { isSavingHome = false; }, 1500);
             if (btn) btn.innerHTML = '<i class="fa-solid fa-check"></i> حفظ الإعدادات';
         });
 }

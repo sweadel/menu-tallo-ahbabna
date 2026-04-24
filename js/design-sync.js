@@ -40,13 +40,13 @@
         // --- A. CSS Variables Injection ---
         let css = `
             :root {
-                --gold: ${d.primaryColor || '#C5A022'};
-                --gold-dark: ${d.primaryColor || '#a8841c'};
-                --bg: ${d.pageBg || '#0B0B0E'};
-                --card-bg: ${d.cardBg || 'rgba(255, 255, 255, 0.03)'};
-                --font-main: '${d.fontFamily || 'IBM Plex Sans Arabic'}', sans-serif;
-                --btn-radius: ${d.btnShape || '8px'};
-                --glass-blur: ${d.glassBlur || '10'}px;
+                --gold: ${d.primaryColor !== undefined ? d.primaryColor : '#C5A022'};
+                --gold-dark: ${d.primaryColor !== undefined ? d.primaryColor : '#a8841c'};
+                --bg: ${d.pageBg !== undefined ? d.pageBg : '#0B0B0E'};
+                --card-bg: ${d.cardBg !== undefined ? d.cardBg : 'rgba(255, 255, 255, 0.03)'};
+                --font-main: '${d.fontFamily !== undefined ? d.fontFamily : 'IBM Plex Sans Arabic'}', sans-serif;
+                --btn-radius: ${d.btnShape !== undefined ? d.btnShape : '8px'};
+                --glass-blur: ${d.glassBlur !== undefined ? d.glassBlur : '10'}px;
             }
             body { 
                 background-color: var(--bg);
