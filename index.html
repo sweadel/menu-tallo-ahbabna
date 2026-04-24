@@ -275,6 +275,11 @@
         <img id="main-logo" src="images/tallo-logo.png" alt="طلوا حبابنا - مادبا" loading="eager">
     </div>
 
+    <!-- Hidden Audio Element for Intro -->
+    <audio id="bgAudio" preload="auto">
+        <source src="intro-audio.m4a" type="audio/mp4">
+    </audio>
+
     <!-- Control Panel -->
     <div class="panel">
         <div class="btn-col">
@@ -413,49 +418,53 @@
         // initHomeSync(); // Disabled to prevent admin overwrites during design phase
 
         /**
-         * 7. Auto Play Intro Audio
-         * Play on the first user interaction.
+         * 7. Robust Audio Unlocker
          */
-        const introAudio = new Audio('intro-audio.m4a');
-        introAudio.volume = 1.0;
-
         function playIntroAudio() {
+            const audio = document.getElementById('bgAudio');
+            if (!audio) return;
+            
+            audio.volume = 1.0;
+
             const startPlay = () => {
-                introAudio.play().then(() => {
-                    document.removeEventListener('click', startPlay);
-                    document.removeEventListener('touchstart', startPlay);
-                }).catch(() => {
-                    // Fail silently, retry on next interaction
-                });
+                audio.play().then(() => {
+                    ['click', 'touchstart', 'mousedown'].forEach(ev => 
+                        document.removeEventListener(ev, startPlay)
+                    );
+                }).catch(() => {});
             };
 
-            document.addEventListener('click', startPlay);
-            document.addEventListener('touchstart', startPlay);
+            ['click', 'touchstart', 'mousedown'].forEach(ev => 
+                document.addEventListener(ev, startPlay)
+            );
+            
+            // Try initial
+            startPlay();
         }
         playIntroAudio();
 
         /**
-         * 8. Enhanced Video Management
-         * Ensures video stays playing and handles mobile restrictions.
+         * 8. Video Management (Ensuring Mute)
          */
         function handleVideoPlayback() {
             const video = document.getElementById('bgVideo');
             if (!video) return;
 
             video.muted = true;
+            video.volume = 0; // Absolute mute
             video.play().catch(() => {
-                // Fallback: Play on interaction
                 const playOnInteract = () => {
+                    video.muted = true;
                     video.play();
                     document.removeEventListener('click', playOnInteract);
                 };
                 document.addEventListener('click', playOnInteract);
             });
 
-            // Re-check periodically to ensure it hasn't paused (e.g., after power saving)
             setInterval(() => {
                 if (video.paused) video.play().catch(() => {});
-            }, 3000);
+                if (!video.muted) video.muted = true; // Force mute
+            }, 2000);
         }
         
         window.addEventListener('load', handleVideoPlayback);
