@@ -387,6 +387,36 @@
 
         initHomeSync();
 
+        /**
+         * 7. Auto Play Intro Audio (Plays Once per Session)
+         * Respects browser autoplay policies with interaction fallback.
+         */
+        function playIntroAudio() {
+            if (sessionStorage.getItem('introPlayed')) return;
+            
+            const audio = new Audio('intro-audio.m4a');
+            audio.volume = 0.6;
+            
+            const startPlay = () => {
+                audio.play().then(() => {
+                    sessionStorage.setItem('introPlayed', 'true');
+                    // Remove listeners once played
+                    document.removeEventListener('click', startPlay);
+                    document.removeEventListener('touchstart', startPlay);
+                }).catch(err => {
+                    console.warn("Autoplay blocked by browser. Waiting for user interaction...");
+                });
+            };
+
+            // Attempt autoplay immediately
+            startPlay();
+            
+            // Fallback: Play on first click or touch
+            document.addEventListener('click', startPlay);
+            document.addEventListener('touchstart', startPlay);
+        }
+        playIntroAudio();
+
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(err => console.log("SW Register Error:", err));

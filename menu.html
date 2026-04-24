@@ -390,6 +390,33 @@
         });
     </script>
     <script src="js/design-sync.js"></script>
-    <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }</script>
+    <script>
+        /**
+         * Auto Play Intro Audio (Plays Once per Session)
+         * Added to menu.html for direct QR-code entries.
+         */
+        function playIntroAudio() {
+            if (sessionStorage.getItem('introPlayed')) return;
+            
+            const audio = new Audio('intro-audio.m4a');
+            audio.volume = 0.6;
+            
+            const startPlay = () => {
+                audio.play().then(() => {
+                    sessionStorage.setItem('introPlayed', 'true');
+                    document.removeEventListener('click', startPlay);
+                    document.removeEventListener('touchstart', startPlay);
+                }).catch(err => {
+                    console.warn("Autoplay blocked. Waiting for interaction...");
+                });
+            };
+            startPlay();
+            document.addEventListener('click', startPlay);
+            document.addEventListener('touchstart', startPlay);
+        }
+        playIntroAudio();
+
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js') }
+    </script>
 </body>
 </html>
