@@ -1560,6 +1560,14 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                         <p class="stat-sub">إجمالي التقييمات</p>
                     </div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:rgba(155,89,182,0.1); border-color:rgba(155,89,182,0.25); color:#9b59b6;"><i class="fa-solid fa-user-shield"></i></div>
+                    <div class="stat-info">
+                        <h3>المستخدمين</h3>
+                        <p class="stat-num" id="stat-users">—</p>
+                        <p class="stat-sub">حسابات الإدارة</p>
+                    </div>
+                </div>
             </div>
 
             <div class="form-section-label" style="margin-top:24px;margin-bottom:16px;"><i class="fa-solid fa-bolt"></i> اختصارات سريعة</div>
@@ -1589,11 +1597,17 @@ input:checked + .slider::before { transform: translateX(20px); background: #000;
                     <div class="dac-text">الصفحة الرئيسية</div>
                     <div class="dac-sub">الروابط والفيديو</div>
                 </button>
-                <a class="dash-action-card" href="menu.html" target="_blank" style="text-decoration:none;">
-                    <div class="dac-icon" style="color:#9b59b6;background:rgba(155,89,182,0.15);"><i class="fa-solid fa-eye"></i></div>
-                    <div class="dac-text">معاينة المنيو</div>
-                    <div class="dac-sub">شاهد شكل المنيو للزبون</div>
                 </a>
+                <button class="dash-action-card" onclick="navigateTo('view-accounts')">
+                    <div class="dac-icon" style="color:var(--green);background:rgba(46,204,113,0.15);"><i class="fa-solid fa-users-gear"></i></div>
+                    <div class="dac-text">إدارة الحسابات</div>
+                    <div class="dac-sub">إضافة مستخدمين وصلاحيات</div>
+                </button>
+                <button class="dash-action-card" onclick="navigateTo('view-audit')">
+                    <div class="dac-icon" style="color:var(--orange);background:rgba(230,126,34,0.15);"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <div class="dac-text">سجل التعديلات</div>
+                    <div class="dac-sub">تاريخ العمليات والتراجع</div>
+                </button>
             </div>
         </div>
 

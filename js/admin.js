@@ -694,10 +694,14 @@ function updateStats() {
     if (el('stat-active')) el('stat-active').textContent = menuItems.filter(i => i.status !== 'inactive').length;
     if (el('stat-hidden')) el('stat-hidden').textContent = menuItems.filter(i => i.status === 'inactive').length;
     
-    // Add feedback count stat if the element exists
     REFS.feedback.once('value').then(snap => {
         const feedCount = snap.val() ? Object.keys(snap.val()).length : 0;
         if (el('stat-feedback')) el('stat-feedback').textContent = feedCount;
+    });
+
+    REFS.users.once('value').then(snap => {
+        const userCount = snap.val() ? Object.keys(snap.val()).length : 0;
+        if (el('stat-users')) el('stat-users').textContent = userCount;
     });
 }
 
