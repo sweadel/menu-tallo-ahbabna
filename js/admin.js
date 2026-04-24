@@ -398,8 +398,9 @@ REFS.users.on('value', snapshot => {
     if (!grid) return;
     grid.innerHTML = '';
 
+    const data = snapshot.val();
     if (!data) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-users"></i><h3>لا يوجد حسابات</h3><p>أضف مستخدمين جدد</p></div>`;
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-users"></i><h3>لا توجد حسابات</h3><p>أضف حسابات للمدراء والمحررين</p></div>`;
         return;
     }
 
@@ -410,7 +411,7 @@ REFS.users.on('value', snapshot => {
         card.className = 'user-card';
         card.innerHTML = `
             <div class="user-card-header">
-                <div class="user-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                <div class="user-avatar"><i class="fa-solid fa-user-shield"></i></div>
                 <div class="user-info">
                     <div class="user-name">${user.username}</div>
                     <div class="user-role">${roleMap[user.role] || user.role}</div>
@@ -426,6 +427,61 @@ REFS.users.on('value', snapshot => {
             </div>
         `;
         grid.appendChild(card);
+    });
+});
+
+// ══════════════ 10. AUDIT LOG LISTENER ══════════════
+REFS.logs.on('value', snapshot => {
+    const timeline = document.getElementById('audit-timeline');
+    if (!timeline) return;
+    timeline.innerHTML = '';
+
+    const data = snapshot.val();
+    if (!data) {
+        timeline.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-3);">لا يوجد نشاط مسجل حالياً</div>`;
+        return;
+    }
+
+    // Newest first
+    const entries = Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp).slice(0, 50);
+
+    entries.forEach(([logKey, entry]) => {
+        const date = new Date(entry.timestamp).toLocaleString('ar-EG');
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
+
+        let icon = 'fa-pen';
+        let iconBg = 'var(--blue)';
+        if(entry.action?.includes('إضافة') || entry.action?.includes('استعادة')) { icon = 'fa-plus'; iconBg = 'var(--green)'; }
+        if(entry.action?.includes('حذف')) { icon = 'fa-trash'; iconBg = 'var(--red)'; }
+
+        let detailsHtml = `<div class="tl-title">${entry.details || ''}</div>`;
+        if (entry.diff && entry.diff.length > 0) {
+            detailsHtml += `<div class="log-diff-list">`;
+            entry.diff.forEach(d => {
+                detailsHtml += `<div class="log-diff-item">
+                    <span class="field">${d.label}:</span> 
+                    <span class="old">${d.old || '—'}</span> 
+                    <i class="fa-solid fa-arrow-left" style="font-size:0.6rem;margin:0 6px;opacity:0.5;"></i>
+                    <span class="new">${d.new || '—'}</span>
+                </div>`;
+            });
+            detailsHtml += `</div>`;
+        }
+
+        item.innerHTML = `
+            <div class="tl-icon" style="background:${iconBg}"><i class="fa-solid ${icon}"></i></div>
+            <div class="tl-content">
+                <div class="tl-header">
+                    <span class="tl-action">${entry.action || 'عملية'}</span>
+                    <span class="tl-date">${date}</span>
+                </div>
+                <div class="tl-user"><i class="fa-solid fa-user-circle"></i> بواسطة: ${entry.user || 'Admin'}</div>
+                <div class="tl-body">${detailsHtml}</div>
+                ${entry.snapshot && entry.itemKey ? `<div class="tl-actions"><button class="btn btn-secondary btn-sm" onclick="revertLog('${entry.itemKey}', '${logKey}')"><i class="fa-solid fa-rotate-left"></i> تراجع</button></div>` : ''}
+            </div>
+        `;
+        timeline.appendChild(item);
     });
 });
 
@@ -482,65 +538,6 @@ function deleteUser(key) {
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
 
-// ══════════════ 10. AUDIT LOG LISTENER ══════════════
-REFS.logs.limitToLast(100).on('value', snapshot => {
-    const data  = snapshot.val();
-    const timeline = document.getElementById('audit-timeline');
-    if (!timeline) return;
-    timeline.innerHTML = '';
-
-    if (!data) {
-        timeline.innerHTML = `<div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i><h3>لا توجد سجلات</h3><p>ستظهر هنا كل التعديلات التي تقوم بها</p></div>`;
-        return;
-    }
-
-    const entries = Object.entries(data).reverse();
-    entries.forEach(([logKey, entry]) => {
-        const date = new Date(entry.timestamp).toLocaleString('ar-EG');
-        const item = document.createElement('div');
-        item.className = 'timeline-item';
-
-        let icon = 'fa-pen';
-        let iconBg = 'var(--blue)';
-        if(entry.action.includes('إضافة') || entry.action.includes('استعادة')) { icon = 'fa-plus'; iconBg = 'var(--green)'; }
-        if(entry.action.includes('حذف')) { icon = 'fa-trash'; iconBg = 'var(--red)'; }
-
-        // Build undo button
-        let undoBtn = '';
-        if (entry.snapshot && (entry.action === 'تعديل صنف') && entry.itemKey) {
-            undoBtn = `<button class="btn btn-secondary btn-sm" onclick="revertLog('${entry.itemKey}', '${logKey}')"><i class="fa-solid fa-rotate-left"></i> تراجع عن هذا التعديل</button>`;
-        }
-
-        // Detailed changes formatting
-        let detailsHtml = `<div class="tl-title">${entry.details || ''}</div>`;
-        if (entry.diff && entry.diff.length > 0) {
-            detailsHtml += `<div class="log-diff-list">`;
-            entry.diff.forEach(d => {
-                detailsHtml += `<div class="log-diff-item">
-                    <span class="field">${d.label}:</span> 
-                    <span class="old">${d.old || 'فارغ'}</span> 
-                    <i class="fa-solid fa-arrow-left" style="font-size:0.6rem;margin:0 4px;opacity:0.5;"></i>
-                    <span class="new">${d.new || 'فارغ'}</span>
-                </div>`;
-            });
-            detailsHtml += `</div>`;
-        }
-
-        item.innerHTML = `
-            <div class="tl-icon" style="background:${iconBg}"><i class="fa-solid ${icon}"></i></div>
-            <div class="tl-content">
-                <div class="tl-header">
-                    <span class="tl-action">${entry.action}</span>
-                    <span class="tl-date">${date}</span>
-                </div>
-                <div class="tl-user"><i class="fa-solid fa-user-circle"></i> بواسطة: ${entry.user || 'Admin'}</div>
-                <div class="tl-body">${detailsHtml}</div>
-                ${undoBtn ? `<div class="tl-actions">${undoBtn}</div>` : ''}
-            </div>
-        `;
-        timeline.appendChild(item);
-    });
-});
 
 function getLogClass(action) {
     if (action.includes('إضافة')) return 'active';
@@ -916,13 +913,14 @@ function renderCategoryGrid() {
     filtered.forEach(cat => {
         const count   = menuItems.filter(i => i.category === cat.id).length;
         const secName = sectionNames[cat.section] || cat.section || '—';
+        const isHidden = cat.status === 'hidden';
 
         const card = document.createElement('div');
-        card.className = 'cat-card';
+        card.className = `cat-card ${isHidden ? 'dimmed' : ''}`;
         card.innerHTML = `
             <div class="cat-card-icon"><i class="fa-solid ${cat.icon || 'fa-folder'}"></i></div>
             <div class="cat-card-info">
-                <h3>${cat.nameAr}</h3>
+                <h3>${cat.nameAr} ${isHidden ? '<span style="font-size:0.6rem;color:var(--red);">(مخفي)</span>' : ''}</h3>
                 <div class="en">${cat.nameEn || '—'}</div>
                 <div class="cat-card-meta">
                     <span class="meta-tag gold">${secName}</span>
@@ -953,6 +951,9 @@ function openCatModal() {
     document.getElementById('catForm')?.reset();
     document.getElementById('catModalTitle').textContent = 'إضافة قسم جديد';
     
+    // Default values
+    document.getElementById('catStatus').value = 'active';
+
     // Hide items section when adding new cat
     const itemsSection = document.getElementById('catItemsSection');
     if (itemsSection) itemsSection.style.display = 'none';
@@ -975,6 +976,7 @@ function editCategory(key) {
     document.getElementById('catSection').value = cat.section || 'arabic';
     document.getElementById('catIcon').value    = cat.icon   || '';
     document.getElementById('catOrder').value   = cat.order  || 0;
+    document.getElementById('catStatus').value  = cat.status || 'active';
     
     // Show items list
     document.getElementById('catItemsSection').style.display = 'block';
@@ -1046,6 +1048,7 @@ function saveCategory() {
         section: document.getElementById('catSection').value,
         icon:    document.getElementById('catIcon').value.trim(),
         order:   parseInt(document.getElementById('catOrder').value) || 0,
+        status:  document.getElementById('catStatus').value || 'active'
     };
 
     if (editingCatKey) {
@@ -1290,5 +1293,32 @@ function clearFeedback() {
     if(!confirm('تحذير: سيتم مسح كافة التقييمات نهائياً. هل أنت متأكد؟')) return;
     REFS.feedback.remove()
         .then(() => showToast('تم مسح جميع التقييمات'))
+        .catch(err => showToast('خطأ: ' + err.message, 'error'));
+}
+
+// ══════════════ 26. AUDIT LOG ACTIONS ══════════════
+function revertLog(itemKey, logKey) {
+    if (!confirm('هل تريد التراجع عن هذا التعديل وإعادة الصنف لحالته السابقة؟')) return;
+    
+    REFS.logs.child(logKey).once('value').then(snap => {
+        const entry = snap.val();
+        if (!entry || !entry.snapshot) { 
+            showToast('لا يمكن التراجع عن هذه العملية (لا توجد نسخة احتياطية)', 'error'); 
+            return; 
+        }
+        
+        REFS.menu.child(itemKey).update(entry.snapshot)
+            .then(() => {
+                showToast('تم التراجع عن التعديل بنجاح ✓');
+                log('تراجع (Undo)', `تم التراجع عن العملية: ${entry.action}`);
+            })
+            .catch(err => showToast('خطأ في استرجاع البيانات: ' + err.message, 'error'));
+    });
+}
+
+function clearAuditLogs() {
+    if (!confirm('هل أنت متأكد من مسح سجل العمليات بالكامل؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+    REFS.logs.remove()
+        .then(() => showToast('تم مسح السجل بنجاح'))
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
