@@ -75,10 +75,14 @@ function navigateTo(viewId) {
     const target = document.getElementById(viewId);
     if (target) target.classList.add('active');
     document.getElementById('sidebar')?.classList.remove('open');
+    document.getElementById('sidebar-overlay')?.classList.remove('active');
 }
 
 function toggleSidebar() {
-    document.getElementById('sidebar')?.classList.toggle('open');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar) sidebar.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('active');
 }
 
 // ══════════════ 4. MENU LISTENER ══════════════
