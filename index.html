@@ -266,37 +266,47 @@
 
     <script>
         /**
-         * 1. Automatic Audio Playback Logic
+         * 1. Extreme Autoplay Logic (Web Audio API + Retry Loop)
          */
-        function initAudio() {
+        const audioFile = 'intro-audio.m4a';
+        let audioContext;
+        let audioBuffer;
+
+        async function initExtremeAutoplay() {
             const audio = document.getElementById('introAudio');
             if (!audio) return;
 
-            // محاولة التشغيل التلقائي فوراً
-            const playNow = () => {
+            // محاولة التشغيل المباشر أولاً
+            const attempt = () => {
                 audio.play().then(() => {
-                    console.log("Audio: Playing automatically!");
+                    console.log("Success: Pure Autoplay!");
                 }).catch(() => {
-                    console.log("Audio: Blocked by browser, waiting for first touch...");
-                    // في حال منع المتصفح، سيشتغل مع أول حركة بسيطة للمستخدم
-                    const forcePlay = () => {
+                    console.log("Blocked: Retrying or waiting for interaction...");
+                    
+                    // خطة الطوارئ: التشغيل مع أول حركة (حتى لو لم تكن نقرة)
+                    const unlock = () => {
                         audio.play();
-                        window.removeEventListener('pointerdown', forcePlay);
-                        window.removeEventListener('touchstart', forcePlay);
+                        window.removeEventListener('touchstart', unlock);
+                        window.removeEventListener('pointerdown', unlock);
+                        window.removeEventListener('scroll', unlock);
                     };
-                    window.addEventListener('pointerdown', forcePlay);
-                    window.addEventListener('touchstart', forcePlay);
+                    window.addEventListener('touchstart', unlock);
+                    window.addEventListener('pointerdown', unlock);
+                    window.addEventListener('scroll', unlock);
                 });
             };
 
-            // تشغيل فور الجاهزية
-            if (document.readyState === 'complete') playNow();
-            else window.addEventListener('load', playNow);
+            // محاولة التشغيل فوراً وبشكل متكرر في الثواني الأولى
+            attempt();
+            setTimeout(attempt, 1000);
+            setTimeout(attempt, 2000);
         }
-        initAudio();
+
+        // انطلاق المحاولة فور تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', initExtremeAutoplay);
 
         /**
-         * 2. Optimized Video Playback
+         * 2. Background Video Logic
          */
         function initVideo() {
             const video = document.getElementById('bgVideo');
