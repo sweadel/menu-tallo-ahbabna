@@ -365,22 +365,22 @@ header.shrunk .search-row {
 /* أزرار الأصناف الفرعية الفردية (Buttons) */
 .cat-btn {
   flex: 0 0 auto;     /* الحفاظ على حجم الزر حسب النص بداخله */
-  padding: 14px 35px; /* تم تكبير الحجم بشكل كبير (سوبر) لسهولة الضغط (كانت 10x24) */
+  padding: 8px 22px;  /* تم تصغير الحجم ليكون أكثر رشاقة وأناقة (كان 14x35) */
   color: rgba(255, 255, 255, 0.75); /* لون نص أبيض باهت */
   background: rgba(255, 255, 255, 0.03); /* خلفية شفافة جداً (3%) */
   border: 1px solid rgba(255, 255, 255, 0.08); /* حدود دقيقة جداً */
-  border-radius: 30px; /* زيادة الانحناء ليناسب الحجم الضخم */
+  border-radius: 20px; /* العودة للانحناء الكلاسيكي */
   text-decoration: none;
-  font-size: 1.15rem; /* تكبير الخط بشكل واضح جداً (كان 0.98) */
-  font-weight: 700;   /* جعل الخط عريضاً (Bold) لزيادة الوضوح */
-  min-width: 140px;   /* ضمان عرض أدنى لكل زر ليعطي هيبة للتصميم */
-  justify-content: center; /* توسيط الكلمة داخل الزر */
-  letter-spacing: 0.5px; 
-
+  font-size: 0.92rem; /* حجم خط متوازن وأنيق (كان 1.15) */
+  font-weight: 600;   /* خط واضح ولكن ليس ضخماً */
+  min-width: 110px;   /* عرض مناسب ليكون الزر مريحاً للعين (كان 140) */
+  justify-content: center;
+  letter-spacing: 0.3px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap; /* منع انقسام النص */
   display: flex;      /* لترتيب الأيقونة (إن وجدت) مع النص */
   align-items: center;
+
   gap: 6px;
 }
 
