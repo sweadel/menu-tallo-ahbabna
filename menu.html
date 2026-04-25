@@ -297,8 +297,8 @@
         function buildCard(item) {
             const card = document.createElement('a');
             card.className = 'menu-card';
-            card.setAttribute('data-t', item.nameAr || item.name || '');
-            card.setAttribute('data-desc', item.descAr || item.desc || '');
+            card.setAttribute('data-t', item.name || '');
+            card.setAttribute('data-desc', item.desc || '');
             
             const imgStyle = item.image ? `background-image:url('${item.image}'); background-size: cover; background-position: center;` : '';
             const price = (item.price || '').toString().trim();
@@ -306,7 +306,7 @@
             card.innerHTML = `
                 <div class="card-img" style="${imgStyle}"></div>
                 <div class="card-body">
-                    <h3 class="card-name">${item.nameAr || item.name || ''}</h3>
+                    <h3 class="card-name">${item.name || ''}</h3>
                     <span class="card-price">${price ? price + ' د.أ' : ''}</span>
                 </div>
             `;

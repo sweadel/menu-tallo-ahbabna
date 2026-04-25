@@ -45,12 +45,46 @@
                 </div>
             </section>
 
-            <!-- MENU VIEW -->
+            <!-- MENU VIEW (إدارة المنيو المطورة) -->
             <section class="view" id="view-menu" style="display:none;">
-                <div class="page-header"><div class="page-title"><h1>قائمة الطعام</h1><p>إدارة الوجبات والأسعار.</p></div><button class="btn-primary" onclick="openItemModal()"><i class="fa-solid fa-plus"></i> صنف جديد</button></div>
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>إدارة المنيو</h1>
+                        <p>تصفح الوجبات حسب القسم وانقلها بسهولة.</p>
+                    </div>
+                    <button class="btn-primary" onclick="openItemModal()">
+                        <i class="fa-solid fa-plus"></i> وجبة جديدة
+                    </button>
+                </div>
+                
                 <div class="data-card">
-                    <div class="table-header"><input type="text" id="globalSearch" class="form-control" placeholder="بحث..." style="width:200px;" oninput="onGlobalSearch()"> <select id="filterCategory" class="form-control" style="width:150px;" onchange="renderTable()"></select></div>
-                    <table><thead><tr><th>الصورة</th><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="menu-table-body"></tbody></table>
+                    <div class="table-header" style="flex-wrap: wrap; gap: 15px;">
+                        <!-- فلتر الأقسام بشكل احترافي -->
+                        <div class="cat-filter-tabs" id="catFilterTabs" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:5px; width:100%;">
+                            <!-- سيتم ملؤه من JS -->
+                        </div>
+                        <div style="display:flex; gap:10px; width:100%;">
+                            <input type="text" id="globalSearch" class="form-control" placeholder="ابحث عن وجبة..." style="flex:1;" oninput="onGlobalSearch()">
+                            <select id="filterCategory" class="form-control" style="width:180px;" onchange="renderTable()">
+                                <option value="all">كل الأقسام</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الصورة</th>
+                                    <th>اسم الوجبة</th>
+                                    <th>نقل إلى قسم</th> <!-- ميزة النقل السريع -->
+                                    <th>السعر</th>
+                                    <th>الحالة</th>
+                                    <th>إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="menu-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
