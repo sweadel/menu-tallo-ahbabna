@@ -25,15 +25,59 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* إعدادات إضافية خاصة بشكل الهيدر واللوجو */
+        /* إعدادات إضافية خاصة بشكل الهيدر واللوجو لضمان الثبات */
+        :root {
+            --header-h: 220px;
+            --header-h-shrunk: 130px;
+        }
+
         .arch-overlay {
             background-image: url('images/header-arch-final.png') !important;
             display: block !important;
+            position: absolute;
+            inset: 0;
+            background-size: 100% 100%;
+            z-index: 1;
+            transition: 0.4s ease;
         }
+
+        header {
+            height: var(--header-h);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--dark);
+        }
+
+        header.shrunk {
+            height: var(--header-h-shrunk);
+        }
+
+        header.shrunk .logo-wrap img {
+            width: 80px;
+            margin-top: -10px;
+        }
+
+        header.shrunk .arch-overlay {
+            opacity: 0.9;
+            transform: scaleY(0.85);
+            transform-origin: top;
+        }
+
+        .logo-wrap {
+            position: relative;
+            z-index: 2;
+            transition: 0.4s ease;
+        }
+
         .logo-wrap img {
+            width: 130px;
             filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
+            transition: 0.4s ease;
         }
-        body { direction: rtl; font-weight: 700; }
+
+        body { direction: rtl; font-weight: 700; background: #0a0a0a; }
         .sec-title::after { background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25)); }
         
         /* تأثير الظهور الناعم لإلغاء التخبط */
@@ -44,6 +88,16 @@
         @keyframes fadeInItems {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ثبات شريط التصنيفات الفرعية */
+        .hdr-bottom {
+            position: sticky;
+            top: var(--header-h-shrunk);
+            z-index: 999;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(197, 160, 34, 0.2);
         }
     </style>
 </head>
