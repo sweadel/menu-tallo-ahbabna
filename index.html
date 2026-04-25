@@ -1,76 +1,82 @@
 <!DOCTYPE html>
 <!-- 
   ==========================================================================
-  PROJECT: Tallo Ahbabna - Digital Menu & Landing Page
-  FILE: index.html
-  DESCRIPTION: The main gateway for customers. Features a video background,
-               restaurant logo, and quick access buttons to the menu and feedback.
-  VERSION: 3.0 (Cleaned & Documented)
+  المشروع: مطعم طلوا حبابنا - منيو ديجيتال وصفحة هبوط
+  الملف: index.html
+  الوصف: هذه هي الصفحة الرئيسية (بوابة الموقع) التي تحتوي على فيديو الخلفية،
+         شعار المطعم، وأزرار الدخول للمنيو.
   ==========================================================================
 -->
 <html lang="ar" dir="rtl">
 
 <head>
+    <!-- تعريف ترميز الحروف لدعم اللغة العربية -->
     <meta charset="UTF-8">
+    <!-- جعل الموقع متوافقاً مع شاشات الهواتف الذكية -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- لون شريط العنوان في المتصفح -->
     <meta name="theme-color" content="#C5A022">
+    <!-- وصف الموقع لمحركات البحث (SEO) -->
     <meta name="description" content="مطعم طلوا حبابنا - مادبا، الأردن. اكتشف قائمة طعامنا الكاملة وجرب أصنافنا المميزة.">
 
-    <!-- Social Media Meta Tags (Open Graph) -->
+    <!-- إعدادات الروابط عند مشاركة الموقع على فيسبوك وواتساب (Open Graph) -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="طلوا حبابنا | مادبا">
     <meta property="og:description" content="تفضل وشوف قائمتنا الكاملة - تجربة طعام فريدة في قلب مادبا">
     <meta property="og:image" content="images/tallo-logo.png">
     <meta property="og:locale" content="ar_SA">
 
-    <!-- Progressive Web App (PWA) Support -->
+    <!-- دعم تحويل الموقع إلى تطبيق (PWA) -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="images/tallo-logo.png">
 
     <title>طلوا حبابنا | مادبا</title>
 
-    <!-- Typography: IBM Plex Sans Arabic (Premium & Modern) -->
+    <!-- تحميل الخطوط من جوجل (خط IBM Plex Sans Arabic) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
 
     <style>
+        /* تعريف المتغيرات (الألوان والخطوط) لتسهيل التغيير لاحقاً */
         :root {
-            --gold: #C5A022;
-            --gold-glow: rgba(197, 160, 34, 0.4);
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --text-main: #FFFFFF;
+            --gold: #C5A022; /* اللون الذهبي الأساسي */
+            --gold-glow: rgba(197, 160, 34, 0.4); /* توهج ذهبي شفاف */
+            --glass: rgba(255, 255, 255, 0.05); /* تأثير الزجاج الشفاف */
+            --glass-border: rgba(255, 255, 255, 0.12); /* حدود الزجاج */
+            --text-main: #FFFFFF; /* لون النص الأبيض */
             --font-arabic: 'IBM Plex Sans Arabic', sans-serif;
         }
 
+        /* تصفير الإعدادات الافتراضية للمتصفح لضمان تناسق التصميم */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: #000;
+            background-color: #000; /* خلفية سوداء */
             color: var(--text-main);
             font-family: var(--font-arabic);
-            overflow: hidden;
-            height: 100dvh;
+            overflow: hidden; /* منع التمرير في الصفحة الرئيسية */
+            height: 100dvh; /* طول الصفحة حسب ارتفاع الشاشة */
             width: 100vw;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center; /* توسيط المحتوى عمودياً */
+            justify-content: center; /* توسيط المحتوى أفقياً */
             text-align: center;
-            direction: rtl;
+            direction: rtl; /* الكتابة من اليمين لليسام */
         }
 
-        /* Video Background with Radial Shadow */
+        /* إعدادات فيديو الخلفية */
         .vid-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
+            z-index: -2; /* وضعه خلف كل العناصر */
             background: #000;
         }
         .vid-bg video {
-            width: 100%; height: 100%; object-fit: cover;
-            opacity: 0.65;
+            width: 100%; height: 100%; object-fit: cover; /* تغطية كامل الشاشة دون تشويه */
+            opacity: 0.65; /* تقليل السطوع لبروز النص */
         }
+        /* طبقة تظليل فوق الفيديو لتحسين الرؤية */
         .vid-bg::after {
             content: '';
             position: absolute;
@@ -79,7 +85,7 @@
             z-index: -1;
         }
 
-        /* Layout Container */
+        /* الحاوية الرئيسية للمحتوى */
         .container {
             width: 100%;
             max-width: 450px;
@@ -90,45 +96,46 @@
             align-items: center;
         }
 
-        /* Premium Logo Animation */
+        /* تأثيرات الشعار (اللوجو) */
         .logo-wrap {
             margin-bottom: 45px;
             transition: all 0.5s ease;
         }
         .logo-wrap img {
             width: 240px;
-            filter: drop-shadow(0 15px 45px rgba(0,0,0,0.9));
-            animation: logoEntrance 1.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            filter: drop-shadow(0 15px 45px rgba(0,0,0,0.9)); /* ظل تحت اللوجو للفخامة */
+            animation: logoEntrance 1.8s cubic-bezier(0.2, 0.8, 0.2, 1); /* حركة دخول اللوجو */
         }
 
-        /* Button Grid */
+        /* تنسيق عمود الأزرار */
         .btn-col {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 16px; /* المسافة بين الأزرار */
         }
 
+        /* التصميم المشترك لجميع الأزرار (Glassmorphism) */
         .main-btn {
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 16px 24px;
-            border-radius: 100px;
+            border-radius: 100px; /* جعل الزر دائري الأطراف */
             text-decoration: none;
             font-size: 1.1rem;
             font-weight: 600;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
             border: 1px solid var(--glass-border);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px); /* تأثير تغبيش الخلفية خلف الزر */
             -webkit-backdrop-filter: blur(15px);
             color: #fff;
-            animation: btnSlideIn 0.8s backwards;
+            animation: btnSlideIn 0.8s backwards; /* حركة دخول الأزرار */
         }
 
-        /* Gold Style */
+        /* تنسيق الزر الذهبي */
         .main-btn.gold {
             background: rgba(197, 160, 34, 0.18);
             color: var(--gold);
@@ -136,12 +143,12 @@
             font-weight: 700;
         }
         .main-btn.gold:active {
-            transform: scale(0.96);
+            transform: scale(0.96); /* تصغير الزر قليلاً عند اللمس */
             background: var(--gold);
             color: #000;
         }
 
-        /* Ghost Style */
+        /* تنسيق الزر الشفاف */
         .main-btn.ghost {
             background: var(--glass);
             color: rgba(255, 255, 255, 0.9);
@@ -152,7 +159,7 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Info Text */
+        /* النص السفلي */
         .tagline {
             margin-top: 35px;
             font-size: 0.85rem;
@@ -162,7 +169,7 @@
             font-weight: 400;
         }
 
-        /* Social Bar */
+        /* شريط الروابط الاجتماعية */
         .social-bar {
             margin-top: 25px;
             display: flex;
@@ -176,10 +183,10 @@
         }
         .s-link:active {
             color: var(--gold);
-            transform: scale(1.2);
+            transform: scale(1.2); /* تكبير الأيقونة عند اللمس */
         }
 
-        /* Animations */
+        /* تعريف حركات الدخول (Animations) */
         @keyframes logoEntrance {
             0% { opacity: 0; transform: scale(0.85) translateY(30px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -189,13 +196,13 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* Staggered Button Entrance */
+        /* جعل الأزرار تظهر واحداً تلو الآخر بفوارق زمنية بسيطة */
         .btn-col a:nth-child(1) { animation-delay: 0.4s; }
         .btn-col a:nth-child(2) { animation-delay: 0.5s; }
         .btn-col a:nth-child(3) { animation-delay: 0.6s; }
         .btn-col a:nth-child(4) { animation-delay: 0.7s; }
 
-        /* Mobile specific tweaks */
+        /* تعديلات خاصة للشاشات الصغيرة جداً */
         @media (max-height: 700px) {
             .logo-wrap img { width: 190px; }
             .logo-wrap { margin-bottom: 25px; }
@@ -207,21 +214,21 @@
 
 <body>
 
-    <!-- Background Video Layer -->
+    <!-- قسم فيديو الخلفية -->
     <div class="vid-bg">
         <video id="bgVideo" autoplay muted loop playsinline preload="metadata" poster="images/wide-bg.png">
             <source id="home-video-source" src="images/tallo-video-final.mp4" type="video/mp4">
         </video>
     </div>
 
-    <!-- Central Content Container -->
+    <!-- الحاوية المركزية للمحتوى -->
     <div class="container">
-        <!-- Logo Section -->
+        <!-- قسم الشعار -->
         <div class="logo-wrap">
             <img id="main-logo" src="images/tallo-logo.png" alt="طلوا حبابنا - مادبا" loading="eager">
         </div>
 
-        <!-- Interactive Buttons Section -->
+        <!-- قسم أزرار التفاعل -->
         <div class="btn-col">
             <a href="menu.html#arabic" id="btn_arabic" class="main-btn gold">
                 قائمة الطعام - عربي
@@ -237,36 +244,40 @@
             </a>
         </div>
 
-        <!-- Social Bar & Location -->
+        <!-- معلومات الموقع وشريط التواصل -->
         <p class="tagline">طلوا حبابنا - مادبا، الأردن</p>
         <div class="social-bar">
+            <!-- رابط الموقع على الخريطة -->
             <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" id="link_maps" target="_blank" rel="noopener" class="s-link" title="الموقع">
                 <i class="fa-solid fa-location-dot"></i>
             </a>
+            <!-- رابط الواتساب المباشر -->
             <a href="https://wa.me/962779688633" id="link_whatsapp" target="_blank" rel="noopener" class="s-link" title="واتساب">
                 <i class="fa-brands fa-whatsapp"></i>
             </a>
+            <!-- رابط الإنستغرام -->
             <a href="https://www.instagram.com/tallo.hbabna/" id="link_instagram" target="_blank" rel="noopener" class="s-link" title="إنستغرام">
                 <i class="fa-brands fa-instagram"></i>
             </a>
+            <!-- رابط الفيسبوك -->
             <a href="https://www.facebook.com/people/tallo-hbabna/61586065659210/" id="link_facebook" target="_blank" rel="noopener" class="s-link" title="فيسبوك">
                 <i class="fa-brands fa-facebook-f"></i>
             </a>
         </div>
     </div>
 
-    <!-- Hidden Audio for Autoplay -->
+    <!-- ملف الصوت المخفي الذي يعمل تلقائياً -->
     <audio id="introAudio" preload="auto" autoplay>
         <source src="intro-audio.m4a" type="audio/mp4">
     </audio>
 
-    <!-- Firebase & Logic -->
+    <!-- تحميل مكتبات Firebase للربط مع قاعدة البيانات -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
         /**
-         * 1. Extreme Autoplay Logic (Web Audio API + Retry Loop)
+         * 1. منطق التشغيل التلقائي للصوت (محاولات متكررة لتجاوز حظر المتصفحات)
          */
         const audioFile = 'intro-audio.m4a';
         let audioContext;
@@ -279,11 +290,11 @@
             // محاولة التشغيل المباشر أولاً
             const attempt = () => {
                 audio.play().then(() => {
-                    console.log("Success: Pure Autoplay!");
+                    console.log("نجح التشغيل التلقائي!");
                 }).catch(() => {
-                    console.log("Blocked: Retrying or waiting for interaction...");
+                    console.log("المتصفح حظر الصوت، بانتظار أول حركة للمستخدم...");
                     
-                    // خطة الطوارئ: التشغيل مع أول حركة (حتى لو لم تكن نقرة)
+                    // خطة الطوارئ: تشغيل الصوت مع أول حركة للمستخدم (لمس، سحب، أو نقر)
                     const unlock = () => {
                         audio.play();
                         window.removeEventListener('touchstart', unlock);
@@ -296,26 +307,28 @@
                 });
             };
 
-            // محاولة التشغيل فوراً وبشكل متكرر في الثواني الأولى
+            // تكرار المحاولة في الثواني الأولى لضمان العمل
             attempt();
             setTimeout(attempt, 1000);
             setTimeout(attempt, 2000);
         }
 
-        // انطلاق المحاولة فور تحميل الصفحة
+        // بدء محاولات الصوت فور تحميل محتوى الصفحة
         window.addEventListener('DOMContentLoaded', initExtremeAutoplay);
 
         /**
-         * 2. Background Video Logic
+         * 2. منطق فيديو الخلفية
          */
         function initVideo() {
             const video = document.getElementById('bgVideo');
             if (!video) return;
-            video.muted = true;
+            video.muted = true; // يجب أن يكون صامتاً ليعمل تلقائياً
             video.play().catch(() => {
+                // إذا حظر المتصفح الفيديو، سيشتغل مع أول لمسة
                 window.addEventListener('pointerdown', () => video.play(), {once: true});
             });
         }
+        // بدء تشغيل الفيديو فور اكتمال تحميل الموقع
         window.addEventListener('load', initVideo);
     </script>
 </body>
