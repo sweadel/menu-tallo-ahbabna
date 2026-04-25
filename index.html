@@ -4,33 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مطعم طلو أحبابنا | Tallo Ahbabna</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root { --gold: #C5A022; --dark: #0a0a0a; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'IBM Plex Sans Arabic', sans-serif; }
-        body { background:var(--dark); color:#fff; overflow:hidden; }
-        .hero { position:relative; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; }
-        .bg-video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; opacity:0.4; z-index:-1; }
-        .logo { width:180px; margin-bottom:30px; filter:drop-shadow(0 0 20px rgba(197,160,34,0.4)); }
-        h1 { font-size:2.5rem; margin-bottom:15px; color:var(--gold); }
-        p { font-size:1.2rem; margin-bottom:40px; color:#ccc; }
-        .btn-group { display:flex; gap:20px; }
-        .btn { padding:15px 40px; border-radius:50px; text-decoration:none; font-weight:700; transition:0.3s; font-size:1.1rem; }
-        .btn-gold { background:var(--gold); color:#000; }
-        .btn-gold:hover { transform:scale(1.05); box-shadow:0 0 30px rgba(197,160,34,0.5); }
+        :root {
+            --gold: #C5A022;
+            --gold-light: #E2C25D;
+            --dark: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        body { background-color: var(--dark); color: #fff; overflow: hidden; height: 100vh; }
+
+        /* فيديو الخلفية */
+        .video-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -1; opacity: 0.5; filter: brightness(0.6) contrast(1.2);
+        }
+
+        /* نمط السدو الجانبي */
+        .sadu-pattern {
+            position: fixed; top: 0; bottom: 0; width: 80px;
+            background: url('images/sadu-pattern.png'); /* تأكد من وجود الصورة أو سأستخدم لون ذهبي */
+            background-size: contain; opacity: 0.15; z-index: 0;
+        }
+        .sadu-right { right: 0; }
+        .sadu-left { left: 0; }
+
+        .hero {
+            height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 20px; position: relative; z-index: 10;
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(10,10,10,0.8) 100%);
+        }
+
+        .logo-container {
+            position: relative; margin-bottom: 40px;
+            animation: fadeInDown 1.5s ease;
+        }
+        .logo {
+            width: 240px; /* الحجم الفخم */
+            filter: drop-shadow(0 0 30px rgba(197, 160, 34, 0.4));
+            transition: 0.5s;
+        }
+        .logo:hover { transform: scale(1.05); filter: drop-shadow(0 0 50px rgba(197, 160, 34, 0.6)); }
+
+        h1 {
+            font-size: 2.8rem; font-weight: 700; margin-bottom: 10px;
+            color: #fff; text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+        .tagline {
+            font-size: 1.3rem; color: var(--gold); font-weight: 400;
+            margin-bottom: 50px; opacity: 0.9;
+        }
+
+        .btn-group {
+            display: flex; gap: 20px; animation: fadeInUp 1.5s ease;
+            flex-wrap: wrap; justify-content: center;
+        }
+        .btn {
+            position: relative; padding: 18px 45px; border-radius: 50px;
+            text-decoration: none; font-weight: 700; font-size: 1.2rem;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden; border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px); color: #fff;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .btn-ar { background: linear-gradient(135deg, var(--gold), #8a6d13); color: #000; border: none; }
+        .btn-en { background: var(--glass); }
+
+        .btn:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+        .btn-ar:hover { box-shadow: 0 10px 40px rgba(197, 160, 34, 0.4); }
+        .btn-en:hover { background: rgba(255,255,255,0.1); border-color: var(--gold); color: var(--gold); }
+
+        /* Social Icons */
+        .social-links {
+            position: absolute; bottom: 40px; display: flex; gap: 25px;
+            font-size: 1.5rem; opacity: 0.7; transition: 0.3s;
+        }
+        .social-links a { color: #fff; text-decoration: none; transition: 0.3s; }
+        .social-links a:hover { color: var(--gold); transform: scale(1.2); }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .logo { width: 180px; }
+            .btn { width: 100%; justify-content: center; padding: 15px 30px; font-size: 1.1rem; }
+            .btn-group { width: 100%; max-width: 300px; }
+        }
     </style>
 </head>
 <body>
+
+    <video id="mainVideo" class="video-bg" autoplay muted loop playsinline poster="images/video-poster.jpg">
+        <source src="" type="video/mp4">
+    </video>
+
+    <div class="sadu-pattern sadu-left"></div>
+    <div class="sadu-pattern sadu-right"></div>
+
     <div class="hero">
-        <video id="vbg" autoplay muted loop playsinline class="bg-video">
-            <source src="" type="video/mp4">
-        </video>
-        <img src="images/tallo-logo.png" alt="طلو أحبابنا" class="logo">
-        <h1 id="htitle">طلو أحبابنا</h1>
-        <p id="htag">أهلاً بكم في عالمنا الخاص</p>
+        <div class="logo-container">
+            <img src="images/tallo-logo.png" alt="Tallo Ahbabna" class="logo">
+        </div>
+
+        <h1 id="mainTitle">طلو أحبابنا</h1>
+        <p class="tagline" id="mainTagline">عراقة الماضي.. بلمسة الحاضر</p>
+
         <div class="btn-group">
-            <a href="menu.html" class="btn btn-gold">تصفح المنيو</a>
+            <a href="menu.html" class="btn btn-ar">
+                <i class="fa-solid fa-utensils"></i> المنيو العربي
+            </a>
+            <a href="menu-en.html" class="btn btn-en">
+                English Menu <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="social-links">
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
     </div>
 
@@ -43,12 +146,27 @@
             projectId: "tallow-ahbabna",
             databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
         };
-        firebase.initializeApp(fbCfg);
-        firebase.database().ref('settings/home').on('value', s => {
-            const d = s.val(); if(!d) return;
-            if(d.video) document.getElementById('vbg').querySelector('source').src = d.video;
-            if(d.video) document.getElementById('vbg').load();
-            if(d.tagline) document.getElementById('htag').textContent = d.tagline;
+        if (!firebase.apps.length) firebase.initializeApp(fbCfg);
+        const db = firebase.database();
+
+        // مزامنة الإعدادات لحظياً
+        db.ref('settings/home').on('value', snap => {
+            const data = snap.val();
+            if(!data) return;
+            
+            if(data.video) {
+                const v = document.getElementById('mainVideo');
+                const s = v.querySelector('source');
+                if(s.src !== data.video) {
+                    s.src = data.video;
+                    v.load();
+                    v.play().catch(e => console.log("Auto-play blocked"));
+                }
+            }
+            
+            if(data.tagline) {
+                document.getElementById('mainTagline').textContent = data.tagline;
+            }
         });
     </script>
 </body>
