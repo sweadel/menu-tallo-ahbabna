@@ -314,7 +314,7 @@
             return card;
         }
 
-        // الوظيفة الرئيسية لعرض المنيو بالكامل بناءً على الأقسام والوجبات
+        // الوظيفة الرئيسية لعرض المنيو بالكامل (تم تحسينها لتعرض القسم المختار فقط لتوفير الطاقة)
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta) return;
 
@@ -329,56 +329,53 @@
                 itemsByCat[item.category].push(item);
             });
 
-            // بناء كل قسم (عربي، انترناشونال، إلخ)
-            const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
-            sectionKeys.forEach(secKey => {
-                const navEl = document.getElementById(secKey + 'Nav');
-                const secEl = document.getElementById(secKey);
-                if (!navEl || !secEl) return;
+            // تحديث القسم الحالي النشط فقط (Lazy Rendering)
+            const secKey = currentTab; 
+            const navEl = document.getElementById(secKey + 'Nav');
+            const secEl = document.getElementById(secKey);
+            if (!navEl || !secEl) return;
 
-                // 1. بناء أزرار التنقل في الذاكرة (Fragment)
-                const navFrag = document.createDocumentFragment();
-                // 2. بناء محتوى القسم في الذاكرة (Fragment)
-                const secFrag = document.createDocumentFragment();
+            // 1. بناء أزرار التنقل في الذاكرة
+            const navFrag = document.createDocumentFragment();
+            // 2. بناء محتوى القسم في الذاكرة
+            const secFrag = document.createDocumentFragment();
 
-                const hero = secEl.querySelector('.section-hero');
-                if (hero) secFrag.appendChild(hero.cloneNode(true));
+            // الحفاظ على البانر العلوي
+            const hero = secEl.querySelector('.section-hero');
+            if (hero) secFrag.appendChild(hero.cloneNode(true));
 
-                const cats = Object.entries(_categoriesMeta)
-                    .map(([id, val]) => ({ id, ...val }))
-                    .filter(c => c.section === secKey && c.status !== 'hidden')
-                    .sort((a, b) => (a.order || 0) - (b.order || 0));
+            const cats = Object.entries(_categoriesMeta)
+                .map(([id, val]) => ({ id, ...val }))
+                .filter(c => c.section === secKey && c.status !== 'hidden')
+                .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-                cats.forEach(cat => {
-                    const btn = document.createElement('a');
-                    btn.href = '#' + cat.id;
-                    btn.className = 'cat-btn';
-                    btn.textContent = cat.nameAr;
-                    if(cat.icon) btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ` + btn.innerHTML;
-                    navFrag.appendChild(btn);
+            cats.forEach(cat => {
+                const btn = document.createElement('a');
+                btn.href = '#' + cat.id;
+                btn.className = 'cat-btn';
+                btn.innerHTML = (cat.icon ? `<i class="fa-solid ${cat.icon}"></i> ` : '') + cat.nameAr;
+                navFrag.appendChild(btn);
 
-                    const h2 = document.createElement('h2');
-                    h2.id = cat.id;
-                    h2.className = 'sec-title';
-                    h2.textContent = cat.nameAr;
-                    if(cat.icon) h2.innerHTML = `<i class="fa-solid ${cat.icon} sec-icon"></i> ` + h2.innerHTML;
-                    
-                    const grid = document.createElement('div');
-                    grid.className = 'menu-grid';
-                    const items = itemsByCat[cat.id] || [];
-                    items.forEach(item => grid.appendChild(buildCard(item)));
+                const h2 = document.createElement('h2');
+                h2.id = cat.id;
+                h2.className = 'sec-title';
+                h2.innerHTML = (cat.icon ? `<i class="fa-solid ${cat.icon} sec-icon"></i> ` : '') + cat.nameAr;
+                
+                const grid = document.createElement('div');
+                grid.className = 'menu-grid';
+                const items = itemsByCat[cat.id] || [];
+                items.forEach(item => grid.appendChild(buildCard(item)));
 
-                    secFrag.appendChild(h2);
-                    secFrag.appendChild(grid);
-                });
+                secFrag.appendChild(h2);
+                secFrag.appendChild(grid);
+            });
 
-                // 3. التحديث اللحظي للشاشة
-                window.requestAnimationFrame(() => {
-                    navEl.innerHTML = '';
-                    navEl.appendChild(navFrag);
-                    secEl.innerHTML = '';
-                    secEl.appendChild(secFrag);
-                });
+            // تحديث الشاشة في خطوة واحدة
+            window.requestAnimationFrame(() => {
+                navEl.innerHTML = '';
+                navEl.appendChild(navFrag);
+                secEl.innerHTML = '';
+                secEl.appendChild(secFrag);
             });
         }
 

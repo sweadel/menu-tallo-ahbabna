@@ -278,69 +278,51 @@
 
     <script>
         /**
-         * 1. منطق التشغيل التلقائي للصوت (محاولات متكررة لتجاوز حظر المتصفحات)
+         * 1. منطق تشغيل الصوت بذكاء (عند أول تفاعل حقيقي)
          */
-        const audioFile = 'intro-audio.m4a';
-        let audioContext;
-        let audioBuffer;
-
-        async function initExtremeAutoplay() {
+        function initSmartAutoplay() {
             const audio = document.getElementById('introAudio');
             if (!audio) return;
 
-            // محاولة التشغيل المباشر
-            const play = () => {
+            const playAudio = () => {
                 audio.play().then(() => {
-                    console.log("Audio Playing!");
                     cleanup();
                 }).catch(() => {});
             };
 
             const cleanup = () => {
-                window.removeEventListener('mousedown', play);
-                window.removeEventListener('touchstart', play);
-                window.removeEventListener('mousemove', play);
-                window.removeEventListener('scroll', play);
-                window.removeEventListener('keydown', play);
+                ['mousedown', 'touchstart', 'keydown', 'wheel'].forEach(ev => 
+                    window.removeEventListener(ev, playAudio)
+                );
             };
 
-            // تشغيل مع أي حركة بسيطة جداً
-            window.addEventListener('mousedown', play);
-            window.addEventListener('touchstart', play);
-            window.addEventListener('mousemove', play);
-            window.addEventListener('scroll', play);
-            window.addEventListener('keydown', play);
-
-            // محاولات متكررة تلقائية
-            play();
-            setTimeout(play, 300);
-            setTimeout(play, 1500);
+            ['mousedown', 'touchstart', 'keydown', 'wheel'].forEach(ev => 
+                window.addEventListener(ev, playAudio, { passive: true })
+            );
         }
-
-        // بدء محاولات الصوت فور تحميل محتوى الصفحة
-        window.addEventListener('DOMContentLoaded', initExtremeAutoplay);
+        window.addEventListener('DOMContentLoaded', initSmartAutoplay);
 
         /**
-         * 2. وظيفة الانتقال الناعم بين الصفحات
+         * 2. وظيفة الانتقال السريع والآمن
          */
         function navigateTo(url) {
+            const video = document.getElementById('bgVideo');
+            if (video) video.pause(); // إيقاف الفيديو فوراً لتوفير المعالج
+            
             document.body.style.opacity = '0';
-            setTimeout(() => { window.location.href = url; }, 300);
+            window.location.href = url; // انتقال مباشر دون انتظار طويل
         }
 
         /**
-         * 3. منطق فيديو الخلفية
+         * 3. تشغيل الفيديو بكفاءة
          */
         function initVideo() {
             const video = document.getElementById('bgVideo');
             if (!video) return;
-            video.muted = true; // يجب أن يكون صامتاً ليعمل تلقائياً
             video.play().catch(() => {
-                // إذا حظر المتصفح الفيديو، سيشتغل مع أول لمسة
                 window.addEventListener('pointerdown', () => video.play(), {once: true});
             });
         }
-        // بدء تشغيل الفيديو فور اكتمال تحميل الموقع
         window.addEventListener('load', initVideo);
     </script>
 </body>
