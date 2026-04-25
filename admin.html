@@ -62,32 +62,34 @@
                 </div>
             </section>
 
-            <!-- OTHER VIEWS PLACEHOLDERS -->
-            <section class="view" id="view-design" style="display:none;"><div class="page-header"><h1>التصميم</h1></div></section>
-            <section class="view" id="view-home" style="display:none;"><div class="page-header"><h1>الرئيسية</h1></div></section>
-            <section class="view" id="view-feedback" style="display:none;"><div class="page-header"><h1>الآراء</h1></div></section>
+            <!-- LOGS VIEW -->
             <section class="view" id="view-logs" style="display:none;"><div class="page-header"><h1>السجل</h1></div><div class="data-card"><table><thead><tr><th>الوقت</th><th>الحدث</th></tr></thead><tbody id="logs-table-body"></tbody></table></div></section>
+            
+            <!-- TRASH VIEW -->
             <section class="view" id="view-trash" style="display:none;"><div class="page-header"><h1>المحذوفات</h1></div><div class="data-card"><table><thead><tr><th>الاسم</th><th>إجراء</th></tr></thead><tbody id="trash-table-body"></tbody></table></div></section>
         </main>
     </div>
 
-    <!-- MODAL: ITEM -->
+    <!-- MODAL: ITEM (معدل ليشمل الوصفين) -->
     <div class="modal-overlay" id="itemModal">
         <div class="modal-content">
-            <div class="modal-header"><h2 id="modalTitle">إضافة صنف</h2><button onclick="closeItemModal()">&times;</button></div>
+            <div class="modal-header"><h2 id="modalTitle">إدارة الصنف</h2><button onclick="closeItemModal()">&times;</button></div>
             <div class="modal-body">
                 <form id="itemForm">
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                        <input type="text" id="itemName" class="form-control" placeholder="الاسم عربي" required>
-                        <input type="text" id="itemNameEn" class="form-control" placeholder="الاسم إنجليزي">
-                        <select id="itemCategory" class="form-control" required></select>
-                        <input type="text" id="itemPrice" class="form-control" placeholder="السعر">
+                        <div class="form-group"><label>الاسم (عربي)</label><input type="text" id="itemName" class="form-control" required></div>
+                        <div class="form-group"><label>الاسم (English)</label><input type="text" id="itemNameEn" class="form-control"></div>
+                        <div class="form-group"><label>القسم</label><select id="itemCategory" class="form-control" required></select></div>
+                        <div class="form-group"><label>السعر</label><input type="text" id="itemPrice" class="form-control"></div>
                     </div>
-                    <input type="text" id="itemImg" class="form-control" placeholder="رابط الصورة" style="margin-top:10px;">
-                    <textarea id="itemDesc" class="form-control" placeholder="الوصف" style="margin-top:10px;"></textarea>
+                    <div class="form-group" style="margin-top:10px;"><label>رابط الصورة</label><input type="text" id="itemImg" class="form-control"></div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+                        <div class="form-group"><label>الوصف (عربي)</label><textarea id="itemDesc" class="form-control" rows="3"></textarea></div>
+                        <div class="form-group"><label>الوصف (English)</label><textarea id="itemDescEn" class="form-control" rows="3"></textarea></div>
+                    </div>
                 </form>
             </div>
-            <div class="modal-footer"><button class="btn-primary" onclick="saveItem()">حفظ</button></div>
+            <div class="modal-footer"><button class="btn-primary" onclick="saveItem()">حفظ البيانات</button></div>
         </div>
     </div>
 
@@ -109,7 +111,6 @@
                         </select>
                         <input type="number" id="catOrder" class="form-control" placeholder="الترتيب (رقم)">
                     </div>
-                    <input type="text" id="catIcon" class="form-control" placeholder="أيقونة (fa-solid fa-bowl-food)" style="margin-top:10px;">
                 </form>
             </div>
             <div class="modal-footer"><button class="btn-primary" onclick="saveCategory()">حفظ القسم</button></div>
