@@ -31,7 +31,14 @@
         .logo-wrap img {
             filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
         }
-        body { direction: ltr; font-weight: 700; }
+        body { direction: ltr; font-weight: 700; background: #0a0a0a; }
+        
+        /* الثبات التام للصور ومنع القفز */
+        .card-img {
+            aspect-ratio: 1 / 1 !important;
+            transform: translateZ(0);
+            background-color: #2a0a0a !important;
+        }
         
         /* تعديلات النوافذ المنبثقة لتناسب الاتجاه من اليسار لليمين */
         .modal-price-badge { margin-left: auto; margin-right: 0; }
