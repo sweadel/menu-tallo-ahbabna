@@ -1,35 +1,29 @@
 <!DOCTYPE html>
 <!-- 
   ==========================================================================
-  PROJECT: Tallo Ahbabna - Digital Menu
-  FILE: menu-en.html (English Version)
-  DESCRIPTION: The dynamic menu page (English). Renders items and categories
-               real-time from Firebase. Supports search and category filtering.
-  VERSION: 3.0 (Cleaned & Dynamic)
+  المشروع: طلوا حبابنا - المنيو الرقمي
+  الملف: menu-en.html (النسخة الإنجليزية)
+  الوصف: صفحة عرض المنيو باللغة الإنجليزية، تجلب البيانات لحظياً من Firebase.
   ==========================================================================
 -->
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr"> <!-- dir="ltr" لتعمل الصفحة من اليسار لليمين -->
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tallo Ahbabna | Digital Menu</title>
     
-    <!-- Fonts: Premium English Selection -->
+    <!-- استيراد الخطوط المناسبة للغة الإنجليزية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap">
     
-    <!-- Core CSS & Icons -->
+    <!-- استيراد ملفات التنسيق والأيقونات -->
     <link rel="stylesheet" href="css/menu-final-v1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* 
-        --------------------------------------------------------------------------
-        DESIGN OVERRIDES (Base styles, others managed via Admin)
-        --------------------------------------------------------------------------
-        */
+        /* إعدادات تصميم خاصة بالنسخة الإنجليزية */
         .arch-overlay {
             background-image: url('images/header-arch-final.png') !important;
             display: block !important;
@@ -38,16 +32,15 @@
             filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
         }
         body { direction: ltr; font-weight: 700; }
-        .sec-title::after { background: linear-gradient(to right, transparent, rgba(197, 160, 34, .25)); }
         
-        /* Modal tweaks for LTR */
+        /* تعديلات النوافذ المنبثقة لتناسب الاتجاه من اليسار لليمين */
         .modal-price-badge { margin-left: auto; margin-right: 0; }
         .back-btn { right: auto; left: 18px; }
     </style>
 </head>
 
 <body>
-    <!-- 1. Promo Banner -->
+    <!-- 1. شريط الإعلانات (يظهر إذا تم تفعيله من لوحة التحكم) -->
     <div id="promo-banner" class="promo-banner" style="display: none;">
         <div class="promo-content">
             <i class="fa-solid fa-bullhorn"></i>
@@ -55,12 +48,12 @@
         </div>
     </div>
 
-    <!-- 2. Sticky/Collapsing Header -->
+    <!-- 2. رأس الصفحة (Header) الذي يتقلص عند التمرير -->
     <header id="mainHeader">
         <div class="hdr-top">
             <div class="arch-overlay"></div>
             
-            <!-- Back Button -->
+            <!-- زر العودة للصفحة الرئيسية -->
             <a href="index.html" class="back-btn" title="Back">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
@@ -69,7 +62,7 @@
                 <img src="images/tallo-logo.png" alt="Logo">
             </div>
 
-            <!-- Main Tab Pills -->
+            <!-- أزرار الأقسام الرئيسية (Tabs) -->
             <div class="nav-row" id="mainTabRow">
                 <a href="javascript:void(0)" class="pill active" onclick="setTab('arabic', this)">Arabic Menu</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('intl', this)">International</a>
@@ -78,7 +71,7 @@
                 <a href="javascript:void(0)" class="pill" onclick="setTab('argileh', this)">Argileh</a>
             </div>
 
-            <!-- Global Search Box -->
+            <!-- صندوق البحث العام في المنيو -->
             <div class="search-row">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass" style="color: var(--gold); font-size: 1rem;"></i>
@@ -89,7 +82,7 @@
 
     </header>
     
-    <!-- HDR BOTTOM: Category Shortcuts -->
+    <!-- الأقسام الفرعية (تظهر تحت القسم الرئيسي المختار) -->
     <div class="hdr-bottom">
         <div class="sub-nav" id="arabicNav"></div>
         <div class="sub-nav" style="display:none" id="intlNav"></div>
@@ -98,8 +91,9 @@
         <div class="sub-nav" style="display:none" id="argilehNav"></div>
     </div>
 
-    <!-- 3. Dynamic Content Container -->
+    <!-- 3. حاوية المحتوى الديناميكي (الوجبات والأصناف) -->
     <div class="container">
+        <!-- قسم المأكولات العربية -->
         <section id="arabic" class="active">
             <div class="section-hero">
                 <div class="hero-text">
@@ -107,7 +101,7 @@
                     <div class="hero-sub">🍳 Breakfast · 🥙 Traditional · 🍖 Grills · & More ✨</div>
                 </div>
             </div>
-            <!-- Skeletons -->
+            <!-- تأثير التحميل (Skeletons) يظهر حتى تنتهي البيانات من الوصول -->
             <div id="skeletons-en" class="menu-grid">
                 <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-price"></div></div>
                 <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-price"></div></div>
@@ -116,6 +110,7 @@
             </div>
         </section>
 
+        <!-- الأقسام الأخرى (تظهر وتختفي حسب الاختيار) -->
         <section id="intl" style="display:none;">
             <div class="section-hero">
                 <div class="hero-text">
@@ -153,7 +148,7 @@
         </section>
     </div>
 
-    <!-- 4. Quick Contact/Social Bar (Floating Premium) -->
+    <!-- 4. شريط التواصل الاجتماعي (عائم في الأسفل) -->
     <div class="social-bar">
         <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" target="_blank" class="s-link">
             <i class="fa-solid fa-location-dot"></i>
@@ -173,7 +168,7 @@
         </a>
     </div>
 
-    <!-- 5. Dish Detail Modal -->
+    <!-- 5. نافذة تفاصيل الوجبة (تظهر عند النقر على صنف) -->
     <div class="modal-overlay" id="dishModal" onclick="closeModal(event)">
         <div class="modal-sheet" role="dialog" aria-modal="true">
             <button class="modal-close" onclick="closeDishModal()" aria-label="Close">&times;</button>
@@ -190,13 +185,14 @@
         </div>
     </div>
 
-    <!-- 6. Scripts -->
+    <!-- 6. الأكواد البرمجية (JavaScript) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
         var currentTab = 'arabic';
 
+        // وظيفة التبديل بين الأقسام الرئيسية
         function setTab(tabId, btn) {
             currentTab = tabId;
             document.querySelectorAll('#mainTabRow .pill').forEach(b => b.classList.remove('active'));
@@ -221,6 +217,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // وظيفة البحث اللحظي في أسماء الوجبات (الإنجليزية)
         function filterMenu() {
             var srchEl = document.getElementById('srch');
             if (!srchEl) return;
@@ -238,6 +235,7 @@
             }
         }
 
+        // فتح نافذة التفاصيل وتعبئة بيانات الوجبة
         function openDishModal(card) {
             var name = card.dataset.t || '';
             var price = card.querySelector('.card-price') ? card.querySelector('.card-price').textContent : '';
@@ -264,6 +262,7 @@
             if (e.target === document.getElementById('dishModal')) closeDishModal();
         }
 
+        // تهيئة Firebase لجلب البيانات
         const _fbCfg = {
             apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
             authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -279,6 +278,7 @@
         let _menuItems = null;
         let _categoriesMeta = null;
 
+        // بناء "بطاقة" الوجبة ديناميكياً
         function buildCard(item) {
             const card = document.createElement('a');
             card.className = 'menu-card';
@@ -299,10 +299,10 @@
             return card;
         }
 
+        // الوظيفة الرئيسية لعرض المنيو بالكامل بناءً على الأقسام والوجبات
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta) return;
 
-            // Hide Skeletons
             const skel = document.getElementById('skeletons-en');
             if (skel) skel.style.display = 'none';
 
@@ -336,10 +336,6 @@
                     btn.className = 'cat-btn';
                     btn.textContent = cat.nameEn || cat.nameAr;
                     if(cat.icon) btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ` + btn.innerHTML;
-                    btn.addEventListener('click', function() {
-                        navEl.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                    });
                     navEl.appendChild(btn);
 
                     const h2 = document.createElement('h2');
@@ -359,22 +355,14 @@
             });
         }
 
+        // بدء الاستماع للتغييرات في قاعدة البيانات
         function initListeners() {
             db.ref('menu_items').on('value', snap => { _menuItems = snap.val(); renderFullMenu(); });
             db.ref('categories_meta').on('value', snap => { _categoriesMeta = snap.val(); renderFullMenu(); });
         }
         initListeners();
 
-        window.addEventListener('load', () => {
-            var hash = window.location.hash.replace('#', '');
-            if (hash === 'intl') setTab('intl', document.querySelectorAll('.pill')[1]);
-            else if (hash === 'drinks') setTab('drinks', document.querySelectorAll('.pill')[3]);
-            else if (hash === 'argileh') setTab('argileh', document.querySelectorAll('.pill')[4]);
-        });
-
-        /**
-         * 7. COLLAPSING HEADER LOGIC
-         */
+        // منطق الرأس المتقلص (Shrinking Header)
         function handleScroll() {
             const header = document.getElementById('mainHeader');
             if (!header) return;
@@ -388,7 +376,9 @@
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('load', handleScroll);
     </script>
-    <!-- <script src="js/design-sync.js"></script> -->
+    <!-- تسجيل خدمة العمل بدون إنترنت (Service Worker) -->
     <script src="sw-register.js" onerror="console.log('SW fallback')"></script>
+</body>
+</html>
 </body>
 </html>

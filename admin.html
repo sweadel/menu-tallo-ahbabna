@@ -4,34 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طلوا حبابنا | لوحة إدارة المنيو</title>
+    
+    <!-- تحميل الخطوط والأيقونات للوحة الإدارة -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
-/* ══════════════ DESIGN SYSTEM ══════════════ */
+/* ══════════════ نظام التصميم (Design System) ══════════════ 
+   هنا نقوم بتعريف الألوان الثابتة للوحة الإدارة لضمان تناسقها.
+*/
 :root {
-    --gold:       #C8A84B;
+    --gold:       #C8A84B; /* اللون الذهبي الخاص بالإدارة */
     --gold-glow:  rgba(200,168,75,0.15);
     --gold-mid:   rgba(200,168,75,0.4);
-    --bg-0:       #0B0B0E;
-    --bg-1:       #111117;
-    --bg-2:       #18181F;
+    --bg-0:       #0B0B0E; /* أغمق درجة خلفية */
+    --bg-1:       #111117; /* درجة الخلفية للألواح (Panels) */
+    --bg-2:       #18181F; /* درجة الخلفية للعناصر التفاعلية */
     --bg-3:       #22222D;
-    --border:     rgba(255,255,255,0.07);
+    --border:     rgba(255,255,255,0.07); /* لون الحدود الشفاف */
     --border-g:   rgba(200,168,75,0.25);
-    --text:       #F0EEE8;
-    --text-2:     #9996A0;
+    --text:       #F0EEE8; /* اللون الأساسي للنصوص */
+    --text-2:     #9996A0; /* اللون الثانوي للنصوص */
     --text-3:     #5C5A66;
-    --green:      #2ECC71;
-    --red:        #E74C3C;
-    --blue:       #3498DB;
-    --radius:     14px;
-    --radius-sm:  8px;
-    --sidebar-w:  260px;
-    --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+    --green:      #2ECC71; /* لون النجاح (حفظ، تفعيل) */
+    --red:        #E74C3C; /* لون التنبيه (حذف، خطأ) */
+    --blue:       #3498DB; /* لون المعلومات */
+    --radius:     14px;    /* انحناء الزوايا الكبير */
+    --radius-sm:  8px;     /* انحناء الزوايا الصغير */
+    --sidebar-w:  260px;   /* عرض القائمة الجانبية */
+    --transition: 0.2s cubic-bezier(0.4,0,0.2,1); /* سرعة الحركات */
 }
 
+/* تنسيقات عامة للجسم والصفحة */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
 html, body {
@@ -39,15 +45,17 @@ html, body {
     font-family: 'IBM Plex Sans Arabic', sans-serif;
     background: var(--bg-0);
     color: var(--text);
-    overflow: hidden;
+    overflow: hidden; /* منع التمرير العام لأننا نستخدم نظام الألواح */
 }
 
-/* ── SCROLLBAR ── */
+/* ── تخصيص شكل شريط التمرير (Scrollbar) ليناسب التصميم المظلم ── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 10px; }
 
-/* ══════════════ LAYOUT ══════════════ */
+/* ══════════════ توزيع العناصر (Layout) ══════════════ 
+   نستخدم نظام Grid لتقسيم الشاشة إلى (قائمة جانبية) و (محتوى رئيسي).
+*/
 .shell {
     display: grid;
     grid-template-columns: var(--sidebar-w) 1fr;
@@ -55,43 +63,29 @@ html, body {
     overflow: hidden;
 }
 
-/* ══════════════ MOBILE RESPONSIVE ══════════════ */
+/* ══════════════ استجابة الموبايل (Responsive) ══════════════ 
+   هذه الإعدادات تعمل فقط عندما يتم فتح لوحة الإدارة من هاتف.
+*/
 @media (max-width: 991px) {
-    :root { --sidebar-w: 0px; }
+    :root { --sidebar-w: 0px; } /* إخفاء القائمة الجانبية افتراضياً */
     .shell { grid-template-columns: 1fr; }
     .sidebar { 
         position: fixed; right: 0; top: 0; bottom: 0; 
-        width: 260px; transform: translateX(100%); 
+        width: 260px; transform: translateX(100%); /* سحب القائمة لليمين خارج الشاشة */
         transition: transform var(--transition);
         z-index: 1000;
         box-shadow: -20px 0 50px rgba(0,0,0,0.5);
-        border-right: 1px solid var(--border);
     }
-    .sidebar.open { transform: translateX(0); }
+    .sidebar.open { transform: translateX(0); } /* إظهارها عند النقر على زر المنيو */
     .sidebar-overlay { 
         position: fixed; inset: 0; background: rgba(0,0,0,0.6); 
         backdrop-filter: blur(4px); z-index: 999; 
         opacity: 0; pointer-events: none; transition: opacity 0.3s;
     }
     .sidebar-overlay.active { opacity: 1; pointer-events: all; }
-    .main { width: 100%; }
-    .topbar { padding: 0 15px !important; }
-    .topbar-search { display: none !important; }
-    .menu-grid { grid-template-columns: 1fr !important; }
-    .stats-grid { grid-template-columns: 1fr !important; }
-    .filters-bar { flex-direction: column; align-items: stretch; gap: 12px; }
-    .views { padding: 16px !important; }
-    .page-hdr { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .page-hdr-right { width: 100%; gap: 8px; }
-    .page-hdr-right .btn { flex: 1; justify-content: center; }
-    .form-row, .form-row.thirds { grid-template-columns: 1fr !important; }
 }
 
-@media (min-width: 992px) {
-    #mobile-toggle { display: none; }
-}
-
-/* ══════════════ SIDEBAR ══════════════ */
+/* ══════════════ القائمة الجانبية (Sidebar) ══════════════ */
 .sidebar {
     background: var(--bg-1);
     border-left: 1px solid var(--border);
@@ -101,6 +95,7 @@ html, body {
     z-index: 200;
 }
 
+/* شعار المطعم واسم لوحة الإدارة في أعلى القائمة */
 .sb-brand {
     padding: 24px 20px;
     border-bottom: 1px solid var(--border);

@@ -1,255 +1,209 @@
 /* ╔══════════════════════════════════════════════════════════════════╗
- ║ css/menu.css — ملف التصميم الموحّد لصفحتي المنيو ║
- ║ Tallo Ahbabna — Shared Menu Stylesheet ║
- ║ ║
- ║ هذا الملف يُستخدم من ملفين: ║
- ║ • menu.html (النسخة العربية) ║
- ║ • menu-en.html (النسخة الإنجليزية) ║
- ║ ║
- ║ أي تعديل في التصميم يكفي هنا فقط — مرة واحدة للنسختين ║
- ╚══════════════════════════════════════════════════════════════════╝ */
+   ║ css/menu-final-v1.css — ملف التصميم التفصيلي للمنيو          ║
+   ║ هنا نتحكم في كل بكسل يراه الزبون (الألوان، الأحجام، المسافات)   ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
 
-/* ════════════════════════════════════════════════════════════════════
- 1. متغيرات التصميم — Design Tokens
- ════════════════════════════════════════════════════════════════════
- كل الألوان والقياسات المتكررة هنا.
- لتغيير لون الذهبي مثلاً: غيّر --gold فقط ويتطبق في كل المكان.
- ════════════════════════════════════════════════════════════════════ */
 :root {
-  /* ── الألوان الأساسية ── */
-  --gold: #FFD700;
-  /* ذهبي ملكي ساطع */
-  --gold-light: #fff0a3;
-  /* ذهبي أفتح */
-  --gold-dim: rgba(255, 215, 0, .18);
-  /* ذهبي شفاف */
-  --gold-glow: rgba(255, 215, 0, .35);
+  /* ── تعريف "متغيرات" الألوان لسهولة التغيير مستقبلاً ── */
+  --gold: #FFD700;       /* لون الذهب الصافي - يستخدم للعناوين والأزرار الهامة */
+  --gold-light: #fff0a3; /* درجة أفتح من الذهبي - تستخدم لإعطاء لمعة خفيفة */
+  --gold-dim: rgba(255, 215, 0, .18); /* ذهبي شفاف جداً (18%) للخلفيات الرقيقة */
+  --gold-glow: rgba(255, 215, 0, .35); /* ذهبي نصف شفاف لإعطاء تأثير "التوهج" */
 
-  /* ── الخلفيات (العنابي الملكي) ── */
-  --bg: #1a0505;
-  /* عنابي داكن جداً */
-  --surface: #2d0b0b;
-  /* أسطح البطاقات */
-  --card: rgba(45, 11, 11, 0.6);
-  /* بطاقات شبه شفافة */
-  --card-hover: rgba(65, 15, 15, 0.8);
+  /* ── الألوان الأساسية للهوية (العنابي والأسود) ── */
+  --bg: #1a0505;      /* لون الخلفية الأساسية (عنابي ملكي داكن جداً) */
+  --surface: #2d0b0b;  /* لون أفتح قليلاً للأسطح المرتفعة عن الأرضية */
+  --card: rgba(45, 11, 11, 0.6); /* لون البطاقات مع شفافية 60% ليظهر ما خلفها */
+  --card-hover: rgba(65, 15, 15, 0.8); /* لون البطاقة عند مرور الماوس (يصبح أغمق) */
 
-  /* ── نصوص ── */
-  --text: #ffffff;
-  --text-dim: #d1c1c1;
+  /* ── النصوص والحدود ── */
+  --text: #ffffff;    /* اللون الأبيض الناصع للنصوص الأساسية */
+  --text-dim: #d1c1c1; /* أبيض مائل للعنابي (باهت) للنصوص الثانوية */
+  --border: rgba(255, 215, 0, .25); /* حدود ذهبية شفافة جداً (25%) */
 
-  /* ── حدود وفواصل ── */
-  --border: rgba(255, 215, 0, .25);
+  /* ── ألوان التمييز (الجديد والحار) ── */
+  --badge-hot: #e63946;  /* الأحمر للوجبات الحارة */
+  --badge-star: #ffb703; /* البرتقالي للوجبات المميزة */
+  --badge-new: #2a9d8f;  /* الأخضر للوجبات الجديدة */
 
-  /* ── ألوان الشارات ── */
-  --badge-hot: #e63946;
-  --badge-star: #ffb703;
-  --badge-new: #2a9d8f;
-
-  /* ── Skeleton Colors ── */
+  /* ── ألوان التحميل المؤقت (Skeleton) ── */
   --skeleton: #3d1414;
   --skeleton-highlight: #4d1a1a;
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   Custom Scrollbar
-   ════════════════════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-
-
-/* ════════════════════════════════════════════════════════════════════
- 2. إعادة الضبط والأساس — Reset & Base
- ════════════════════════════════════════════════════════════════════ */
-*,
-*::before,
-*::after,
-input,
-button,
-textarea,
-select {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ── تخصيص شريط التمرير (Scrollbar) على الجانب ── */
+::-webkit-scrollbar { 
+    width: 6px; /* عرض شريط التمرير (6 بكسل) */
+}
+::-webkit-scrollbar-track { 
+    background: var(--bg); /* خلفية مسار الشريط (نفس لون الموقع الداكن) */
+}
+::-webkit-scrollbar-thumb { 
+    background: var(--gold-dim); /* لون الجزء المتحرك (ذهبي خافت) */
+    border-radius: 10px; /* جعل زوايا الشريط دائرية */
+}
+::-webkit-scrollbar-thumb:hover { 
+    background: var(--gold); /* يتغير للذهبي الساطع عند لمسه بالماوس */
 }
 
-input,
-button,
-textarea,
-select {
-  font-family: inherit;
-  font-weight: 600;
+/* ── إعادة ضبط المتصفح (Reset) لضمان ظهور الموقع بنفس الشكل على كل الأجهزة ── */
+*, *::before, *::after {
+  margin: 0;        /* إلغاء أي مسافات خارجية تلقائية */
+  padding: 0;       /* إلغاء أي مسافات داخلية تلقائية */
+  box-sizing: border-box; /* حساب العرض والارتفاع شاملاً الحدود والمسافات */
 }
 
 html {
-  scroll-behavior: smooth;
-  /* تمرير ناعم عند النقر على الأقسام */
-  -webkit-text-size-adjust: 100%;
-  /* يمنع iOS من تكبير الخط تلقائياً */
+  scroll-behavior: smooth; /* جعل الصفحة تتحرك بنعومة عند الانتقال بين الأقسام */
+  -webkit-text-size-adjust: 100%; /* منع أجهزة الآيفون من تغيير حجم الخط تلقائياً */
 }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
-  padding-top: 0;
-  /* يتحدد بـ adjustBodyPadding() في JS */
-  padding-bottom: 76px;
-  /* مسافة للشريط السفلي (social bar) */
-  min-height: 100dvh;
-  /* dvh = dynamic viewport height (يدعم iPhone) */
-}
-
-/* ════════════════════════════════════════════════════════════════════
- 3. الهيدر الثابت — Fixed Header
- ════════════════════════════════════════════════════════════════════
- يثبت في أعلى الشاشة ويحتوي:
- • شريط الساد (خلفية نسيج)
- • اللوجو
- • التبويبات الرئيسية (pills)
- • مربع البحث
- • التبويبات الفرعية (sub-nav)
- ════════════════════════════════════════════════════════════════════ */
-/* ══ HEADER - Smart Collapsing Header ══
- الهيدر الذكي: يحتوي على قسمين:
- - .hdr-top    : اللوجو + التبويبات الرئيسية + البحث (يختفي عند الـ scroll)
- - .hdr-bottom : شريط الأقسام الفرعية (يبقى ثابتاً دائماً)
-*/
-header {
-  position: relative;
-  /* إزالة الـ sticky للسماح له بالاختفاء طبيعياً */
-  width: 100%;
-  z-index: 1000;
-  background: #000;
-}
-
-/* ── الجزء العلوي: الهيدر الملكي الفخم ── */
-.hdr-top {
-  position: relative;
-  width: 100%;
-  min-height: 420px;
-  background-color: #1a0505;
-  background-image: url('../images/header-sadu-final.png') !important;
-  background-size: 280px;
-  background-position: center top;
-  background-repeat: repeat;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 30px;
-  /* إزالة overflow hidden للسماح بالعناصر بالتحرك بسلاسة */
-  z-index: 10;
-  transition: transform 0.3s ease-out;
-  /* حركة تدريجية خفيفة */
-}
-
-/* طبقة التعتيم لضمان تباين النصوص مع بقاء السدو واضحاً */
-.hdr-top::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom,
-      rgba(0, 0, 0, 0.15) 0%,
-      rgba(0, 0, 0, 0.0) 50%,
-      rgba(0, 0, 0, 0.45) 100%);
-  z-index: 1;
+  background: var(--bg); /* تعيين لون الخلفية العنابي الداكن */
+  color: var(--text);    /* تعيين لون الخط الأساسي (أبيض) */
+  font-family: 'IBM Plex Sans Arabic', sans-serif; /* نوع الخط العربي الفخم */
+  padding-bottom: 76px;  /* مسافة أمان في الأسفل (76 بكسل) لشريط التواصل الاجتماعي */
+  min-height: 100dvh;    /* أقل ارتفاع للجسم هو كامل ارتفاع الشاشة (dvh للأجهزة الحديثة) */
 }
 
 /* ══════════════════════════════════════════════
+   3. الرأس (Header) - واجهة الموقع العلوية
+   ══════════════════════════════════════════════ */
+header {
+  position: relative; /* ليكون مرجعاً للعناصر التي بداخله */
+  width: 100%;        /* عرض كامل الشاشة */
+  z-index: 1000;      /* ليكون فوق جميع العناصر الأخرى */
+  background: #000;   /* خلفية سوداء احتياطية */
+}
+
+/* .hdr-top: الجزء الذي يحتوي على اللوجو وخلفية السدو */
+.hdr-top {
+  position: relative; 
+  width: 100%; 
+  min-height: 420px; /* الارتفاع الافتراضي للهيدر (420 بكسل) ليظهر فخامة اللوجو */
+  background-color: #1a0505; 
+  background-image: url('../images/header-sadu-final.png') !important; /* صورة السدو */
+  background-size: 280px; /* حجم نقشة السدو (280 بكسل) */
+  background-position: center top; /* وضع النقشة في المنتصف من الأعلى */
+  background-repeat: repeat; /* تكرار النقشة لتملأ المساحة */
+  display: flex; /* نظام توزيع مرن للعناصر */
+  flex-direction: column; /* ترتيب العناصر بشكل عمودي */
+  align-items: center; /* وضع العناصر في منتصف العرض */
+  justify-content: flex-end; /* دفع العناصر لأسفل الهيدر */
+  padding-bottom: 30px; /* مسافة 30 بكسل من الأسفل */
+  z-index: 10; 
+  transition: transform 0.3s ease-out; /* حركة سلسة عند التغيير (0.3 ثانية) */
+}
+
+/* طبقة تعتيم (Overlay) فوق السدو ليظهر اللوجو والكلمات بوضوح */
+.hdr-top::before {
+  content: ''; /* عنصر وهمي ضروري للرسم */
+  position: absolute; 
+  inset: 0; /* يملأ كامل مساحة الهيدر من الأركان الأربعة */
+  background: linear-gradient(to bottom, 
+      rgba(0, 0, 0, 0.15) 0%,   /* شفافية بسيطة في الأعلى */
+      rgba(0, 0, 0, 0.0) 50%,   /* شفافية كاملة في المنتصف */
+      rgba(0, 0, 0, 0.45) 100%); /* تعتيم في الأسفل (45%) لبروز الأزرار */
+  z-index: 1; 
+}
+
 /* ══════════════════════════════════════════════
    القوس الإسلامي الذهبي الفخم (النسخة النهائية الشفافة تماماً)
    ══════════════════════════════════════════════ */
+/* القوس الإسلامي الذهبي الفخم في الخلفية */
 .arch-overlay {
   display: block;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 450px;
-  height: 100%;
-  background-image: url('../images/header-arch-final.png') !important;
-  background-size: contain;
-  background-position: bottom center;
-  background-repeat: no-repeat;
-  z-index: 1;
-  /* جعل القوس في الخلفية */
-  filter: drop-shadow(0 0 25px rgba(0, 0, 0, 0.5));
+  position: absolute; /* وضع حر للتحكم في مكانه بدقة */
+  bottom: 0;           /* ملتصق بأسفل الهيدر */
+  left: 50%;          /* وضعه في منتصف العرض */
+  transform: translateX(-50%); /* إزاحة لنصف عرضه ليكون في المنتصف تماماً */
+  width: 100%;        /* يأخذ كامل العرض المتاح */
+  max-width: 450px;   /* لا يتجاوز عرضه 450 بكسل ليحافظ على شكله */
+  height: 100%;       /* يأخذ كامل ارتفاع الهيدر */
+  background-image: url('../images/header-arch-final.png') !important; /* صورة القوس */
+  background-size: contain; /* جعل الصورة تتناسب مع المساحة دون قصها */
+  background-position: bottom center; /* تثبيت قاعدة القوس في الأسفل */
+  background-repeat: no-repeat; /* عدم تكرار الصورة */
+  z-index: 1;         /* خلف اللوجو وأمام خلفية السدو */
+  filter: drop-shadow(0 0 25px rgba(0, 0, 0, 0.5)); /* ظل ناعم تحت القوس لإبرازه */
 }
 
+/* زر العودة (السهم) في أعلى الصفحة */
 .back-btn {
   position: absolute;
-  top: 20px;
-  inset-inline-start: 20px;
-  /* Adapts to LTR/RTL automatically */
-  z-index: 20;
-  display: flex;
+  top: 20px;          /* يبعد 20 بكسل عن الحافة العلوية */
+  inset-inline-start: 20px; /* يبعد 20 بكسل عن الجانب (يدعم العربية والإنجليزي) */
+  z-index: 20;        /* فوق جميع طبقات الهيدر لسهولة الضغط */
+  display: flex;      /* لتوسيط السهم بداخله */
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: rgba(10, 10, 10, 0.65);
-  backdrop-filter: blur(10px);
+  width: 44px;        /* عرض الزر 44 بكسل (حجم مريح للأصابع) */
+  height: 44px;       /* ارتفاع الزر 44 بكسل */
+  background: rgba(10, 10, 10, 0.65); /* خلفية سوداء شفافة (تأثير زجاجي) */
+  backdrop-filter: blur(10px); /* تعتيم (غباش) ما خلف الزر لبروزه */
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(197, 160, 34, 0.25);
-  border-radius: 50%;
-  color: var(--gold);
-  font-size: 1.15rem;
+  border: 1px solid rgba(197, 160, 34, 0.25); /* حدود ذهبية رقيقة جداً */
+  border-radius: 50%; /* جعل الزر دائرياً تماماً */
+  color: var(--gold); /* لون السهم ذهبي */
+  font-size: 1.15rem; /* حجم السهم */
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* حركة ناعمة عند اللمس */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* ظل تحت الزر لإعطاء عمق */
 }
 
+/* تأثير عند تمرير الماوس أو لمس زر العودة */
 .back-btn:hover {
-  background: rgba(197, 160, 34, 0.15);
-  border-color: rgba(197, 160, 34, 0.5);
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(197, 160, 34, 0.2);
+  background: rgba(197, 160, 34, 0.15); /* تفتيح الخلفية قليلاً بلمسة ذهبية */
+  border-color: rgba(197, 160, 34, 0.5); /* زيادة سطوع الحدود */
+  color: #fff; /* تغيير لون السهم للأبيض عند الوقوف عليه */
+  transform: translateY(-2px); /* رفعة بسيطة للأعلى (2 بكسل) */
+  box-shadow: 0 6px 20px rgba(197, 160, 34, 0.2); /* زيادة قوة الظل */
 }
 
+/* حاوية شعار المطعم (Logo Wrapper) */
 .logo-wrap {
   position: absolute;
-  top: 45px; /* Fixed top instead of % to prevent jumping */
+  top: 45px;          /* يبعد 45 بكسل عن أعلى الصفحة (ثابت لضمان عدم القفز) */
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%); /* توسيط اللوجو في منتصف العرض تماماً */
   z-index: 10;
-  pointer-events: none;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  /* Radiant glow for the logo */
+  pointer-events: none; /* جعل اللوجو غير قابل للضغط لعدم إعاقة التنقل */
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* حركة انسيابية جداً عند تصغير اللوجو (نصف ثانية) */
+  /* هالة توهج دائرية خلف اللوجو لبروزه من الخلفية الداكنة */
   background: radial-gradient(circle, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0) 80%);
-  padding: 40px;
+  padding: 40px;      /* مسافة حول اللوجو تسمح بانتشار التوهج الخلفي */
   border-radius: 50%;
 }
 
 .logo-wrap img {
-  height: 160px; /* Increased default size */
-  width: auto;
+  height: 160px;      /* الارتفاع الافتراضي للشعار (160 بكسل - حجم كبير وفخم) */
+  width: auto;        /* العرض يتحدد تلقائياً للحفاظ على الأبعاد */
+  /* ظل قوي وتوهج ذهبي خفيف حول أطراف الشعار نفسه */
   filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.95)) 
           drop-shadow(0 0 15px rgba(229, 196, 103, 0.4));
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Shrunk State (Applied via JS on Scroll) ── */
+/* ── حالة الهيدر المتقلص (Applied via JS on Scroll) ──
+   هذا الكود يتم تفعيله برمجياً عندما ينزل الزبون لأسفل الصفحة
+*/
 header.shrunk .hdr-top {
-  min-height: 160px !important;
-  transform: translateY(-80px);
+  min-height: 160px !important; /* تقليل ارتفاع الهيدر من 420 بكسل إلى 160 بكسل فقط */
+  transform: translateY(-80px); /* رفع الهيدر للأعلى بمقدار 80 بكسل لإخفاء جزء منه */
 }
 
 header.shrunk .logo-wrap {
-  top: 105px;
-  transform: translateX(-50%) scale(0.5);
-  opacity: 0.8;
-  padding: 10px;
+  top: 105px;          /* تغيير مكان اللوجو ليتوسط الهيدر الجديد الصغير */
+  transform: translateX(-50%) scale(0.5); /* تصغير حجم اللوجو بنسبة 50% (نصف الحجم) */
+  opacity: 0.8;        /* جعل اللوجو شفافاً قليلاً (80%) ليكون أقل تشتيتاً */
+  padding: 10px;      /* تقليل الهالة حوله */
 }
 
+/* إخفاء الأزرار والبحث تماماً في حالة الهيدر الصغير لترك مساحة للمنيو */
 header.shrunk .nav-row {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(20px);
+  opacity: 0;         /* شفافية كاملة (اختفاء) */
+  pointer-events: none; /* تعطيل أي ضغطات عليه وهو مخفي */
+  transform: translateY(20px); /* حركة نزول بسيطة قبل الاختفاء التام */
 }
 
 header.shrunk .search-row {
@@ -258,227 +212,224 @@ header.shrunk .search-row {
   transform: translateY(20px);
 }
 
+/* أنيميشن توهج اللوجو (Glow Animation) ليعطي إحساساً بالحياة */
 @keyframes logoGlow {
   from { filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 15px rgba(229, 196, 103, 0.4)); }
   to { filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 1)) drop-shadow(0 0 25px rgba(229, 196, 103, 0.7)); }
 }
 
 
-/* أزرار الأقسام الرئيسية */
+/* أزرار الأقسام الرئيسية (عربي، عالمي، مشروبات...) */
 .nav-row {
   position: absolute;
-  bottom: 105px;
-  /* تم تعديله لضمان عدم قص الأطراف */
+  bottom: 105px;       /* مكانها فوق شريط البحث بمسافة كافية */
   left: 0;
   right: 0;
-  display: flex;
-  justify-content: flex-start;
-  gap: 10px;
-  padding: 12px 10px;
-  /* إضافة padding علوي وسفلي لمنع قص الظلال والحدود */
+  display: flex;      /* توزيع الأزرار بجانب بعضها بشكل مرن */
+  justify-content: flex-start; /* تبدأ الأزرار من جهة اليمين (في العربية) */
+  gap: 10px;          /* مسافة 10 بكسل بين كل زر والآخر */
+  padding: 12px 10px; /* مسافة داخلية للأزرار من الجوانب (10 بكسل) ومن الأعلى والأسفل (12 بكسل) */
   z-index: 15;
-  overflow-x: auto;
-  overflow-y: visible;
-  /* السماح ببروز العناصر للأعلى */
-  scrollbar-width: none;
+  overflow-x: auto;   /* السماح بالتمرير الجانبي إذا كانت الأقسام كثيرة وتتخطى عرض الشاشة */
+  overflow-y: visible; /* السماح ببروز ظل الأزرار للأعلى والأسفل */
+  scrollbar-width: none; /* إخفاء شريط التمرير الافتراضي لشكل أنظف */
   -ms-overflow-style: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-row::-webkit-scrollbar {
-  display: none;
+  display: none;      /* إخفاء شريط التمرير في متصفحات كروم وسفاري */
 }
 
-.pill:first-child {
-  margin-inline-start: 0;
-}
-
-.pill:last-child {
-  margin-inline-end: 0;
-}
-
+/* الأزرار الفردية (Pills) */
 .pill {
-  flex: 0 0 auto;
-  padding: 10px 24px;
-  background: rgba(20, 20, 20, 0.6);
-  color: rgba(255, 255, 255, 0.8);
-  border-radius: 14px;
+  flex: 0 0 auto;     /* منع الأزرار من التمدد أو التقلص، تحافظ على حجم محتواها */
+  padding: 10px 24px; /* مسافة داخلية: 10 بكسل فوق وتحت، و 24 بكسل يمين ويسار */
+  background: rgba(20, 20, 20, 0.6); /* خلفية سوداء شفافة بنسبة 60% */
+  color: rgba(255, 255, 255, 0.8); /* لون النص أبيض شفاف قليلاً */
+  border-radius: 14px; /* زوايا منحنية بمقدار 14 بكسل */
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.9rem;  /* حجم الخط (0.9 من الحجم الافتراضي) */
+  font-weight: 700;   /* سمك الخط (عريض) */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  backdrop-filter: blur(15px);
+  white-space: nowrap; /* منع انقسام النص لسطرين */
+  backdrop-filter: blur(15px); /* تأثير غباش فخم خلف الزر */
   -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08); /* حدود دقيقة جداً لبروز الزر */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* ظل خفيف تحت الزر */
 }
 
+/* تأثير عند تمرير الماوس فوق القسم */
 .pill:hover {
-  background: rgba(197, 160, 34, 0.1);
-  border-color: rgba(197, 160, 34, 0.4);
-  color: #fff;
-  transform: translateY(-1px);
+  background: rgba(197, 160, 34, 0.1); /* لمسة ذهبية خفيفة في الخلفية */
+  border-color: rgba(197, 160, 34, 0.4); /* زيادة سطوع الحدود الذهبية */
+  color: #fff;        /* جعل النص أبيض ناصع */
+  transform: translateY(-1px); /* رفعة بسيطة جداً (1 بكسل) */
 }
 
+/* حالة القسم المختار حالياً (Active) */
 .pill.active {
+  /* خلفية متدرجة من الذهبي الفاتح للذهبي الغامق */
   background: linear-gradient(135deg, var(--gold), #b38d1d) !important;
-  color: #000 !important;
-  box-shadow: 0 8px 25px rgba(197, 160, 34, 0.4);
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.3);
-  font-weight: 800;
+  color: #000 !important; /* لون الخط أسود فوق الذهبي ليكون واضحاً جداً */
+  box-shadow: 0 8px 25px rgba(197, 160, 34, 0.4); /* توهج ذهبي تحت الزر المختار */
+  transform: translateY(-2px); /* رفعة للأعلى 2 بكسل لتمييزه */
+  border-color: rgba(255, 255, 255, 0.3); /* حدود فاتحة لبروزه */
+  font-weight: 800;   /* زيادة سمك الخط */
 }
 
-/* شريط البحث */
+/* شريط البحث الفخم */
 .search-row {
-  width: 100%;
-  display: flex;
+  width: 100%;        /* عرض كامل الحاوية */
+  display: flex;      /* توزيع مرن لتوسيط مربع البحث */
   justify-content: center;
-  padding: 0 20px;
+  padding: 0 20px;    /* مسافة 20 بكسل من اليمين واليسار */
   z-index: 20;
   position: absolute;
-  bottom: 35px;
-  /* رفعه للأعلى ليتناسب مع التبويبات */
+  bottom: 35px;       /* يقع في أسفل الهيدر (فوق النهاية بـ 35 بكسل) */
   left: 0;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-box {
-  width: 100%;
-  max-width: 450px;
-  background: rgba(10, 5, 5, 0.7);
-  border: 1px solid rgba(229, 196, 103, 0.4);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  padding: 0 18px;
-  gap: 12px;
-  backdrop-filter: blur(20px);
+  width: 100%;        /* يأخذ العرض المتاح كاملاً */
+  max-width: 450px;   /* لا يتجاوز عرضه 450 بكسل ليحافظ على أناقته */
+  background: rgba(10, 5, 5, 0.7); /* خلفية داكنة جداً وشفافة (70%) */
+  border: 1px solid rgba(229, 196, 103, 0.4); /* حدود ذهبية خافتة */
+  border-radius: 16px; /* زوايا منحنية (16 بكسل) */
+  display: flex;      /* ترتيب الأيقونة والمدخل بجانب بعضهما */
+  align-items: center; /* توسيط عمودي */
+  padding: 0 18px;    /* مسافة داخلية من اليمين واليسار */
+  gap: 12px;          /* مسافة 12 بكسل بين الأيقونة ومكان الكتابة */
+  backdrop-filter: blur(20px); /* تعتيم زجاجي قوي جداً خلف مربع البحث */
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* ظل عميق لإعطاء إحساس بالبروز */
   transition: all 0.3s ease;
 }
 
+/* تأثير عند الضغط داخل مربع البحث للكتابة */
 .search-box:focus-within {
-  border-color: var(--gold);
-  box-shadow: 0 0 20px rgba(229, 196, 103, 0.25);
-  transform: translateY(-2px);
+  border-color: var(--gold); /* يتغير لون الحدود للذهبي الساطع */
+  box-shadow: 0 0 20px rgba(229, 196, 103, 0.25); /* توهج ذهبي خفيف حول المربع */
+  transform: translateY(-2px); /* رفعة بسيطة للأعلى (2 بكسل) */
 }
 
 .search-box input {
-  background: none;
-  border: none;
-  outline: none;
-  color: #fff;
-  font-size: 0.95rem;
-  height: 54px;
-  width: 100%;
-  font-weight: 500;
+  background: none;   /* إزالة أي خلفية افتراضية */
+  border: none;       /* إزالة أي حدود افتراضية */
+  outline: none;      /* إزالة إطار التحديد الأزرق الافتراضي للمتصفح */
+  color: #fff;        /* لون خط الكتابة (أبيض) */
+  font-size: 0.95rem; /* حجم الخط */
+  height: 54px;       /* ارتفاع منطقة الكتابة (54 بكسل) */
+  width: 100%;        /* تأخذ باقي العرض المتاح في المربع */
+  font-weight: 500;   /* سمك الخط */
 }
 
 .search-box input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5); /* لون نص "ابحث عن طبقك..." باهت */
 }
 
-/* ── الجزء السفلي: شريط الأقسام الفرعية ── */
+/* ── الجزء السفلي من الهيدر: شريط الأقسام الفرعية المثبت ── */
 .hdr-bottom {
-  background: rgba(10, 10, 10, 0.98);
-  /* خلفية داكنة جداً لدعم القراءة */
-  backdrop-filter: blur(15px);
+  background: rgba(10, 10, 10, 0.98); /* خلفية سوداء شبه كاملة (98%) لدعم الوضوح */
+  backdrop-filter: blur(15px); /* تعتيم زجاجي فخم */
   -webkit-backdrop-filter: blur(15px);
-  border-top: 1px solid rgba(197, 160, 34, 0.15);
-  border-bottom: 1px solid rgba(197, 160, 34, 0.15);
+  border-top: 1px solid rgba(197, 160, 34, 0.15); /* خط علوي ذهبي رقيق جداً */
+  border-bottom: 1px solid rgba(197, 160, 34, 0.15); /* خط سفلي ذهبي رقيق جداً */
 
-  /* تثبيت شريط الأقسام الفرعية في أعلى الشاشة */
+  /* الخاصية الأهم: تثبيت الشريط في أعلى الشاشة عند النزول لأسفل */
   position: sticky;
-  top: 0;
-  z-index: 1100;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  top: 0;             /* يلتصق بحافة الشاشة العلوية تماماً */
+  z-index: 1100;      /* ليكون فوق المنيو والبطاقات دائماً */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6); /* ظل تحت الشريط لتمييزه عن المنيو */
 }
 
+/* حاوية أزرار الأصناف (مثل: فطور، غداء، شوربات...) */
 .sub-nav {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  width: 100%;
+  display: flex;      /* ترتيب الأصناف بجانب بعضها */
+  gap: 12px;          /* تم زيادة المسافة بين الأزرار لراحة العين بعد تكبير حجمها (كانت 8) */
+  overflow-x: auto;   /* السماح بالتمرير الجانبي للأصناف */
+  width: 100%;        /* عرض كامل الشاشة */
   justify-content: flex-start;
-  padding: 12px 15px;
+  padding: 12px 15px; /* مسافة داخلية (12 بكسل فوق وتحت، 15 بكسل يمين ويسار) */
   z-index: 15;
   position: relative;
   margin-bottom: 0;
-  scroll-behavior: smooth;
+  scroll-behavior: smooth; /* تمرير ناعم عند الضغط على صنف */
 }
 
 .sub-nav::-webkit-scrollbar {
-  display: none;
+  display: none;      /* إخفاء شريط التمرير الافتراضي */
 }
 
+/* أزرار الأصناف الفرعية الفردية (Buttons) */
 .cat-btn {
-  flex: 0 0 auto;
-  padding: 8px 18px;
-  color: rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+  flex: 0 0 auto;     /* الحفاظ على حجم الزر حسب النص بداخله */
+  padding: 10px 24px; /* تم تكبير المسافة الداخلية لزيادة حجم الزر (كانت 8x18) */
+  color: rgba(255, 255, 255, 0.75); /* لون نص أبيض باهت */
+  background: rgba(255, 255, 255, 0.03); /* خلفية شفافة جداً (3%) */
+  border: 1px solid rgba(255, 255, 255, 0.08); /* حدود دقيقة جداً */
+  border-radius: 25px; /* تم زيادة الانحناء ليناسب الحجم الجديد */
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 0.98rem; /* تم تكبير الخط ليكون أوضح (كان 0.85) */
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px; /* زيادة بسيطة في تباعد الحروف للفخامة */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  display: flex;
+  white-space: nowrap; /* منع انقسام النص */
+  display: flex;      /* لترتيب الأيقونة (إن وجدت) مع النص */
   align-items: center;
   gap: 6px;
 }
 
+/* تأثير عند مرور الماوس فوق الصنف */
 .cat-btn:hover {
-  color: var(--gold);
-  background: rgba(197, 160, 34, 0.08);
+  color: var(--gold); /* يتغير الخط للذهبي */
+  background: rgba(197, 160, 34, 0.08); /* لمسة ذهبية خفيفة في الخلفية */
   border-color: rgba(197, 160, 34, 0.3);
-  transform: translateY(-1px);
+  transform: translateY(-1px); /* رفعة بسيطة */
 }
 
+/* حالة الصنف المختار حالياً (Active Category) */
 .cat-btn.active {
-  color: #000;
-  background: linear-gradient(135deg, var(--gold), #d4af37);
+  color: #000;        /* لون الخط أسود ليكون واضحاً فوق التدرج الذهبي */
+  background: linear-gradient(135deg, var(--gold), #d4af37); /* تدرج ذهبي فخم */
   border-color: var(--gold);
-  box-shadow: 0 4px 10px rgba(197, 160, 34, 0.3);
-  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(197, 160, 34, 0.3); /* توهج تحت الصنف المختار */
+  font-weight: 700;   /* سمك خط أكبر */
 }
 
-/* تم إزالة الهيدر المصغر المعقد للحفاظ على نظافة التصميم */
 
 /* ════════════════════════════════════════════════════════════════════
  4. حاوية المحتوى — Content Container
  ════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════════
+   4. حاوية المحتوى (Container) — المسؤولة عن عرض المنيو بانتظام
+   ════════════════════════════════════════════════════════════════════ */
 .container {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 12px 12px;
+  max-width: 960px;   /* أقصى عرض للمحتوى هو 960 بكسل لسهولة القراءة */
+  margin: 0 auto;     /* توسيط الحاوية في منتصف الشاشة */
+  padding: 0 12px 12px; /* مسافة 12 بكسل من الجوانب والأسفل لمنع التصاق العناصر بالحواف */
 }
 
-/* القسم يبقى مخفياً حتى يصير active */
+/* كل "قسم" (section) يكون مخفياً افتراضياً ويظهر فقط عند اختياره */
 section {
   display: none;
 }
 
 section.active {
-  display: block;
-  animation: fadeIn .22s ease;
-  /* حركة دخول ناعمة */
+  display: block;     /* يظهر القسم المختار */
+  animation: fadeIn .22s ease; /* حركة دخول (Fade In) سريعة وناعمة (0.22 ثانية) */
 }
 
-/* حركة الدخول عند تبديل التبويب */
+/* حركة دخول القسم من الأسفل للأعلى مع زيادة الشفافية */
 @keyframes fadeIn {
   from {
-    opacity: 0;
-    transform: translateY(6px);
+    opacity: 0;       /* يبدأ مخفياً تماماً */
+    transform: translateY(6px); /* يبدأ أسفل مكانه بـ 6 بكسل */
   }
-
   to {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 1;       /* ينتهي ظاهراً تماماً */
+    transform: translateY(0); /* يعود لمكانه الأصلي */
   }
 }
 
@@ -488,18 +439,23 @@ section.active {
  يظهر في أعلى كل تبويب (مشروبات / عربي / عالمي)
  خلفيته نسيج الساد مع تعتيم
  ════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════════
+   5. بانر القسم (Section Hero) — يظهر في أعلى كل قسم (عربي/عالمي/..)
+   ════════════════════════════════════════════════════════════════════ */
 .section-hero {
-  padding: 35px 20px;
-  text-align: center;
+  padding: 35px 20px; /* مسافة داخلية كبيرة لإعطاء مساحة للنص (35 فوق وتحت، 20 يمين ويسار) */
+  text-align: center; /* توسيط النص في منتصف البانر */
+  /* خلفية متدرجة فخمة من العنابي الفاتح للداكن */
   background: linear-gradient(180deg, rgba(45, 11, 11, 0.95) 0%, rgba(26, 5, 5, 0.8) 100%);
   position: relative;
-  margin: 15px 0 25px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  margin: 15px 0 25px; /* مسافة خارج البانر (15 للأعلى و 25 للأسفل) */
+  border-radius: 20px; /* زوايا منحنية بمقدار 20 بكسل لشكل أكثر عصرية */
+  border: 1px solid var(--border); /* حدود ذهبية شفافة رقيقة */
+  overflow: hidden;   /* إخفاء أي تأثيرات تخرج عن حدود البانر */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* ظل عميق لإعطاء بروز للبانر */
 }
 
+/* تأثير توهج خلفي دائري داخل البانر لإعطائه حياة (عنصر تجميلي) */
 .section-hero::before {
   content: '';
   position: absolute;
@@ -512,18 +468,18 @@ section.active {
 }
 
 .hero-title {
-  font-size: 1.8rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-  color: var(--gold);
-  text-shadow: 0 0 20px rgba(197, 160, 34, 0.3);
+  font-size: 1.8rem;  /* حجم عنوان البانر (كبير وواضح) */
+  font-weight: 900;   /* خط سميك جداً (Bold) */
+  text-transform: uppercase; /* جعل الحروف الإنجليزية كبيرة */
+  letter-spacing: 2px; /* مسافة 2 بكسل بين الحروف لزيادة الفخامة */
+  margin-bottom: 8px; /* مسافة 8 بكسل تحت العنوان الأساسي */
+  color: var(--gold); /* لون العنوان ذهبي ملكي */
+  text-shadow: 0 0 20px rgba(197, 160, 34, 0.3); /* توهج ذهبي ناعم خلف النص */
 }
 
 .hero-sub {
-  font-size: 0.85rem;
-  opacity: .7;
+  font-size: 0.85rem; /* حجم النص الفرعي (أصغر من العنوان) */
+  opacity: .7;        /* شفافية 70% ليظهر بوضوح أقل من العنوان الأساسي */
   font-weight: 500;
   color: #fff;
   letter-spacing: 0.5px;
@@ -534,32 +490,36 @@ section.active {
  ════════════════════════════════════════════════════════════════════
  تحتوي: أيقونة + نص + خط ذهبي يمتد للجانب
  ════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════════
+   6. عناوين الأقسام (Section Titles) — مثل: المقبلات الساخنة
+   ════════════════════════════════════════════════════════════════════ */
 .sec-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 40px 0 20px;
-  color: var(--gold);
-  font-size: 1.25rem;
-  font-weight: 800;
-  padding: 0 4px;
-  text-shadow: 0 0 10px rgba(197, 160, 34, 0.2);
-  /* لمنع اختفاء العنوان خلف الشريط المثبت عند النقر على الأقسام */
-  scroll-margin-top: 100px;
+  display: flex;      /* ترتيب الأيقونة والنص والخط الذهبي بجانب بعضهم على خط واحد */
+  align-items: center; /* توسيط العناصر عمودياً ليكون النص محاذياً للأيقونة */
+  gap: 12px;          /* مسافة 12 بكسل كفراغ بين الأيقونة والكلمة والخط */
+  margin: 40px 0 20px; /* مسافة 40 بكسل فوق العنوان لتمييزه عن القسم السابق، و 20 بكسل تحته */
+  color: var(--gold); /* لون العنوان ذهبي ملكي */
+  font-size: 1.25rem; /* حجم خط العنوان (1.25 من الحجم العادي) */
+  font-weight: 800;   /* خط عريض (Bold) جداً لبروز العنوان */
+  padding: 0 4px;     /* مسافة داخلية بسيطة (4 بكسل) من الجوانب */
+  text-shadow: 0 0 10px rgba(197, 160, 34, 0.2); /* توهج ذهبي خفيف خلف العنوان */
+  /* لضمان عدم اختفاء العنوان خلف الشريط المثبت (Sticky) عند الضغط على اسم الصنف */
+  scroll-margin-top: 100px; 
 }
 
 .sec-title .sec-icon {
-  font-size: 1.4rem;
-  filter: drop-shadow(0 0 5px var(--gold));
+  font-size: 1.4rem;  /* حجم الأيقونة (أكبر قليلاً من النص لتكون بارزة) */
+  filter: drop-shadow(0 0 5px var(--gold)); /* توهج ذهبي حول الأيقونة */
 }
 
+/* الخط الذهبي الذي يمتد من يسار العنوان لنهاية المساحة المتاحة */
 .sec-title::after {
-  content: '';
-  height: 2px;
-  flex: 1;
-  background: linear-gradient(to right, var(--gold), transparent);
-  opacity: 0.3;
-  border-radius: 2px;
+  content: '';        /* عنصر وهمي للرسم */
+  height: 2px;        /* سمك الخط (2 بكسل) */
+  flex: 1;            /* يجعله يمتد ليملأ كامل العرض المتبقي في الصفحة */
+  background: linear-gradient(to right, var(--gold), transparent); /* تدرج لوني من الذهبي للاشيء */
+  opacity: 0.3;       /* شفافية 30% ليكون هادئاً ولا يشتت الزبون */
+  border-radius: 2px; /* جعل أطراف الخط منحنية */
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -567,12 +527,15 @@ section.active {
  ════════════════════════════════════════════════════════════════════
  3 أعمدة على الشاشات الكبيرة — 2 أعمدة على الموبايل
  ════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════════
+   7. شبكة البطاقات (Menu Grid) — المسؤولة عن ترتيب الوجبات بانتظام
+   ════════════════════════════════════════════════════════════════════ */
 .menu-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  /* 2 عمود للموبايل ليكون مطابقاً للصورة */
-  gap: 12px;
-  margin-bottom: 20px;
+  display: grid;      /* تفعيل نظام الشبكة (Grid) لتوزيع العناصر */
+  /* تقسيم المساحة لعمودين (2) متساويين تماماً (1fr لكل عمود) */
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 12px;          /* مسافة 12 بكسل كفراغ بين كل وجبة والوجبة المجاورة لها */
+  margin-bottom: 20px; /* مسافة 20 بكسل تحت الشبكة بالكامل قبل القسم التالي */
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -597,34 +560,36 @@ section.active {
  └─────────────────────────────────────────────────┘
  ════════════════════════════════════════════════════════════════════ */
 .menu-card {
-  background: var(--card);
-  backdrop-filter: blur(12px);
+  background: var(--card); /* خلفية زجاجية شفافة بنسبة 60% ليظهر ما خلفها */
+  backdrop-filter: blur(12px); /* تأثير الغباش الفخم خلف البطاقة بمقدار 12 بكسل */
   -webkit-backdrop-filter: blur(12px);
-  border-radius: 24px;
-  overflow: hidden;
-  display: flex;
+  border-radius: 24px; /* زوايا منحنية (24 بكسل) تعطي مظهراً ناعماً وفخماً */
+  overflow: hidden;   /* لإخفاء أي أجزاء من الصورة تخرج عن حدود الزوايا المنحنية */
+  display: flex;      /* ترتيب العناصر داخل البطاقة (صورة، اسم، سعر) عمودياً */
   flex-direction: column;
-  text-decoration: none;
-  color: inherit;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  position: relative;
-  transform: translateZ(0);
-  will-change: transform;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  text-decoration: none; /* إزالة الخط تحت النص لأن البطاقة تعمل كزر */
+  color: inherit;     /* جعل لون النص يتبع اللون العام للموقع */
+  border: 1px solid var(--border); /* حدود ذهبية خفيفة جداً تحدد شكل البطاقة */
+  cursor: pointer;    /* تغيير شكل الماوس ليد عند الوقوف على الوجبة */
+  position: relative; /* لتمكين وضع الشارات (مثل "جديد") فوق البطاقة بدقة */
+  transform: translateZ(0); /* تحسين سرعة العرض على الهواتف */
+  will-change: transform; /* إخبار المتصفح أن البطاقة ستتحرك لضمان سلاسة الأنيميشن */
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); /* حركة ناعمة جداً عند التفاعل (0.35 ثانية) */
+  -webkit-tap-highlight-color: transparent; /* إزالة الوميض الأزرق الافتراضي عند اللمس في الأندرويد */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* ظل ناعم تحت البطاقة لإعطاء عمق وبروز */
 }
 
+/* تأثير عند الوقوف بالماوس أو لمس الوجبة */
 .menu-card:hover {
-  border-color: var(--gold);
-  background: rgba(197, 160, 34, 0.05);
-  box-shadow: 0 10px 30px rgba(197, 160, 34, 0.15);
-  transform: translateY(-5px);
+  border-color: var(--gold); /* تبرز الحدود باللون الذهبي الساطع */
+  background: rgba(197, 160, 34, 0.05); /* لمسة ذهبية خفيفة جداً في الخلفية */
+  box-shadow: 0 10px 30px rgba(197, 160, 34, 0.15); /* زيادة قوة الظل مع توهج ذهبي */
+  transform: translateY(-5px); /* رفع البطاقة للأعلى بمقدار 5 بكسل (إحساس بالنشاط) */
 }
 
+/* تأثير ضغطة الزبون الفعلية على الوجبة */
 .menu-card:active {
-  transform: scale(.96);
+  transform: scale(.96); /* تصغير البطاقة قليلاً جداً (96% من حجمها) لتبدو كأنها زر حقيقي ينضغط */
 }
 
 /* ضغطة بصرية */
@@ -668,114 +633,117 @@ section.active {
  • نسبة 4:3 ثابتة — لا تتشوه الصور
  • إذا لا صورة: يظهر شعار المطعم كـ placeholder
 */
+/* ── منطقة الصورة (Card Image Container) ── */
 .card-img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background-color: var(--surface);
+  width: 100%;        /* تأخذ كامل عرض البطاقة */
+  aspect-ratio: 1 / 1; /* جعل المنطقة مربعة تماماً (الطول يساوي العرض) لانتظام الشكل */
+  background-color: var(--surface); /* لون خلفية يظهر قبل تحميل الصورة */
+  /* في حال عدم وجود صورة للوجبة، يظهر شعار المطعم كصورة افتراضية */
   background-image: url('../images/tallo-logo.png');
   background-position: center;
-  background-size: 44%;
+  background-size: 44%; /* حجم اللوجو الافتراضي في المنتصف */
   background-repeat: no-repeat;
-  overflow: hidden;
+  overflow: hidden;   /* منع أي أجزاء من الصورة من الخروج عن حدود البطاقة */
   position: relative;
-  flex-shrink: 0;
+  flex-shrink: 0;     /* منع الصورة من التقلص في حال كان النص طويلاً جداً */
   transition: background-size 0.3s ease;
 }
 
-/* When an actual dish image is present, fill the container */
+/* عندما يتم إضافة رابط صورة فعلية للوجبة (من لوحة التحكم) */
 .card-img[style*="background-image"] {
-  background-size: cover;
+  background-size: cover; /* جعل الصورة تغطي كامل المربع دون ترك أي فراغات */
 }
 
-/* تدرج شفاف أسفل الصورة لتحسين قراءة الأسماء */
+/* تدرج شفاف (Overlay) أسفل الصورة لضمان وضوح اسم الوجبة المكتوب تحتها */
 .card-img::after {
-  content: '';
+  content: '';        /* عنصر وهمي للرسم */
   position: absolute;
-  bottom: 0;
+  bottom: 0;           /* يبدأ من أسفل منطقة الصورة */
   left: 0;
   right: 0;
-  height: 38%;
-  background: linear-gradient(transparent, rgba(0, 0, 0, .6));
-  pointer-events: none;
+  height: 38%;        /* يغطي 38% من الجزء السفلي للصورة */
+  background: linear-gradient(transparent, rgba(0, 0, 0, .6)); /* تدرج من شفاف لأسود بنسبة 60% */
+  pointer-events: none; /* جعل الطبقة غير قابلة لللمس لكي لا تمنع الضغط على الصورة */
 }
 
-/* الصورة الفعلية — تملأ المنطقة بالكامل */
+/* صورة الوجبة الفعلية (img tag) */
 .card-img img {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  inset: 0;           /* تملأ كامل مساحة الحاوية المربعة */
+  width: 100%;        /* العرض 100% */
+  height: 100%;       /* الارتفاع 100% */
+  object-fit: cover;  /* الحفاظ على تناسق أبعاد الصورة مع قص الزوائد لتناسب المربع */
 }
 
 /* ── معلومات البطاقة ── */
+/* ── معلومات الوجبة (Card Body - اسم الوجبة والسعر) ── */
 .card-body {
-  padding: 10px 8px 12px;
-  display: flex;
+  padding: 10px 8px 12px; /* مسافة داخلية: 10 بكسل من الأعلى، 8 بكسل من الجوانب، و 12 بكسل من الأسفل */
+  display: flex;      /* ترتيب الاسم والسعر بجانب بعضهما (فوق بعض) */
   flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  text-align: center;
-  flex: 1;
+  align-items: center; /* توسيط النص في منتصف البطاقة تماماً */
+  gap: 5px;           /* مسافة 5 بكسل بين اسم الوجبة وسعرها لمنع الالتصاق */
+  text-align: center; /* توسيط خطوط النص */
+  flex: 1;            /* يجعله يأخذ المساحة المتبقية من البطاقة تحت الصورة */
 }
 
 .card-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.35;
+  font-size: 1rem;    /* حجم اسم الوجبة (حجم مثالي للموبايل) */
+  font-weight: 700;   /* خط سميك (Bold) لتمييز اسم الوجبة */
+  color: var(--text); /* لون الخط أبيض (اللون الأساسي المختار) */
+  line-height: 1.35;  /* تباعد الأسطر (1.35) لمنع تداخل الكلام إذا كان الاسم طويلاً */
 }
 
 .card-price {
-  font-size: .8rem;
-  font-weight: 800;
-  color: var(--gold);
-  letter-spacing: .02em;
+  font-size: .8rem;   /* حجم السعر (أصغر قليلاً من الاسم ليكون الاسم هو الأبرز) */
+  font-weight: 800;   /* خط سميك جداً للسعر لجذب الانتباه */
+  color: var(--gold); /* لون السعر ذهبي مميز ليسهل على الزبون معرفة التكلفة فوراً */
+  letter-spacing: .02em; /* مسافة بسيطة جداً (0.02) بين أرقام السعر لزيادة الأناقة */
 }
 
-/* ── Skeleton Animation ── */
+/* ── أنيميشن التحميل (Skeleton Animation) — تظهر أثناء جلب البيانات من الداتابيز ── */
 .skeleton {
-  background: var(--skeleton);
+  background: var(--skeleton); /* خلفية رمادية فاتحة جداً */
   position: relative;
-  overflow: hidden;
-  border-radius: 12px;
+  overflow: hidden;   /* لإخفاء حركة اللمعان التي تخرج عن الحدود */
+  border-radius: 12px; /* زوايا منحنية بسيطة */
 }
 
-.skeleton::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0,
-    rgba(255, 255, 255, 0.03) 20%,
-    rgba(255, 255, 255, 0.06) 60%,
-    rgba(255, 255, 255, 0)
-  );
-  animation: shimmer 1.5s infinite;
-}
-
+/* حركة اللمعان المتحرك (Shimmer) لإعطاء إحساس بالنشاط */
 @keyframes shimmer {
-  100% { transform: translateX(100%); }
+  100% { transform: translateX(100%); } /* تحريك اللمعان من اليسار لليمين بالكامل */
 }
 
+/* بطاقة التحميل الكاملة (تشبه بطاقة الوجبة الأصلية) */
 .skeleton-card {
-  height: 180px;
-  background: var(--card);
-  border-radius: 20px;
-  padding: 10px;
+  height: 180px;      /* ارتفاع البطاقة المؤقتة 180 بكسل */
+  background: var(--card); /* خلفية زجاجية مطابقة للمنيو */
+  border-radius: 20px; /* زوايا منحنية 20 بكسل */
+  padding: 10px;      /* مسافة داخلية */
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 10px;          /* مسافة 10 بكسل بين مربع الصورة ومربع النص */
 }
 
-.skeleton-img { height: 110px; border-radius: 15px; }
-.skeleton-text { height: 15px; width: 80%; margin: 5px auto; }
-.skeleton-price { height: 12px; width: 40%; margin: 0 auto; }
+/* مربع تحميل الصورة */
+.skeleton-img { 
+  height: 110px;      /* ارتفاع منطقة الصورة المؤقتة 110 بكسل */
+  border-radius: 15px; /* زوايا دائرية 15 بكسل */
+}
+
+/* خط تحميل اسم الوجبة */
+.skeleton-text { 
+  height: 15px;       /* سمك الخط 15 بكسل */
+  width: 80%;         /* طول الخط 80% من عرض البطاقة */
+  margin: 5px auto;   /* توسيط الخط */
+}
+
+/* خط تحميل السعر */
+.skeleton-price { 
+  height: 12px;       /* سمك الخط 12 بكسل (أنحف من الاسم) */
+  width: 40%;         /* طول الخط 40% (لأن السعر قصير) */
+  margin: 0 auto;     /* توسيط */
+}
 
 
 /* نقاط صغيرة تشير للضغط لمزيد من التفاصيل */
@@ -788,176 +756,177 @@ section.active {
 }
 
 /* ════════════════════════════════════════════════════════════════════
- 9. مودال تفاصيل الطبق — Dish Detail Modal (Bottom Sheet)
- ════════════════════════════════════════════════════════════════════
- يظهر من الأسفل لما تضغط على أي طبق.
- يملأ تلقائياً من data-ingredients و data-desc و data-price.
- ════════════════════════════════════════════════════════════════════ */
+   9. مودال تفاصيل الطبق — Dish Detail Modal (Bottom Sheet)
+   ════════════════════════════════════════════════════════════════════ */
+/* طبقة التعتيم الخلفية للمودال (Overlay) */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  background: rgba(0, 0, 0, .82);
+  position: fixed;    /* ثابتة وتغطي كامل الشاشة */
+  inset: 0;           /* من جميع الجهات (أعلى، أسفل، يمين، يسار) */
+  z-index: 2000;      /* فوق كل شيء آخر في الموقع */
+  background: rgba(0, 0, 0, .82); /* خلفية سوداء بنسبة 82% لتعتيم المنيو خلفها */
   display: flex;
-  align-items: flex-end;
-  opacity: 0;
-  pointer-events: none;
-  /* غير قابل للنقر حين مخفي */
-  transition: opacity .25s;
+  align-items: flex-end; /* وضع نافذة التفاصيل في أسفل الشاشة */
+  opacity: 0;         /* مخفية افتراضياً */
+  pointer-events: none; /* غير قابلة للضغط وهي مخفية */
+  transition: opacity .25s; /* حركة ظهور ناعمة خلال ربع ثانية */
 }
 
+/* عندما تكون نافذة التفاصيل مفتوحة */
 .modal-overlay.open {
-  opacity: 1;
-  pointer-events: all;
+  opacity: 1;         /* تظهر طبقة التعتيم */
+  pointer-events: all; /* تصبح قابلة للتفاعل والضغط */
 }
 
+/* نافذة التفاصيل البيضاء (Sheet) التي تخرج من الأسفل */
 .modal-sheet {
-  width: 100%;
-  max-width: 560px;
-  margin: 0 auto;
-  background: #161616;
-  border-radius: 24px 24px 0 0;
-  border: 1px solid rgba(197, 160, 34, .18);
-  border-bottom: none;
-  transform: translateY(100%);
-  /* مخفي تحت الشاشة */
+  width: 100%;        /* عرض كامل الشاشة للجوال */
+  max-width: 560px;   /* لا تتجاوز 560 بكسل على الشاشات الكبيرة لتظل أنيقة */
+  margin: 0 auto;     /* توسيط في منتصف العرض */
+  background: #161616; /* خلفية سوداء فخمة جداً */
+  border-radius: 24px 24px 0 0; /* زوايا منحنية من الأعلى فقط (24 بكسل) */
+  border: 1px solid rgba(197, 160, 34, .18); /* حدود ذهبية رقيقة جداً من الأعلى والجوانب */
+  border-bottom: none; /* إزالة الحدود من الأسفل لأنها ملتصقة بحافة الشاشة */
+  transform: translateY(100%); /* تبدأ من تحت الشاشة (مخفية) */
+  /* حركة الخروج للأعلى بانسيابية عالية (Spring effect) */
   transition: transform .32s cubic-bezier(.32, .72, 0, 1);
-  max-height: 92dvh;
+  max-height: 92dvh;  /* أقصى ارتفاع هو 92% من طول الشاشة (تترك مساحة بسيطة فوق) */
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: relative;
 }
 
-/* يرفعه للأعلى عند الفتح */
+/* رفع النافذة للأعلى لتظهر للزبون عند الفتح */
 .modal-overlay.open .modal-sheet {
-  transform: translateY(0);
+  transform: translateY(0); /* تعود لمكانها الطبيعي في أسفل الشاشة */
 }
 
-/* مقبض السحب (handle) */
+/* مقبض السحب الصغير في أعلى المودال (Handle) ليعرف الزبون أنه يمكن سحبه للأسفل لإغلاقه */
 .modal-handle {
-  width: 40px;
-  height: 4px;
-  background: rgba(255, 255, 255, .16);
+  width: 40px;        /* عرض المقبض 40 بكسل */
+  height: 4px;        /* سمكه 4 بكسل */
+  background: rgba(255, 255, 255, .16); /* لونه أبيض باهت جداً */
   border-radius: 2px;
-  margin: 10px auto 0;
+  margin: 10px auto 0; /* يبعد 10 بكسل عن الحافة العلوية ويتوسط العرض */
   flex-shrink: 0;
 }
 
-/* صورة الطبق داخل المودال */
+/* صورة الطبق الكبيرة داخل نافذة التفاصيل */
 .modal-img {
   width: 100%;
-  aspect-ratio: 4 / 3; /* Wider aspect ratio better for food photography */
-  background: #000;
+  aspect-ratio: 4 / 3; /* نسبة عرض 4 لارتفاع 3 (أعرض من المربع ليظهر جمال تصوير الطعام) */
+  background: #000;   /* خلفية سوداء */
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(197, 160, 34, 0.1);
+  border-bottom: 1px solid rgba(197, 160, 34, 0.1); /* خط ذهبي رقيق تحت الصورة */
 }
 
 .modal-actual-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Ensure the full image is visible without cropping */
+  width: 100%;        /* عرض كامل الحاوية */
+  height: 100%;       /* ارتفاع كامل الحاوية */
+  object-fit: contain; /* إظهار كامل الصورة بدون قص (ليرى الزبون كل تفاصيل الطبق) */
   display: block;
 }
 
-
-
-/* محتوى المودال */
+/* محتوى المودال (الاسم، المكونات، الوصف) */
 .modal-body {
-  padding: 18px 20px 32px;
-  overflow-y: auto;
-  flex: 1;
+  padding: 18px 20px 32px; /* مسافات داخلية مريحة للعين */
+  overflow-y: auto;   /* السماح بالتمرير داخل المودال إذا كان الوصف طويلاً */
+  flex: 1;            /* يمتد ليأخذ المساحة المتبقية */
 }
 
-/* صف الاسم + الشارة السعر */
+/* الصف العلوي (الاسم + السعر) */
 .modal-header-row {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: space-between; /* وضع الاسم على اليمين والسعر على اليسار */
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 18px; /* مسافة 18 بكسل تحت هذا الصف */
 }
 
 .modal-title {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.25;
-  flex: 1;
+  font-size: 1.3rem;  /* حجم عنوان الطبق (كبير وواضح) */
+  font-weight: 800;   /* خط عريض جداً */
+  color: var(--text); /* اللون الأبيض الأساسي */
+  line-height: 1.25;  /* تباعد أسطر ضيق قليلاً للأناقة */
+  flex: 1;            /* يأخذ المساحة المتاحة في السطر */
 }
 
+/* شارة السعر الذهبية الفخمة داخل المودال */
 .modal-price-badge {
+  /* تدرج لوني من الذهبي الساطع للداكن */
   background: linear-gradient(135deg, var(--gold), #8a6a00);
-  color: #000;
-  font-size: .86rem;
-  font-weight: 800;
-  padding: 6px 16px;
-  border-radius: 22px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  color: #000;        /* لون السعر أسود ليكون واضحاً جداً فوق الذهبي */
+  font-size: .86rem;  /* حجم خط السعر */
+  font-weight: 800;   /* خط سميك جداً */
+  padding: 6px 16px;  /* مسافة داخلية (مظهر الزر) */
+  border-radius: 22px; /* زوايا دائرية تماماً */
+  white-space: nowrap; /* منع انقسام السعر لسطرين */
+  flex-shrink: 0;     /* منع تصغير السعر إذا كان الاسم طويلاً */
 }
 
-/* تسمية القسم (المكونات / التفاصيل) */
+/* العناوين الجانبية (مثل: المكونات، التفاصيل) */
 .modal-label {
-  font-size: .7rem;
+  font-size: .7rem;   /* حجم خط صغير وأنيق */
   font-weight: 700;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: .1em;
+  color: var(--text-dim); /* لون رمادي باهت */
+  text-transform: uppercase; /* حروف إنجليزية كبيرة */
+  letter-spacing: .1em; /* مسافة بين الحروف */
   margin-bottom: 9px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+/* الخط الأفقي الرفيع بجانب العناوين الجانبية */
 .modal-label::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, .07);
+  background: rgba(255, 255, 255, .07); /* خط أبيض شفاف جداً */
 }
 
-/* المكونات كأزرار صغيرة */
+/* ترتيب المكونات (Pills) */
 .ingredients-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
+  flex-wrap: wrap;    /* السماح للمكونات بالنزول لسطر جديد إذا كانت كثيرة */
+  gap: 7px;           /* مسافة 7 بكسل بين كل مكون والآخر */
   margin-bottom: 18px;
 }
 
+/* زر المكون الفردي */
 .ing-pill {
-  background: rgba(255, 255, 255, .06);
-  border: 1px solid rgba(197, 160, 34, .2);
+  background: rgba(255, 255, 255, .06); /* خلفية رمادية شفافة جداً */
+  border: 1px solid rgba(197, 160, 34, .2); /* حدود ذهبية خفيفة جداً */
   color: var(--text);
   font-size: .78rem;
   font-family: inherit;
-  padding: 5px 14px;
+  padding: 5px 14px;  /* مسافة داخلية تجعلها كأنها كبسولة صغيرة */
   border-radius: 50px;
 }
 
-/* نص الوصف */
+/* نص وصف الطبق */
 .modal-desc {
-  font-size: .88rem;
-  color: var(--text-dim);
-  line-height: 1.85;
+  font-size: .88rem;  /* حجم الخط المناسب للقراءة المطولة */
+  color: var(--text-dim); /* لون رمادي فاتح مريح للعين */
+  line-height: 1.85;  /* تباعد أسطر كبير (1.85) لسهولة قراءة المكونات والوصف */
 }
 
-/* زر الإغلاق X */
+/* زر الإغلاق (X) في أعلى يمين المودال */
 .modal-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 34px;
-  height: 34px;
-  background: rgba(255, 255, 255, .12);
-  border: 1px solid rgba(255, 255, 255, .15);
-  border-radius: 50%;
-  color: #fff;
+  top: 14px;          /* يبعد 14 بكسل عن الأعلى */
+  right: 14px;        /* يبعد 14 بكسل عن اليمين */
+  width: 34px;        /* عرض الزر 34 بكسل */
+  height: 34px;       /* ارتفاع الزر 34 بكسل */
+  background: rgba(255, 255, 255, .12); /* خلفية شفافة */
+  border: 1px solid rgba(255, 255, 255, .15); /* حدود بيضاء رقيقة */
+  border-radius: 50%; /* دائري تماماً */
+  color: #fff;        /* لون حرف الـ X أبيض */
   font-size: 1.1rem;
   cursor: pointer;
   display: flex;
@@ -970,7 +939,7 @@ section.active {
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, .2); /* تفتيح الخلفية عند الوقوف عليه */
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -978,117 +947,123 @@ section.active {
  ════════════════════════════════════════════════════════════════════
  ثابت في أسفل الشاشة — يحتوي: الموقع، واتساب، إنستغرام، فيسبوك
  ════════════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════════
+   10. الشريط الاجتماعي السفلي — Bottom Social Bar
+   ════════════════════════════════════════════════════════════════════ */
+/* الشريط العائم في أسفل الشاشة */
 .social-bar {
-  position: fixed;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 40px);
-  max-width: 450px;
-  background: rgba(15, 15, 15, 0.85);
-  padding: 12px 10px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 1500;
-  border: 1px solid rgba(197, 160, 34, 0.25);
-  border-radius: 20px;
-  backdrop-filter: blur(20px) saturate(180%);
+  position: fixed;    /* ثابت في مكانه مهما نزل الزبون لأسفل الصفحة */
+  bottom: 18px;       /* يبعد 18 بكسل عن حافة الشاشة السفلية */
+  left: 50%;          /* توسيط في منتصف العرض */
+  transform: translateX(-50%); /* تعديل التوسيط ليكون دقيقاً */
+  width: calc(100% - 40px); /* عرضه كامل الشاشة ناقص 40 بكسل (20 يمين و 20 يسار) */
+  max-width: 450px;   /* لا يتجاوز عرضه 450 بكسل ليظل أنيقاً */
+  background: rgba(15, 15, 15, 0.85); /* خلفية سوداء شفافة (85%) */
+  padding: 12px 10px; /* مسافة داخلية (12 بكسل فوق وتحت، 10 يمين ويسار) */
+  display: flex;      /* توزيع الأيقونات بجانب بعضها */
+  justify-content: space-around; /* توزيع مسافات متساوية بين الأيقونات */
+  align-items: center; /* توسيط عمودي */
+  z-index: 1500;      /* فوق المنيو وتحت المودال */
+  border: 1px solid rgba(197, 160, 34, 0.25); /* حدود ذهبية رقيقة جداً */
+  border-radius: 20px; /* زوايا منحنية (20 بكسل) */
+  backdrop-filter: blur(20px) saturate(180%); /* تعتيم زجاجي قوي جداً مع زيادة تشبع الألوان */
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(197, 160, 34, 0.05);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(197, 160, 34, 0.05); /* ظل خارجي وتوهج داخلي خفيف */
 }
 
+/* روابط التواصل الفردية داخل الشريط */
 .s-link {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* الأيقونة فوق والنص تحتها */
   align-items: center;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.6); /* لون النص أبيض باهت */
+  font-size: 0.68rem;  /* حجم الخط (صغير وأنيق) */
   font-weight: 700;
-  gap: 5px;
+  gap: 5px;           /* مسافة 5 بكسل بين الأيقونة والنص */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  flex: 1;
+  flex: 1;            /* تمدد الروابط بالتساوي داخل الشريط */
 }
 
+/* أيقونات التواصل */
 .s-link i {
-  font-size: 1.25rem;
-  color: var(--gold);
+  font-size: 1.25rem;  /* حجم الأيقونة (كبير وواضح) */
+  color: var(--gold); /* لون الأيقونة ذهبي دائماً */
   transition: all 0.3s ease;
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3)); /* ظل صغير خلف الأيقونة لبروزها */
 }
 
+/* تأثير عند الوقوف على الرابط */
 .s-link:hover {
-  color: #fff;
+  color: #fff;        /* النص يصبح أبيض ناصع */
 }
 
 .s-link:hover i {
-  transform: translateY(-3px) scale(1.1);
-  color: #fff;
-  text-shadow: 0 0 10px var(--gold);
+  transform: translateY(-3px) scale(1.1); /* رفع الأيقونة للأعلى وتكبيرها قليلاً عند الوقوف عليها */
+  color: #fff;        /* الأيقونة تصبح بيضاء */
+  text-shadow: 0 0 10px var(--gold); /* توهج ذهبي خلف الأيقونة */
 }
 
-/* زر الرجوع للأعلى */
+/* ════════════════════════════════════════════════════════════════════
+   11. زر الرجوع للأعلى (Scroll to Top)
+   ════════════════════════════════════════════════════════════════════ */
 #scrollTop {
   position: fixed;
-  bottom: 70px;
-  left: 16px;
-  width: 40px;
-  height: 40px;
-  background: var(--gold);
+  bottom: 70px;       /* يقع فوق الشريط الاجتماعي بمسافة بسيطة */
+  left: 16px;         /* يقع في جهة اليسار (بالعربية) */
+  width: 40px;        /* عرض الزر 40 بكسل */
+  height: 40px;       /* ارتفاع الزر 40 بكسل */
+  background: var(--gold); /* لونه ذهبي ساطع */
   border: none;
-  border-radius: 50%;
-  display: none;
-  /* يظهر بالـ JS عند التمرير للأسفل */
+  border-radius: 50%; /* دائري تماماً */
+  display: none;      /* مخفي افتراضياً ويظهر بواسطة الجافاسكريبت عند النزول */
   justify-content: center;
   align-items: center;
   cursor: pointer;
   z-index: 999;
-  box-shadow: 0 4px 16px var(--gold-glow);
+  box-shadow: 0 4px 16px var(--gold-glow); /* توهج ذهبي حول الزر */
   transition: transform .2s;
 }
 
 #scrollTop:hover {
-  transform: translateY(-3px);
+  transform: translateY(-3px); /* رفعة بسيطة عند الوقوف عليه */
 }
 
-
-
 /* ════════════════════════════════════════════════════════════════════
- 12. استجابة الموبايل — Responsive Mobile
- ════════════════════════════════════════════════════════════════════
- الشاشات < 600px → عمودان بدل ثلاثة للبطاقات
- ════════════════════════════════════════════════════════════════════ */
+   12. استجابة الموبايل (Responsive Mobile) — أهم جزء للجوال
+   ════════════════════════════════════════════════════════════════════ */
 @media (max-width: 600px) {
+  /* عندما يكون عرض الشاشة أصغر من 600 بكسل (أغلب الجوالات) */
+  
   .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr); /* ضمان وجود عمودين وجبات دائماً */
+    gap: 8px;          /* تقليل المسافة بين الوجبات لـ 8 بكسل لتوفير مساحة */
   }
 
   .card-name {
-    font-size: 1rem;
-    padding: 0 4px;
+    font-size: 1rem;    /* الحفاظ على حجم الخط 1 بكسل لسهولة القراءة */
+    padding: 0 4px;     /* مسافة بسيطة من الجوانب */
   }
 
   .card-price {
-    font-size: .85rem;
+    font-size: .85rem;  /* حجم السعر */
     margin-top: 2px;
   }
 
   .sec-title {
-    font-size: 1.05rem;
+    font-size: 1.05rem; /* تصغير عناوين الأقسام قليلاً لتناسب عرض الجوال */
   }
 
   .hero-title {
-    font-size: 1.2rem;
+    font-size: 1.2rem;  /* تصغير عنوان البانر لكي لا يأخذ مساحة كبيرة */
   }
 
   .modal-title {
-    font-size: 1.15rem;
+    font-size: 1.15rem; /* تصغير عنوان الوجبة داخل المودال */
   }
 
   .pill {
-    padding: 8px 16px;
-    font-size: .84rem;
+    padding: 8px 16px;  /* تقليل المسافة داخل أزرار الأقسام الرئيسية لتناسب العرض الصغير */
+    font-size: .84rem;  /* تصغير حجم خط الأقسام */
   }
-}
+}

@@ -3,24 +3,29 @@
  * طلوا حبابنا | Tallo Ahbabna
  */
 
-// ══════════════ 0. SECURITY ══════════════
+// ══════════════ 0. نظام الأمان (SECURITY) ══════════════
+// التحقق مما إذا كان المستخدم قد قام بتسجيل الدخول بنجاح.
+// إذا لم يكن مسجلاً، يتم تحويله تلقائياً لصفحة الدخول.
 if (localStorage.getItem('admin_auth') !== 'true') {
     window.location.href = 'login.html';
 }
 
+// وظيفة تسجيل الخروج: مسح بيانات الجلسة والعودة لصفحة الدخول.
 function logout() {
     localStorage.removeItem('admin_auth');
     localStorage.removeItem('admin_user');
     window.location.href = 'login.html';
 }
 
+// عند تحميل الصفحة، نقوم بعرض اسم المستخدم الحالي في القائمة.
 document.addEventListener('DOMContentLoaded', () => {
     const user = localStorage.getItem('admin_user') || 'المدير العام';
     const el = document.getElementById('current-user-display');
     if (el) el.textContent = user;
 });
 
-// ══════════════ 1. FIREBASE ══════════════
+// ══════════════ 1. الاتصال بـ FIREBASE ══════════════
+// هنا نضع "مفاتيح الاتصال" بقاعدة بيانات جوجل (Firebase).
 const firebaseConfig = {
     apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
     authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -30,85 +35,80 @@ const firebaseConfig = {
     appId: "1:1025966646494:web:f89373fad63d988f298e4f",
     databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
 };
+
+// بدء تشغيل Firebase إذا لم يكن يعمل بالفعل.
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// مراجع قاعدة البيانات (طرق الوصول لكل جدول بيانات).
 const REFS = {
-    menu:       db.ref('menu_items'),
-    deleted:    db.ref('deleted_items'),
-    categories: db.ref('categories_meta'),
-    logs:       db.ref('audit_logs'),
-    users:      db.ref('users'),
-    design:     db.ref('settings/design'),
-    home:       db.ref('settings/home'),
-    feedback:   db.ref('feedback'),
+    menu:       db.ref('menu_items'),       // جدول الوجبات
+    deleted:    db.ref('deleted_items'),    // سلة المحذوفات
+    categories: db.ref('categories_meta'),  // الأقسام (لحوم، مقبلات...)
+    logs:       db.ref('audit_logs'),       // سجل العمليات (من فعل ماذا؟)
+    users:      db.ref('users'),            // حسابات المدراء
+    design:     db.ref('settings/design'),  // إعدادات التصميم (ألوان، خطوط)
+    home:       db.ref('settings/home'),    // إعدادات الصفحة الرئيسية
+    feedback:   db.ref('feedback'),         // تقييمات الزبائن
 };
 
-// ══════════════ 2. STATE ══════════════
+// ══════════════ 2. حالة النظام (STATE) ══════════════
+// متغيرات مؤقتة لتخزين البيانات أثناء استخدام لوحة الإدارة.
 let menuItems     = [];
 let categoryItems = [];
-let editingKey    = null;
+let editingKey    = null; // لتخزين كود الوجبة التي نقوم بتعديلها حالياً
 let editingCatKey = null;
 let editingUserKey = null;
-let viewMode      = 'table';
+let viewMode      = 'table'; // نمط العرض الافتراضي (جدول)
 let catFilter     = 'all';
-let isSavingDesign = false;
-let isSavingHome   = false;
-let lastDesignSavedAt = 0;
-let lastHomeSavedAt   = 0;
 
-const FONTS = [
-    'Zain', 'Tajawal', 'Cairo', 'Almarai', 'IBM Plex Sans Arabic', 
-    'Roboto', 'Inter', 'Outfit', 'Montserrat'
-];
-
-// ══════════════ 3. NAVIGATION ══════════════
-document.querySelectorAll('[data-view]').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        navigateTo(this.getAttribute('data-view'));
-    });
-});
-
+// ══════════════ 3. التنقل (NAVIGATION) ══════════════
+// وظائف للتبديل بين الشاشات (مثلاً من الإحصائيات إلى قائمة الوجبات).
 function navigateTo(viewId) {
+    // إزالة الحالة "نشط" من كل الروابط والشاشات أولاً
     document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
     document.querySelectorAll(`[data-view="${viewId}"]`).forEach(b => b.classList.add('active'));
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    
+    // إظهار الشاشة المطلوبة
     const target = document.getElementById(viewId);
     if (target) target.classList.add('active');
+    
+    // إغلاق القائمة الجانبية في الموبايل بعد النقر
     document.getElementById('sidebar')?.classList.remove('open');
     document.getElementById('sidebar-overlay')?.classList.remove('active');
 }
 
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    if (sidebar) sidebar.classList.toggle('open');
-    if (overlay) overlay.classList.toggle('active');
-}
-
-// ══════════════ 4. MENU LISTENER ══════════════
+// ══════════════ 4. مراقب الوجبات (MENU LISTENER) ══════════════
+// هذا الكود "يراقب" قاعدة البيانات؛ أي تغيير في الوجبات سيظهر هنا فوراً بدون تحديث الصفحة.
 REFS.menu.on('value', snapshot => {
     const data = snapshot.val();
     menuItems = [];
     if (data) {
+        // تحويل البيانات من نظام Firebase إلى قائمة (Array) سهلة الاستخدام
         Object.entries(data).forEach(([key, val]) => menuItems.push({ firebaseKey: key, ...val }));
+        
+        // ترتيب الوجبات: المميزة (Featured) تظهر أولاً، ثم ترتيب أبجدي
         menuItems.sort((a, b) => {
             if (a.featured && !b.featured) return -1;
             if (!a.featured && b.featured) return 1;
             return (a.name || '').localeCompare(b.name || '', 'ar');
         });
     }
-    renderTable();
-    renderGrid();
-    updateStats();
-    updateBadge();
+    
+    // تحديث الواجهات بكل البيانات الجديدة
+    renderTable();  // تحديث الجدول
+    renderGrid();   // تحديث عرض البطاقات
+    updateStats();  // تحديث الأرقام في الإحصائيات
+    updateBadge();  // تحديث العداد الصغير بجانب كلمة "المنيو"
 }, err => {
     showToast('خطأ في الاتصال بقاعدة البيانات', 'error');
     console.error(err);
 });
 
 // ══════════════ 4.1 FEEDBACK & USER LIVE STATS ══════════════
+// ══════════════ 4. مراقب الإحصائيات (STATS LISTENERS) ══════════════
+// مراقبة جدول "التقييمات" وتحديث العداد في لوحة التحكم فور وصول تقييم جديد.
 REFS.feedback.on('value', snapshot => {
     const count = snapshot.val() ? Object.keys(snapshot.val()).length : 0;
     const el = document.getElementById('stat-feedback');
@@ -117,13 +117,15 @@ REFS.feedback.on('value', snapshot => {
     if (badge) badge.textContent = count;
 });
 
+// مراقبة جدول "المستخدمين" (المدراء) لعرض عددهم وتحديث القائمة.
 REFS.users.on('value', snapshot => {
     const count = snapshot.val() ? Object.keys(snapshot.val()).length : 0;
     const el = document.getElementById('stat-users');
     if (el) el.textContent = count;
-    renderUserGrid(snapshot.val());
+    renderUserGrid(snapshot.val()); // تحديث واجهة عرض حسابات المدراء
 });
 
+// وظيفة بناء بطاقات المستخدمين (الحسابات التي تملك صلاحية الدخول للوحة).
 function renderUserGrid(data) {
     const grid = document.getElementById('users-grid');
     if (!grid) return;
@@ -155,7 +157,8 @@ function renderUserGrid(data) {
     });
 }
 
-// ══════════════ 5. CATEGORIES LISTENER ══════════════
+// ══════════════ 5. مراقب الأقسام (CATEGORIES LISTENER) ══════════════
+// هنا يتم جلب الأقسام (مثل: المشاوي، المقبلات) وترتيبها حسب الرقم التسلسلي.
 REFS.categories.on('value', snapshot => {
     const data = snapshot.val();
     categoryItems = [];
@@ -163,14 +166,15 @@ REFS.categories.on('value', snapshot => {
         Object.entries(data).forEach(([key, val]) => categoryItems.push({ id: key, ...val }));
         categoryItems.sort((a, b) => (a.order || 0) - (b.order || 0));
     }
-    rebuildCategorySelects();
-    renderCategoryGrid();
-    renderTable();
+    rebuildCategorySelects(); // تحديث قوائم الاختيار (Dropdowns) في النوافذ
+    renderCategoryGrid();     // تحديث واجهة عرض الأقسام
+    renderTable();            // إعادة بناء الجدول ليعكس أسماء الأقسام الجديدة
     renderGrid();
     document.getElementById('stat-cats').textContent = categoryItems.length;
 });
 
-// ══════════════ 6. DELETED ITEMS LISTENER ══════════════
+// ══════════════ 6. سلة المحذوفات (DELETED ITEMS LISTENER) ══════════════
+// مراقبة العناصر المحذوفة للسماح للمدير باستعادتها أو حذفها نهائياً.
 REFS.deleted.on('value', snapshot => {
     const data  = snapshot.val();
     const grid  = document.getElementById('deleted-items-grid');
@@ -211,15 +215,17 @@ REFS.deleted.on('value', snapshot => {
     });
 });
 
-// ══════════════ 7. DESIGN SETTINGS LISTENER ══════════════
+// ══════════════ 7. محرك التصميم (DESIGN ENGINE) ══════════════
+// هذا الجزء هو "المسؤول" عن مظهر الموقع. أي تغيير هنا يغير ألوان وخطوط المنيو للزبائن فوراً.
 REFS.design.on('value', snapshot => {
-    if (isSavingDesign) return; 
+    if (isSavingDesign) return; // حماية: لا نقرأ البيانات من السيرفر أثناء قيامنا بعملية حفظ
     const d = snapshot.val();
     if (!d) return;
 
-    // Timestamp Lock: Ignore updates older than our last save
+    // قفل الطابع الزمني: تجاهل التحديثات إذا كانت أقدم من آخر عملية حفظ قمنا بها
     if (d.updatedAt && d.updatedAt < lastDesignSavedAt) return;
     
+    // وظائف مساعدة لتعبئة الخانات (input fields) بالقيم الحالية
     const sv = (id, val) => {
         const el = document.getElementById(id);
         if (el && val !== undefined) {
@@ -232,7 +238,7 @@ REFS.design.on('value', snapshot => {
         if (el) el.checked = val === true;
     };
 
-    // 1. Colors
+    // 1. الألوان (Colors)
     const primary = d.primaryColor || '#E5C467';
     sv('d_primaryColor', primary);
     sv('d_primaryColorText', primary);
@@ -249,18 +255,18 @@ REFS.design.on('value', snapshot => {
     sv('d_cardBg', cardBg);
     sv('d_cardBgText', cardBg);
 
-    // 2. Typography
+    // 2. الخطوط ونمط العرض
     sv('d_fontFamily', d.fontFamily || 'IBM Plex Sans Arabic');
     sc('d_fontBold', d.fontBold !== false);
     sv('d_cardStyle', d.cardStyle || 'modern');
 
-    // 3. Header
+    // 3. الهوية البصرية (Logo & Header)
     sv('d_logoUrl', d.logoUrl || 'images/tallo-logo.png');
     sv('d_logoHeight', d.logoHeight || 145);
     sv('d_headerBg', d.headerBg || 'images/header-sadu-final.png');
     sv('d_headerOpacity', d.headerOpacity || 0.15);
 
-    // 4. Tabs & Search
+    // 4. مسميات الأقسام
     sv('d_labelArabic', d.labelArabic || 'المنيو العربي');
     sv('d_labelIntl', d.labelIntl || 'الانترناشونال');
     sv('d_labelDesserts', d.labelDesserts || 'الحلويات');
@@ -269,12 +275,12 @@ REFS.design.on('value', snapshot => {
     sc('d_showSearch', d.showSearch !== false);
     sv('pill_textColor', d.pillTextColor || '#8a8580');
 
-    // 5. Promo Banner
+    // 5. شريط الإعلانات المتجول
     sc('d_bannerActive', d.bannerActive === true);
     sv('d_bannerText', d.bannerText || '');
 });
 
-// ── Live Preview Engine ──
+// وظيفة المعاينة الحية: تظهر للمدير كيف سيبدو الموقع قبل أن يضغط "حفظ".
 function previewDesign() {
     const d = {
         primaryColor: document.getElementById('d_primaryColor')?.value,
@@ -289,91 +295,38 @@ function previewDesign() {
 
     const box = document.getElementById('design-preview-box');
     const logoImg = document.getElementById('preview-logo');
-    const pills = [document.getElementById('preview-pill-active'), document.getElementById('preview-pill-dim')];
-
+    
     if (!box) return;
 
-    // Apply font
+    // تطبيق الخط المختار فوراً على صندوق المعاينة
     if (d.fontFamily) {
-        let link = document.getElementById('ds-preview-font');
-        if (!link) {
-            link = document.createElement('link'); link.id = 'ds-preview-font'; link.rel = 'stylesheet';
-            document.head.appendChild(link);
-        }
-        link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(d.fontFamily)}:wght@400;700;800&display=swap`;
         box.style.fontFamily = `'${d.fontFamily}', sans-serif`;
     }
     box.style.fontWeight = d.fontBold ? '800' : '600';
 
-    // Apply colors
+    // تطبيق الألوان
     if (d.primaryColor) {
         document.documentElement.style.setProperty('--gold', d.primaryColor);
     }
-    if (d.pillActiveBg && pills[0]) {
-        pills[0].style.background = d.pillActiveBg;
-    }
 
-    // Apply background
+    // تطبيق الخلفية
     if (d.pageBgImage) {
         box.style.backgroundImage = `url('${d.pageBgImage}')`;
-        box.style.backgroundSize = d.pageBgSize || 'cover';
     } else {
         box.style.backgroundImage = 'none';
         box.style.background = d.pageBg || 'var(--bg-1)';
     }
 
-    // Apply logo
+    // تحديث الشعار في المعاينة
     if (logoImg && d.logoUrl) logoImg.src = d.logoUrl;
 }
 
-// Add live listeners
-document.addEventListener('DOMContentLoaded', () => {
-    const ids = ['d_primaryColor', 'd_fontFamily', 'd_fontBold', 'd_pageBg', 'd_pageBgImage', 'd_pageBgSize', 'd_logoUrl', 'hdr_logoUrl', 'pill_activeBg'];
-    ids.forEach(id => {
-        document.getElementById(id)?.addEventListener('input', previewDesign);
-        document.getElementById(id)?.addEventListener('change', previewDesign);
-    });
-
-    // Bidirectional Color Sync
-    const sync = (pickerId, textId) => {
-        const picker = document.getElementById(pickerId);
-        const text = document.getElementById(textId);
-        if (!picker || !text) return;
-        picker.addEventListener('input', () => { text.value = picker.value.toUpperCase(); });
-        text.addEventListener('input', () => { 
-            const val = text.value.trim();
-            if (/^#[0-9A-F]{6}$/i.test(val)) picker.value = val;
-        });
-    };
-    sync('d_primaryColor', 'd_primaryColorText');
-    sync('pill_activeBg', 'pill_activeBgText');
-    sync('d_pageBg', 'd_pageBgText');
-    sync('d_cardBg', 'd_cardBgText');
-});
-
-// ── Background Image Preview in Admin ──
-function updateBgPreview(url) {
-    const box = document.getElementById('bg-preview-box');
-    if (!box) return;
-    if (url && url.trim()) {
-        box.innerHTML = '';
-        box.style.backgroundImage = `url('${url.trim()}')`;
-        box.style.backgroundSize = '120px auto';
-        box.style.backgroundRepeat = 'repeat';
-        box.style.border = '1px solid var(--border-g)';
-    } else {
-        box.style.backgroundImage = 'none';
-        box.style.background = '#111';
-        box.style.border = '1px dashed var(--border)';
-        box.innerHTML = '<span style="font-size:0.7rem; color:var(--text-3);">معاينة — أدخل رابط صورة أعلاه</span>';
-    }
-}
-
+// وظيفة حفظ كل تغييرات التصميم وإرسالها لـ Firebase.
 function saveDesign() {
     const gv  = id => document.getElementById(id)?.value || '';
     const gc  = id => document.getElementById(id)?.checked ?? true;
     
-    lastDesignSavedAt = Date.now();
+    lastDesignSavedAt = Date.now(); // تحديث وقت الحفظ لمنع التضارب
     const designData = {
         primaryColor:  gv('d_primaryColor'),
         pageBg:        gv('d_pageBg'),
@@ -404,6 +357,7 @@ function saveDesign() {
     const btn = document.querySelector('[onclick="saveDesign()"]');
     if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
 
+    // إرسال البيانات لقاعدة البيانات
     REFS.design.set(designData)
         .then(() => {
             showToast('✓ تم تطبيق وحفظ إعدادات التصميم بنجاح');
@@ -411,18 +365,20 @@ function saveDesign() {
         })
         .catch(err => showToast('خطأ: ' + err.message, 'error'))
         .finally(() => {
-            setTimeout(() => { isSavingDesign = false; }, 1500);
+            setTimeout(() => { isSavingDesign = false; }, 1500); // مهلة أمان
             if (btn) btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> حفظ وتطبيق التصميم';
         });
 }
 
 // ══════════════ 8. HOME SETTINGS LISTENER ══════════════
+// ══════════════ 8. مراقب إعدادات الصفحة الرئيسية (HOME SETTINGS) ══════════════
+// مراقبة إعدادات الصفحة الرئيسية (روابط السوشيال ميديا، فيديو الخلفية، الجملة الترحيبية).
 REFS.home.on('value', snapshot => {
     if (isSavingHome) return;
     const h = snapshot.val();
     if (!h) return;
 
-    // Timestamp Lock
+    // قفل الطابع الزمني: تجاهل التحديثات إذا كانت أقدم من آخر عملية حفظ قمنا بها
     if (h.updatedAt && h.updatedAt < lastHomeSavedAt) return;
     
     const sv = (id, val) => { 
@@ -434,6 +390,7 @@ REFS.home.on('value', snapshot => {
         if(el) el.checked = val !== false; 
     };
 
+    // تعبئة البيانات في لوحة التحكم (أزرار التواصل، الروابط، الفيديو)
     sc('h_btn_ar', h.showBtnAr !== false);
     sc('h_btn_en', h.showBtnEn !== false);
     sc('h_btn_feed', h.showBtnFeed !== false);
@@ -447,6 +404,7 @@ REFS.home.on('value', snapshot => {
     sv('h_logoSize', h.homeLogoSize !== undefined ? h.homeLogoSize : '');
 });
 
+// وظيفة حفظ إعدادات الصفحة الرئيسية في Firebase.
 function saveHomeSettings() {
     const gv = id => document.getElementById(id)?.value || '';
     const gc = id => document.getElementById(id)?.checked ?? true;
@@ -521,7 +479,8 @@ REFS.users.on('value', snapshot => {
     });
 });
 
-// ══════════════ 10. AUDIT LOG LISTENER ══════════════
+// ══════════════ 10. سجل النشاط (AUDIT LOG LISTENER) ══════════════
+// هذا الجزء يراقب "كل كبيرة وصغيرة" في الموقع؛ من أضاف وجبة؟ ومن حذف قسماً؟ مع إمكانية التراجع.
 REFS.logs.on('value', snapshot => {
     const timeline = document.getElementById('audit-timeline');
     if (!timeline) return;
@@ -533,7 +492,7 @@ REFS.logs.on('value', snapshot => {
         return;
     }
 
-    // Newest first
+    // ترتيب السجل: الأحدث يظهر أولاً، ونعرض آخر 50 عملية فقط.
     const entries = Object.entries(data).sort((a,b) => b[1].timestamp - a[1].timestamp).slice(0, 50);
 
     entries.forEach(([logKey, entry]) => {
@@ -541,11 +500,13 @@ REFS.logs.on('value', snapshot => {
         const item = document.createElement('div');
         item.className = 'timeline-item';
 
+        // اختيار أيقونة العملية ولونها (أخضر للإضافة، أحمر للحذف، أزرق للتعديل)
         let icon = 'fa-pen';
         let iconBg = 'var(--blue)';
         if(entry.action?.includes('إضافة') || entry.action?.includes('استعادة')) { icon = 'fa-plus'; iconBg = 'var(--green)'; }
         if(entry.action?.includes('حذف')) { icon = 'fa-trash'; iconBg = 'var(--red)'; }
 
+        // بناء تفاصيل التغيير (ماذا كان السعر القديم وما هو الجديد؟)
         let detailsHtml = `<div class="tl-title">${entry.details || ''}</div>`;
         if (entry.diff && entry.diff.length > 0) {
             detailsHtml += `<div class="log-diff-list">`;
@@ -1247,14 +1208,17 @@ function calculateItemDiff(oldObj, newObj) {
             let newDisp = newVal;
             
             // Map values for better readability
+            /* تحويل القيم البرمجية لكلمات عربية مفهومة داخل سجل العمليات */
             if (key === 'status') {
                 oldDisp = oldVal === 'inactive' ? 'مخفي' : 'نشط';
                 newDisp = newVal === 'inactive' ? 'مخفي' : 'نشط';
             }
+            /* تحويل قيم الـ Boolean (true/false) لكلمات (نعم/لا) */
             if (key === 'featured') {
                 oldDisp = oldVal ? 'نعم' : 'لا';
                 newDisp = newVal ? 'نعم' : 'لا';
             }
+            /* البحث عن اسم القسم بالعربي بدلاً من الـ ID البرمجي */
             if (key === 'category') {
                 const cOld = categoryItems.find(c => c.id === oldVal);
                 const cNew = categoryItems.find(c => c.id === newVal);
@@ -1262,38 +1226,52 @@ function calculateItemDiff(oldObj, newObj) {
                 newDisp = cNew ? cNew.nameAr : newVal;
             }
 
+            /* إضافة التغيير للقائمة ليتم عرضه في السجل: "الاسم القديم -> الاسم الجديد" */
             diff.push({ label: fields[key], old: oldDisp, new: newDisp });
         }
     });
     return diff;
 }
 
-// ══════════════ 23. TOAST ══════════════
+// ════════════════════════════════════════════════════════════════════
+// 23. التنبيهات المنبثقة (TOAST) — الرسائل التي تظهر أعلى الشاشة
+// ════════════════════════════════════════════════════════════════════
 function showToast(message, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
+    
+    /* تحديد الأيقونة المناسبة حسب نوع التنبيه (نجاح، خطأ، تحذير) */
     const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation' };
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
+    
+    /* بناء شكل التنبيه: أيقونة + الرسالة */
     toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.success} toast-icon"></i><span>${message}</span>`;
     container.appendChild(toast);
+    
+    /* إخفاء التنبيه تلقائياً بعد 3.5 ثانية */
     setTimeout(() => {
         toast.style.cssText = 'opacity:0;transform:translateX(20px);transition:0.3s;';
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(() => toast.remove(), 300); /* حذفه من الكود تماماً بعد اختفائه */
     }, 3500);
 }
 
-// ══════════════ 24. EXPORT TO CSV ══════════════
+
+// ════════════════════════════════════════════════════════════════════
+// 24. تصدير البيانات لملف (CSV) — لتحميل المنيو والأسعار على إكسل
+// ════════════════════════════════════════════════════════════════════
 function exportToCSV() {
+    /* التحقق أولاً من وجود بيانات لتصديرها */
     if (!menuItems || menuItems.length === 0) {
         showToast('لا توجد بيانات للتصدير', 'error');
         return;
     }
     
-    // Create CSV header
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // Adding BOM for Arabic support
+    /* إنشاء رأس الملف (العناوين) وتجهيزه ليدعم اللغة العربية بترميز UTF-8 */
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
     csvContent += "الاسم العربي,الاسم الانجليزي,القسم,السعر,الحالة,الفئة (الرئيسية)\r\n";
 
+    /* المرور على كل وجبة وتحويل بياناتها لسطر داخل الملف */
     menuItems.forEach(item => {
         const catObj = categoryItems.find(c => c.id === item.category);
         const catName = catObj ? catObj.nameAr : '-';
@@ -1309,52 +1287,64 @@ function exportToCSV() {
             `"${status}"`,
             `"${secName}"`
         ];
-        csvContent += row.join(",") + "\r\n";
+        csvContent += row.join(",") + "\r\n"; /* دمج البيانات بفاصلة ليفهمها الإكسل */
     });
 
+    /* إنشاء رابط "وهمي" لتحميل الملف على جهاز الكمبيوتر */
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
+    /* تسمية الملف بـ "menu_prices" مع إضافة تاريخ اليوم لاسم الملف */
     link.setAttribute("download", `menu_prices_export_${new Date().toLocaleDateString('ar-EG').replace(/\//g,'-')}.csv`);
     document.body.appendChild(link);
-    link.click();
+    link.click(); /* الضغط على الرابط تلقائياً ليبدأ التحميل */
     document.body.removeChild(link);
     
     showToast('تم تصدير ملف الأسعار ✓');
-    log('تصدير بيانات', 'تم تصدير ملف المنيو والأسعار');
+    log('تصدير بيانات', 'تم تصدير ملف المنيو والأسعار'); /* تسجيل العملية في السجل */
 }
 
-// ══════════════ 25. FEEDBACK MANAGEMENT ══════════════
+
+// ════════════════════════════════════════════════════════════════════
+// 25. إدارة آراء وتقييمات الزبائن (Feedback Management)
+// ════════════════════════════════════════════════════════════════════
+/* مراقب لحظي (Listener) لآراء الزبائن في الداتابيز */
 REFS.feedback.on('value', snapshot => {
     const data = snapshot.val();
     const grid = document.getElementById('feedback-grid');
     const badge = document.getElementById('feedback-count-badge');
     if (!grid) return;
-    grid.innerHTML = '';
+    grid.innerHTML = ''; /* تنظيف الشبكة قبل إضافة التقييمات الجديدة */
 
+    /* إذا لم يكن هناك أي تقييم بعد */
     if (!data) {
         grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid fa-comment-dots"></i><h3>لا توجد آراء حالياً</h3><p>ستظهر هنا التقييمات المرسلة من الزبائن</p></div>`;
         if(badge) badge.textContent = '0';
         return;
     }
 
-    const entries = Object.entries(data).reverse(); // Newest first
-    if(badge) badge.textContent = entries.length;
+    /* ترتيب التقييمات بحيث يظهر الأحدث في البداية */
+    const entries = Object.entries(data).reverse(); 
+    if(badge) badge.textContent = entries.length; /* تحديث عدد التقييمات في الشريط العلوي */
 
+    /* بناء بطاقة لكل تقييم زبون */
     entries.forEach(([key, f]) => {
         const date = f.timestamp ? new Date(f.timestamp).toLocaleString('ar-EG') : (f.dateStr || '-');
         const card = document.createElement('div');
         card.className = 'feedback-card';
         
+        /* رسم النجوم للتقييمات (الخدمة، الطعام، الأجواء) */
         let ratingsHtml = '<div class="f-ratings">';
         if(f.ratings) {
             Object.entries(f.ratings).forEach(([label, val]) => {
                 const labelAr = { service: 'الخدمة', food: 'الطعام', atmosphere: 'الأجواء' }[label] || label;
+                /* تكرار أيقونة النجمة حسب التقييم المعطى من الزبون */
                 ratingsHtml += `<div class="f-rate-item"><span>${labelAr}</span> <span class="stars">${'⭐'.repeat(val)}${'<i class="fa-regular fa-star" style="color:var(--text-3);opacity:0.3;font-size:0.7rem;"></i>'.repeat(5-val)}</span></div>`;
             });
         }
         ratingsHtml += '</div>';
 
+        /* محتوى البطاقة: الاسم، التاريخ، رقم الهاتف، الطاولة، والتعليق */
         card.innerHTML = `
             <div class="f-card-header">
                 <div class="f-avatar"><i class="fa-solid fa-user"></i></div>
@@ -1377,6 +1367,7 @@ REFS.feedback.on('value', snapshot => {
     });
 });
 
+/* حذف تقييم واحد من الداتابيز */
 function deleteFeedback(key) {
     if(!confirm('هل تريد حذف هذا التقييم؟')) return;
     REFS.feedback.child(key).remove()
@@ -1384,6 +1375,7 @@ function deleteFeedback(key) {
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
 
+/* مسح كافة التقييمات نهائياً من الداتابيز */
 function clearFeedback() {
     if(!confirm('تحذير: سيتم مسح كافة التقييمات نهائياً. هل أنت متأكد؟')) return;
     REFS.feedback.remove()
@@ -1391,10 +1383,15 @@ function clearFeedback() {
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
 
-// ══════════════ 26. AUDIT LOG ACTIONS ══════════════
+
+// ════════════════════════════════════════════════════════════════════
+// 26. عمليات سجل التدقيق (Audit Log Actions) — التراجع والمسح
+// ════════════════════════════════════════════════════════════════════
+/* وظيفة التراجع (Undo): تعيد الوجبة لحالتها قبل التعديل الأخير */
 function revertLog(itemKey, logKey) {
     if (!confirm('هل تريد التراجع عن هذا التعديل وإعادة الصنف لحالته السابقة؟')) return;
     
+    /* جلب بيانات النسخة الاحتياطية (Snapshot) التي حفظناها وقت التعديل */
     REFS.logs.child(logKey).once('value').then(snap => {
         const entry = snap.val();
         if (!entry || !entry.snapshot) { 
@@ -1402,18 +1399,22 @@ function revertLog(itemKey, logKey) {
             return; 
         }
         
+        /* تحديث الوجبة في الداتابيز بالبيانات القديمة المسترجعة */
         REFS.menu.child(itemKey).update(entry.snapshot)
             .then(() => {
                 showToast('تم التراجع عن التعديل بنجاح ✓');
+                /* تسجيل عملية التراجع نفسها في السجل */
                 log('تراجع (Undo)', `تم التراجع عن العملية: ${entry.action}`);
             })
             .catch(err => showToast('خطأ في استرجاع البيانات: ' + err.message, 'error'));
     });
 }
 
+/* مسح سجل العمليات بالكامل لتنظيف لوحة التحكم */
 function clearAuditLogs() {
     if (!confirm('هل أنت متأكد من مسح سجل العمليات بالكامل؟ لا يمكن التراجع عن هذا الإجراء.')) return;
     REFS.logs.remove()
         .then(() => showToast('تم مسح السجل بنجاح'))
         .catch(err => showToast('خطأ: ' + err.message, 'error'));
 }
+

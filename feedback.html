@@ -4,18 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طلو أحبابنا | خبرنا عن تجربتك</title>
+    <!-- استيراد الخطوط والأيقونات والتنسيقات الأساسية -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    
     <style>
         body {
             background-color: #000;
             color: #fff;
             padding-top: 20px;
-            direction: rtl;
+            direction: rtl; /* الكتابة من اليمين لليسار */
             font-family: 'IBM Plex Sans Arabic', sans-serif;
             font-weight: 600;
         }
+
+        /* حاوية نموذج التقييم بتصميم ذهبي وأنيق */
         .feedback-container {
             max-width: 500px;
             margin: 0 auto;
@@ -25,13 +29,10 @@
             box-shadow: 0 10px 30px rgba(197, 160, 34, 0.1);
             border: 1px solid rgba(197, 160, 34, 0.2);
         }
-        .logo-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .logo-header img {
-            height: 100px;
-        }
+
+        .logo-header { text-align: center; margin-bottom: 20px; }
+        .logo-header img { height: 100px; }
+
         .intro-text {
             text-align: center;
             font-size: 0.9rem;
@@ -39,22 +40,23 @@
             margin-bottom: 25px;
             color: #ccc;
         }
+
+        /* تقسيم النموذج لشبكة (خانتين بجانب بعض) */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
         }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+
+        .form-group { display: flex; flex-direction: column; }
         .form-group label {
             font-size: 0.85rem;
             margin-bottom: 5px;
             color: var(--primary);
             font-weight: 700;
         }
+
         .form-group input, .form-group textarea {
             background: #111;
             border: 1px solid #333;
@@ -63,11 +65,10 @@
             border-radius: 12px;
             font-size: 0.9rem;
             outline: none;
-            transition: border-color 0.3s;
+            transition: 0.3s;
         }
-        .form-group input:focus, .form-group textarea:focus {
-            border-color: var(--primary);
-        }
+
+        /* تنسيق أقسام النجوم */
         .rating-section {
             background: #1a1a1a;
             padding: 15px;
@@ -76,27 +77,19 @@
             text-align: center;
             border: 1px solid #222;
         }
-        .rating-title {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            display: block;
-        }
+
+        .rating-title { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: block; }
+        
+        /* جعل النجوم تعمل بشكل تفاعلي */
         .stars {
             display: flex;
             justify-content: center;
             gap: 10px;
-            flex-direction: row-reverse;
+            flex-direction: row-reverse; /* لعكس اتجاه التظليل */
         }
-        .stars i {
-            font-size: 1.8rem;
-            color: #333;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .stars i:hover, .stars i.active {
-            color: var(--primary);
-        }
+        .stars i { font-size: 1.8rem; color: #333; cursor: pointer; transition: 0.3s; }
+        .stars i:hover, .stars i.active { color: var(--primary); }
+
         .submit-btn {
             width: 100%;
             background: var(--primary);
@@ -108,13 +101,7 @@
             font-size: 1.1rem;
             margin-top: 20px;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .submit-btn:active {
-            transform: scale(0.98);
-        }
-        @media (max-width: 480px) {
-            .form-grid { grid-template-columns: 1fr; }
+            transition: 0.2s;
         }
     </style>
 </head>
@@ -138,7 +125,7 @@
                     </div>
                     <div class="form-group">
                         <label>رقم الطاولة أو الفاتورة</label>
-                        <input type="text" placeholder="اتركه فارغاً لو لم يتوفر">
+                        <input type="text" placeholder="رقم الطاولة">
                     </div>
                     <div class="form-group">
                         <label>رقم الهاتف</label>
@@ -150,6 +137,7 @@
                     </div>
                 </div>
 
+                <!-- أقسام التقييم بالنجوم -->
                 <div class="rating-section">
                     <span class="rating-title">الخدمة</span>
                     <div class="stars" data-category="service">
@@ -198,7 +186,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        // Initialize Firebase
+        // إعدادات الاتصال بـ Firebase
         const _cfg = {
             apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
             authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -210,13 +198,14 @@
         };
         if (!firebase.apps.length) firebase.initializeApp(_cfg);
     </script>
+    <!-- ملف مزامنة التصميم: ليأخذ صفحة التقييم نفس ألوان المنيو تلقائياً -->
     <script src="js/design-sync.js"></script>
     
     <script>
-        // Set current date/time
+        // تحديد الوقت الحالي تلقائياً
         document.getElementById('dateTime').value = new Date().toLocaleString('ar-EG');
 
-        // Star rating logic
+        // منطق النجوم: تلوين النجوم عند النقر عليها
         document.querySelectorAll('.stars i').forEach(star => {
             star.addEventListener('click', function() {
                 const category = this.parentElement;
@@ -225,14 +214,15 @@
                 
                 stars.forEach(s => {
                     if (parseInt(s.getAttribute('data-value')) <= value) {
-                        s.classList.add('active');
+                        s.classList.add('active'); // تلوين النجمة
                     } else {
-                        s.classList.remove('active');
+                        s.classList.remove('active'); // إطفاء النجمة
                     }
                 });
             });
         });
 
+        // وظيفة إرسال التقييم لقاعدة البيانات
         function submitFeedback() {
             const form = document.getElementById('feedbackForm');
             const name = form.querySelector('input[type="text"]').value;
@@ -240,6 +230,7 @@
             const phone = form.querySelector('input[type="tel"]').value;
             const comments = form.querySelector('textarea').value;
             
+            // جمع التقييمات (عدد النجوم) لكل قسم
             const ratings = {};
             document.querySelectorAll('.stars').forEach(s => {
                 const cat = s.getAttribute('data-category');
@@ -263,10 +254,11 @@
             btn.disabled = true;
             btn.textContent = 'جاري الإرسال...';
 
+            // دفع البيانات لجدول feedback في Firebase
             firebase.database().ref('feedback').push(data)
                 .then(() => {
                     alert('شكراً لتقييمك! تم إرسال ملاحظاتك بنجاح.');
-                    window.location.href = 'index.html';
+                    window.location.href = 'index.html'; // العودة للرئيسية
                 })
                 .catch(err => {
                     alert('حدث خطأ: ' + err.message);
@@ -275,5 +267,7 @@
                 });
         }
     </script>
+</body>
+</html>
 </body>
 </html>

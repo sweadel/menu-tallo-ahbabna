@@ -3,175 +3,237 @@
    Tallo Ahbabna Management System
 ════════════════════════════════════════════════════════════════════ */
 
+/* ════════════════════════════════════════════════════════════════════
+   1. الثوابت والألوان (Variables) — أساس تصميم لوحة التحكم
+   ════════════════════════════════════════════════════════════════════ */
 :root {
-    --bg-main: #080808;
-    --bg-surface: #121212;
-    --bg-card: #1a1a1a;
-    --gold: #E5C467;
-    --gold-hover: #f2d68c;
-    --gold-glow: rgba(229, 196, 103, 0.2);
-    --text-primary: #f8f6f0;
-    --text-secondary: #a39d96;
-    --border-color: rgba(229, 196, 103, 0.15);
+    /* الألوان الأساسية */
+    --bg-main: #080808;      /* خلفية الصفحة الأساسية (أسود ملكي داكن) */
+    --bg-surface: #121212;   /* خلفية القوائم والأسطح (أسود أفتح قليلاً) */
+    --bg-card: #1a1a1a;      /* خلفية بطاقات الإحصائيات (رمادي داكن جداً) */
+    --gold: #E5C467;         /* اللون الذهبي الفاخر (اللون الأساسي للبراند) */
+    --gold-hover: #f2d68c;   /* درجة ذهبية أفتح عند تمرير الماوس */
+    --gold-glow: rgba(229, 196, 103, 0.2); /* هالة توهج ذهبي شفافة */
     
-    --success: #00cc66;
-    --success-bg: rgba(0, 204, 102, 0.1);
-    --danger: #ff4d4d;
-    --danger-bg: rgba(255, 77, 77, 0.1);
-    --info: #3399ff;
+    /* ألوان النصوص */
+    --text-primary: #f8f6f0;   /* لون النص الأساسي (أبيض كريمي مريح للعين) */
+    --text-secondary: #a39d96; /* لون النص الفرعي (رمادي باهت) */
+    --border-color: rgba(229, 196, 103, 0.15); /* لون الحدود (ذهبي شفاف جداً) */
     
+    /* ألوان الحالة */
+    --success: #00cc66;      /* لون النجاح أو التفعيل (أخضر) */
+    --success-bg: rgba(0, 204, 102, 0.1); /* خلفية خضراء شفافة */
+    --danger: #ff4d4d;       /* لون الحذف أو التنبيه (أحمر) */
+    --danger-bg: rgba(255, 77, 77, 0.1); /* خلفية حمراء شفافة */
+    --info: #3399ff;         /* لون المعلومات (أزرق) */
+    
+    /* الظلال (Shadows) لإعطاء عمق */
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
     --shadow-md: 0 8px 24px rgba(0,0,0,0.6);
     --shadow-lg: 0 16px 40px rgba(0,0,0,0.8);
     
-    --radius-sm: 6px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
+    /* انحناء الزوايا (Border Radius) */
+    --radius-sm: 6px;        /* انحناء بسيط للأزرار */
+    --radius-md: 12px;       /* انحناء متوسط للمربعات */
+    --radius-lg: 20px;       /* انحناء كبير للبطاقات والنافذة المنبثقة */
 }
 
+/* تصفير الإعدادات الافتراضية للمتصفح */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    box-sizing: border-box;  /* لضمان حساب الأحجام بدقة شاملة الحدود والمسافات */
+    font-family: 'IBM Plex Sans Arabic', sans-serif; /* الخط العربي الرسمي للموقع */
 }
 
 body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    overflow: hidden; /* Prevent body scroll, handle inside containers */
+    background-color: var(--bg-main); /* تطبيق الخلفية السوداء الأساسية */
+    color: var(--text-primary);       /* تطبيق لون النص الأبيض الكريمي */
+    overflow: hidden; /* منع التمرير في الجسم الأساسي لتثبيت لوحة التحكم (التمرير داخلي فقط) */
 }
 
-/* ═════ Utility Classes ═════ */
-.text-danger { color: var(--danger) !important; }
-.text-muted { color: var(--text-secondary); font-size: 0.85rem; font-weight: 400; }
-.flex-1 { flex: 1; }
-.full-width { width: 100%; }
+/* ── فئات مساعدة (Utility Classes) ── */
+.text-danger { color: var(--danger) !important; } /* نص أحمر للتنبيهات أو الحذف */
+.text-muted { 
+    color: var(--text-secondary); 
+    font-size: 0.85rem; 
+    font-weight: 400; 
+} /* نص جانبي باهت للملاحظات الصغيرة */
+.flex-1 { flex: 1; }      /* عنصر مرن يمتد ليملأ المساحة المتاحة */
+.full-width { width: 100%; } /* عرض كامل (100%) */
 
-/* Typography */
-h1, h2, h3 { font-weight: 700; }
-.page-title { font-size: 1.8rem; color: var(--text-primary); margin-bottom: 5px; }
-.page-subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+/* ── الخطوط (Typography) ── */
+h1, h2, h3 { font-weight: 700; } /* عناوين بخط عريض لبروزها */
+.page-title { 
+    font-size: 1.8rem;       /* حجم عنوان الصفحة (كبير وجذاب) */
+    color: var(--text-primary); 
+    margin-bottom: 5px; 
+}
+.page-subtitle { 
+    color: var(--text-secondary); 
+    font-size: 0.95rem;      /* حجم النص الفرعي تحت العنوان */
+}
 
-/* ═════ Login Screen ═════ */
+/* ════════════════════════════════════════════════════════════════════
+   2. شاشة تسجيل الدخول (Login Screen)
+   ════════════════════════════════════════════════════════════════════ */
 .login-screen {
-    position: fixed;
+    position: fixed;    /* ثابتة وتغطي كامل الشاشة */
     top: 0; left: 0; right: 0; bottom: 0;
+    /* خلفية متدرجة دائرية (Radial Gradient) لتبدو الإضاءة خارجة من المنتصف */
     background: radial-gradient(circle at center, var(--bg-surface) 0%, var(--bg-main) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+    display: flex;      /* استخدام نظام Flex لتوسيط صندوق الدخول */
+    align-items: center; /* توسيط عمودي */
+    justify-content: center; /* توسيط أفقي */
+    z-index: 9999;      /* فوق جميع العناصر لضمان عدم الدخول بدون تسجيل */
     transition: opacity 0.5s ease;
 }
 
 .login-box {
-    background: var(--bg-card);
-    padding: 40px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 0 40px var(--gold-glow);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
+    background: var(--bg-card); /* خلفية الصندوق رمادي داكن جداً */
+    padding: 40px;      /* مسافة داخلية كبيرة (40 بكسل) لراحة العين */
+    border-radius: var(--radius-lg); /* زوايا منحنية (20 بكسل) */
+    border: 1px solid var(--border-color); /* حدود ذهبية شفافة */
+    box-shadow: 0 0 40px var(--gold-glow); /* توهج ذهبي حول الصندوق بالكامل */
+    width: 100%;        /* يأخذ كامل العرض المتاح في الشاشات الصغيرة */
+    max-width: 400px;   /* لا يتجاوز عرضه 400 بكسل ليظل أنيقاً */
+    text-align: center; /* توسيط المحتوى داخل الصندوق */
 }
 
-.login-logo { height: 70px; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
-.login-box h2 { color: var(--gold); margin-bottom: 5px; }
-.login-box p { color: var(--text-secondary); margin-bottom: 30px; font-size: 0.9rem; }
-.login-hint { margin-top: 20px; color: var(--gold); font-size: 0.8rem; opacity: 0.8; }
+.login-logo { 
+    height: 70px;       /* ارتفاع شعار المطعم في شاشة الدخول (70 بكسل) */
+    margin-bottom: 20px; /* مسافة 20 بكسل تحت الشعار */
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); /* ظل تحت الشعار لبروزه */
+}
 
-/* ═════ Main Layout ═════ */
+.login-box h2 { 
+    color: var(--gold);  /* عنوان "دخول الإدارة" باللون الذهبي */
+    margin-bottom: 5px; 
+}
+
+.login-box p { 
+    color: var(--text-secondary); 
+    margin-bottom: 30px; 
+    font-size: 0.9rem; 
+}
+
+.login-hint { 
+    margin-top: 20px; 
+    color: var(--gold); 
+    font-size: 0.8rem; 
+    opacity: 0.8; 
+} /* ملاحظة صغيرة باللون الذهبي أسفل الصندوق */
+
+
+/* ════════════════════════════════════════════════════════════════════
+   3. توزيع الواجهة والقائمة الجانبية (Sidebar)
+   ════════════════════════════════════════════════════════════════════ */
 .admin-layout {
-    display: flex;
-    height: 100vh;
+    display: flex;      /* توزيع الواجهة ليكون المنيو بجانب المحتوى الأساسي */
+    height: 100vh;      /* طول الواجهة يساوي كامل طول الشاشة */
 }
 
-/* Sidebar */
+/* القائمة الجانبية (Sidebar) */
 .sidebar {
-    width: 280px;
-    background-color: var(--bg-surface);
-    border-left: 1px solid var(--border-color);
-    display: flex;
+    width: 280px;       /* عرض القائمة الجانبية 280 بكسل */
+    background-color: var(--bg-surface); /* خلفية سوداء أفتح قليلاً من الخلفية الأساسية */
+    border-left: 1px solid var(--border-color); /* خط ذهبي رفيع يفصل القائمة عن المحتوى (جهة اليسار بالعربي) */
+    display: flex;      /* ترتيب العناصر عمودياً داخل القائمة */
     flex-direction: column;
-    z-index: 100;
+    z-index: 100;       /* لضمان بقائها فوق المحتوى في الشاشات الصغيرة */
 }
 
 .sidebar-header {
-    padding: 25px 20px;
+    padding: 25px 20px; /* مسافة داخلية (25 بكسل فوق وتحت، 20 يمين ويسار) */
     display: flex;
     align-items: center;
-    gap: 15px;
-    border-bottom: 1px solid var(--border-color);
+    gap: 15px;          /* مسافة 15 بكسل بين اللوجو واسم المطعم */
+    border-bottom: 1px solid var(--border-color); /* خط فاصل أسفل رأس القائمة */
 }
 
-.sidebar-header h2 { font-size: 1.1rem; color: var(--gold); }
-.admin-logo { height: 40px; }
+.sidebar-header h2 { 
+    font-size: 1.1rem;   /* حجم اسم المطعم في القائمة */
+    color: var(--gold);  /* لونه ذهبي فخم */
+}
 
+.admin-logo { 
+    height: 40px;       /* ارتفاع اللوجو الصغير في القائمة (40 بكسل) */
+}
+
+/* قائمة الروابط (Navigation) */
 .sidebar-nav {
-    flex: 1;
-    padding: 20px 0;
-    overflow-y: auto;
+    flex: 1;            /* تمدد القائمة لتأخذ المساحة المتبقية */
+    padding: 20px 0;    /* مسافة داخلية فوق وتحت */
+    overflow-y: auto;   /* السماح بالتمرير داخل القائمة إذا كثرت الروابط */
 }
 
+/* رابط مفرد في القائمة */
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 14px 25px;
-    color: var(--text-secondary);
+    gap: 15px;          /* مسافة 15 بكسل بين الأيقونة والكلمة */
+    padding: 14px 25px; /* مساحة ضغط مريحة (14 بكسل فوق وتحت، 25 يمين ويسار) */
+    color: var(--text-secondary); /* لونه رمادي باهت افتراضياً */
     text-decoration: none;
-    transition: all 0.2s ease;
-    font-weight: 500;
-    font-size: 0.95rem;
+    transition: all 0.2s ease; /* حركة ناعمة عند تغيير اللون */
+    font-weight: 500;   /* سمك خط متوسط */
+    font-size: 0.95rem; /* حجم الخط */
 }
 
-.nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+.nav-item i { 
+    width: 20px;        /* عرض موحد للأيقونات لضمان التناسق الرأسي */
+    text-align: center; 
+    font-size: 1.1rem; 
+}
 
+/* تأثير عند تمرير الماوس على الرابط */
 .nav-item:hover {
-    color: var(--text-primary);
-    background-color: rgba(255,255,255,0.03);
+    color: var(--text-primary); /* اللون يصبح أبيض ناصع */
+    background-color: rgba(255,255,255,0.03); /* خلفية رمادية شفافة جداً تظهر كإضاءة */
 }
 
+/* حالة الرابط المفعل حالياً (Active Page) */
 .nav-item.active {
-    color: var(--gold);
-    background-color: rgba(197, 160, 34, 0.08);
-    border-right: 4px solid var(--gold);
+    color: var(--gold);  /* اللون يصبح ذهبي */
+    background-color: rgba(197, 160, 34, 0.08); /* خلفية ذهبية شفافة جداً */
+    border-right: 4px solid var(--gold); /* خط ذهبي سميك جهة اليمين لتمييز الصفحة الحالية */
 }
 
 .sidebar-footer {
     padding: 15px 0;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-color); /* خط فاصل فوق تذييل القائمة */
 }
 
-/* Main Content Area */
+
+/* ── منطقة المحتوى الأساسية (Main Content) ── */
 .main-content {
-    flex: 1;
+    flex: 1;            /* تأخذ كامل المساحة المتبقية بجانب القائمة الجانبية */
     display: flex;
     flex-direction: column;
-    background-color: var(--bg-main);
+    background-color: var(--bg-main); /* الخلفية السوداء الأساسية */
 }
 
-/* Topbar */
+/* ── الشريط العلوي (Topbar) ── */
 .topbar {
-    height: 75px;
-    background-color: var(--bg-surface);
-    border-bottom: 1px solid var(--border-color);
+    height: 75px;       /* ارتفاع الشريط العلوي 75 بكسل */
+    background-color: var(--bg-surface); /* نفس خلفية القائمة الجانبية */
+    border-bottom: 1px solid var(--border-color); /* خط ذهبي يفصل الشريط عن المحتوى بالأسفل */
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
+    justify-content: space-between; /* توزيع البحث على اليمين والملف الشخصي على اليسار */
+    padding: 0 40px;    /* مسافة 40 بكسل من الجوانب */
     z-index: 90;
 }
 
+/* صندوق البحث في الشريط العلوي */
 .topbar-search {
     display: flex;
     align-items: center;
-    background-color: var(--bg-main);
-    padding: 10px 18px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    width: 350px;
+    background-color: var(--bg-main); /* خلفية سوداء داكنة */
+    padding: 10px 18px; /* مسافة داخلية */
+    border-radius: var(--radius-md); /* زوايا منحنية 12 بكسل */
+    border: 1px solid var(--border-color); /* حدود ذهبية خفيفة */
+    width: 350px;       /* عرض صندوق البحث 350 بكسل */
     color: var(--text-secondary);
 }
 
@@ -180,106 +242,128 @@ h1, h2, h3 { font-weight: 700; }
     border: none;
     color: var(--text-primary);
     outline: none;
-    padding-right: 12px;
-    width: 100%;
+    padding-right: 12px; /* مسافة بسيطة بعد أيقونة البحث */
+    width: 100%;        /* يأخذ كامل عرض الصندوق */
 }
 
 .topbar-actions {
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 25px;          /* مسافة 25 بكسل بين الأزرار (تنبيهات، إعدادات) */
 }
 
+/* أزرار الأيقونات (مثل التنبيهات) */
 .icon-btn {
     background: transparent;
     border: none;
     color: var(--text-secondary);
-    font-size: 1.3rem;
+    font-size: 1.3rem;  /* حجم الأيقونة */
     cursor: pointer;
     position: relative;
     transition: 0.2s;
 }
 
-.icon-btn:hover { color: var(--gold); }
+.icon-btn:hover { color: var(--gold); } /* تلوين الأيقونة بالذهبي عند الوقوف عليها */
 
+/* شارة التنبيهات الحمراء (Badge) */
 .badge {
     position: absolute;
-    top: -6px; right: -6px;
-    background-color: var(--danger);
+    top: -6px; right: -6px; /* توضع فوق الأيقونة في الزاوية */
+    background-color: var(--danger); /* اللون الأحمر */
     color: white;
     font-size: 0.65rem;
     padding: 2px 6px;
-    border-radius: 10px;
+    border-radius: 10px; /* دائرية */
     font-weight: 700;
 }
 
+/* الملف الشخصي للمستخدم في الزاوية */
 .user-profile {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 12px;          /* مسافة 12 بكسل بين الصورة والاسم */
     cursor: pointer;
     padding-right: 25px;
-    border-right: 1px solid rgba(255,255,255,0.1);
+    border-right: 1px solid rgba(255,255,255,0.1); /* خط فاصل بسيط على اليمين */
 }
 
 .user-profile img {
-    height: 40px; width: 40px;
-    border-radius: 50%;
+    height: 40px; width: 40px; /* حجم الصورة الشخصية 40x40 بكسل */
+    border-radius: 50%; /* دائرية تماماً */
     object-fit: cover;
-    border: 2px solid var(--gold);
+    border: 2px solid var(--gold); /* إطار ذهبي سمك 2 بكسل حول الصورة */
 }
 
-.user-profile span { font-weight: 600; font-size: 0.95rem; }
+.user-profile span { 
+    font-weight: 600; 
+    font-size: 0.95rem; 
+}
 
-/* Views Container */
+
+/* ── حاوية الصفحات (Views Container) ── */
 .views-container {
-    flex: 1;
-    padding: 40px;
-    overflow-y: auto;
+    flex: 1;            /* تمدد لتغطية باقي مساحة الشاشة */
+    padding: 40px;      /* مسافة داخلية كبيرة حول محتوى الصفحة */
+    overflow-y: auto;   /* السماح بالتمرير إذا كان المحتوى طويلاً */
 }
 
+/* الأقسام الفردية داخل لوحة التحكم */
 .view-section {
-    display: none;
+    display: none;      /* مخفية افتراضياً وتظهر بالـ JS */
+    /* أنيميشن الدخول: الصفحة تصعد للأعلى ببطء مع ظهور تدريجي */
     animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.view-section.active { display: block; }
+.view-section.active { display: block; } /* تظهر فقط الصفحة النشطة */
 
+/* تعريف أنيميشن الصعود (Slide Up) */
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); /* تبدأ من تحت بـ 20 بكسل */
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);    /* تصل لمكانها الطبيعي */
+    }
 }
 
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 30px;
+    margin-bottom: 30px; /* مسافة 30 بكسل تحت رأس الصفحة */
 }
 
-/* ═════ Buttons ═════ */
+/* ── الأزرار (Buttons) ── */
+/* الزر الأساسي (ذهبي فخم) */
 .primary-btn {
+    /* تدرج لوني ذهبي يبدأ من الفاتح للداكن */
     background: linear-gradient(135deg, var(--gold) 0%, #a8841c 100%);
-    color: #000;
+    color: #000;        /* لون النص أسود ليكون واضحاً */
     border: none;
-    padding: 12px 24px;
-    border-radius: var(--radius-sm);
+    padding: 12px 24px; /* مساحة ضغط مريحة */
+    border-radius: var(--radius-sm); /* زوايا منحنية بسيطة 6 بكسل */
     font-weight: 700;
     font-size: 0.95rem;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 10px;          /* مسافة بين أيقونة الزر والنص */
     transition: all 0.3s;
-    box-shadow: 0 4px 15px var(--gold-glow);
+    box-shadow: 0 4px 15px var(--gold-glow); /* ظل ذهبي خفيف تحت الزر */
 }
 
-.primary-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(197, 160, 34, 0.4); }
+.primary-btn:hover { 
+    transform: translateY(-2px); /* رفعة بسيطة للزر عند الوقوف عليه */
+    box-shadow: 0 6px 20px rgba(197, 160, 34, 0.4); /* زيادة قوة الظل عند الحوم */
+}
 
+/* الزر الثانوي (شفاف بحدود) */
 .secondary-btn {
     background: transparent;
     color: var(--text-primary);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-color); /* حدود ذهبية شفافة */
     padding: 12px 24px;
     border-radius: var(--radius-sm);
     font-weight: 600;
@@ -287,71 +371,99 @@ h1, h2, h3 { font-weight: 700; }
     transition: 0.2s;
 }
 
-.secondary-btn:hover { background: rgba(255,255,255,0.05); }
+.secondary-btn:hover { background: rgba(255,255,255,0.05); } /* تفتيح بسيط عند الوقوف */
 
-/* ═════ Dashboard Stats ═════ */
+
+/* ── إحصائيات لوحة التحكم (Dashboard Stats) ── */
 .stats-grid {
-    display: grid;
+    display: grid;      /* توزيع المربعات بشكل شبكي */
+    /* تقسيم الأعمدة: المربع لا يقل عن 300 بكسل ويتوزع تلقائياً حسب عرض الشاشة */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
+    gap: 25px;          /* مسافة 25 بكسل بين كل مربع وإحصائية */
     margin-bottom: 30px;
 }
 
+/* بطاقة إحصائية مفردة */
 .stat-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 25px;
+    background-color: var(--bg-card); /* خلفية رمادية داكنة */
+    border: 1px solid var(--border-color); /* حدود ذهبية شفافة */
+    border-radius: var(--radius-md); /* زوايا منحنية 12 بكسل */
+    padding: 25px;      /* مسافة داخلية مريحة */
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 20px;          /* مسافة 20 بكسل بين الأيقونة والأرقام */
     box-shadow: var(--shadow-sm);
     transition: 0.3s;
 }
 
-.stat-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+.stat-card:hover { 
+    transform: translateY(-5px); /* رفع البطاقة للأعلى عند الوقوف عليها لتعطي إحساساً بالتفاعل */
+    border-color: var(--gold);   /* تلوين الحدود بالذهبي الواضح عند الحوم */
+}
 
+/* مربع الأيقونة داخل الإحصائية */
 .stat-icon {
-    width: 65px; height: 65px;
+    width: 65px; height: 65px; /* حجم المربع 65x65 بكسل */
     border-radius: var(--radius-md);
-    background: var(--gold-glow);
-    color: var(--gold);
+    background: var(--gold-glow); /* خلفية ذهبية باهتة جداً (توهج) */
+    color: var(--gold);          /* لون الأيقونة ذهبي ساطع */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
+    font-size: 1.8rem;           /* حجم الأيقونة كبير (1.8) */
 }
 
-.stat-info h3 { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 5px; }
-.stat-num { font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; line-height: 1; }
+.stat-info h3 { 
+    font-size: 0.95rem; 
+    color: var(--text-secondary); 
+    margin-bottom: 5px; 
+} /* عنوان الإحصائية (مثل: إجمالي الطلبات) */
 
+.stat-num { 
+    font-size: 2rem;    /* حجم الرقم كبير جداً (2rem) ليكون هو الأبرز */
+    font-weight: 700; 
+    color: var(--text-primary); 
+    margin-bottom: 5px; 
+    line-height: 1; 
+}
+
+/* اتجاه الإحصائية (صعود/نزول) */
 .stat-trend { font-size: 0.85rem; font-weight: 600; }
-.stat-trend.positive { color: var(--success); }
-.stat-trend.neutral { color: var(--text-secondary); }
+.stat-trend.positive { color: var(--success); } /* اللون الأخضر للنمو */
+.stat-trend.neutral { color: var(--text-secondary); } /* اللون الرمادي للثبات */
 
-/* Panels */
+/* ── اللوحات والبطاقات (Panels) ── */
 .dashboard-panels { display: grid; gap: 25px; }
+
 .panel-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     padding: 25px;
 }
-.panel-title { margin-bottom: 20px; font-size: 1.2rem; color: var(--gold); }
 
+.panel-title { 
+    margin-bottom: 20px; 
+    font-size: 1.2rem; 
+    color: var(--gold); 
+} /* عنوان اللوحة الجانبية باللون الذهبي */
+
+/* تنبيه المعلومات (Info Alert) */
 .info-alert {
-    background-color: rgba(51, 153, 255, 0.1);
-    border-right: 4px solid var(--info);
+    background-color: rgba(51, 153, 255, 0.1); /* خلفية زرقاء شفافة جداً */
+    border-right: 4px solid var(--info);      /* خط أزرق سميك جهة اليمين (بالعربي) */
     padding: 15px 20px;
     border-radius: var(--radius-sm);
     color: #e0f0ff;
     line-height: 1.6;
 }
 
-/* ═════ Data Tables ═════ */
+
+/* ── جداول البيانات (Data Tables) ── */
+/* شريط الفلاتر والبحث فوق الجدول */
 .filters-bar {
     display: flex;
-    gap: 15px;
+    gap: 15px;          /* مسافة 15 بكسل بين مربع البحث والفلتر */
     margin-bottom: 20px;
 }
 
@@ -362,11 +474,11 @@ h1, h2, h3 { font-weight: 700; }
     padding: 10px 15px;
     border-radius: var(--radius-sm);
     outline: none;
-    min-width: 180px;
+    min-width: 180px;   /* عرض قائمة الخيارات لا يقل عن 180 بكسل */
 }
 
 .filter-input {
-    flex: 1;
+    flex: 1;            /* مربع البحث يمتد ليأخذ كامل المساحة */
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
@@ -375,56 +487,68 @@ h1, h2, h3 { font-weight: 700; }
     outline: none;
 }
 
+/* حاوية الجدول (لإضافة زوايا منحنية وظلال) */
 .table-container {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    overflow: hidden; /* Hide rounded borders overflow */
+    overflow: hidden;   /* لإخفاء أي محتوى يخرج عن الزوايا المنحنية */
     box-shadow: var(--shadow-sm);
 }
 
 .data-table {
-    width: 100%;
-    border-collapse: collapse;
+    width: 100%;        /* الجدول يأخذ كامل عرض الصفحة */
+    border-collapse: collapse; /* منع تباعد الخلايا */
 }
 
 .data-table th, .data-table td {
-    padding: 16px 20px;
-    text-align: right;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 16px 20px; /* مسافة داخلية مريحة في كل خلية */
+    text-align: right;  /* محاذاة النص لليمين (للموقع العربي) */
+    border-bottom: 1px solid rgba(255,255,255,0.05); /* خط فاصل رفيع جداً بين الأسطر */
 }
 
 .data-table th {
-    background-color: rgba(0,0,0,0.4);
-    color: var(--text-secondary);
+    background-color: rgba(0,0,0,0.4); /* خلفية داكنة لرأس الجدول */
+    color: var(--text-secondary);     /* لون خط رمادي باهت */
     font-weight: 500;
     font-size: 0.9rem;
-    white-space: nowrap;
+    white-space: nowrap; /* منع انقسام العناوين لسطرين */
 }
 
 .data-table tbody tr { transition: background-color 0.2s; }
+/* تلوين السطر بالكامل بلون ذهبي خفيف جداً عند تمرير الماوس */
 .data-table tbody tr:hover { background-color: rgba(197, 160, 34, 0.05); }
 
+/* صورة الوجبة المصغرة داخل الجدول */
 .item-img-mini {
-    width: 48px; height: 48px;
-    border-radius: 8px;
+    width: 48px; height: 48px; /* حجم الصورة 48x48 بكسل */
+    border-radius: 8px; /* زوايا منحنية بسيطة */
     background-color: var(--bg-surface);
-    background-size: cover;
+    background-size: cover;    /* الصورة تغطي المربع بالكامل */
     background-position: center;
     border: 1px solid var(--border-color);
 }
 
+/* شارة الحالة (متوفر / غير متوفر) */
 .status-badge {
     padding: 6px 12px;
-    border-radius: 20px;
+    border-radius: 20px; /* شكل كبسولة */
     font-size: 0.8rem;
     font-weight: 600;
     display: inline-block;
 }
 
-.status-active { background-color: var(--success-bg); color: var(--success); }
-.status-inactive { background-color: var(--danger-bg); color: var(--danger); }
+.status-active { 
+    background-color: var(--success-bg); /* خلفية خضراء شفافة */
+    color: var(--success);               /* نص أخضر (متوفر) */
+}
 
+.status-inactive { 
+    background-color: var(--danger-bg);  /* خلفية حمراء شفافة */
+    color: var(--danger);                /* نص أحمر (غير متوفر) */
+}
+
+/* أزرار العمليات (تعديل / حذف) */
 .action-btn {
     background: transparent;
     border: none;
@@ -437,163 +561,173 @@ h1, h2, h3 { font-weight: 700; }
     margin-left: 5px;
 }
 
-.action-btn.edit:hover { background-color: var(--gold-glow); color: var(--gold); }
-.action-btn.delete:hover { background-color: var(--danger-bg); color: var(--danger); }
+.action-btn.edit:hover { background-color: var(--gold-glow); color: var(--gold); } /* تلوين ذهبي عند التعديل */
+.action-btn.delete:hover { background-color: var(--danger-bg); color: var(--danger); } /* تلوين أحمر عند الحذف */
 
-/* ═════ Forms & Modals ═════ */
+
+/* ── النماذج والنوافذ المنبثقة (Forms & Modals) ── */
+/* مجموعة حقول الإدخال */
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px;
+    margin-bottom: 20px; /* مسافة 20 بكسل تحت كل حقل */
 }
 
 .form-group label {
-    margin-bottom: 5px;
+    margin-bottom: 5px; /* مسافة 5 بكسل بين اسم الحقل ومربع الكتابة */
     font-weight: 500;
     font-size: 0.95rem;
 }
 
-.form-group.row-align {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px dashed rgba(255,255,255,0.05);
-}
-
+/* تنسيق مربع الكتابة (Input) */
 .form-control {
-    background-color: var(--bg-main);
-    border: 1px solid rgba(255,255,255,0.1);
+    background-color: var(--bg-main); /* خلفية سوداء داكنة */
+    border: 1px solid rgba(255,255,255,0.1); /* حدود رمادية خفيفة جداً */
     color: var(--text-primary);
-    padding: 12px 15px;
-    border-radius: var(--radius-sm);
+    padding: 12px 15px; /* مساحة داخلية مريحة للكتابة */
+    border-radius: var(--radius-sm); /* زوايا منحنية بسيطة */
     font-family: inherit;
     font-size: 1rem;
     outline: none;
-    transition: 0.2s;
+    transition: 0.2s;    /* حركة ناعمة عند التركيز */
 }
 
+/* تأثير عند الضغط على مربع الكتابة (Focus) */
 .form-control:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 2px var(--gold-glow);
+    border-color: var(--gold);   /* تلوين الحدود بالذهبي */
+    box-shadow: 0 0 0 2px var(--gold-glow); /* إضافة هالة توهج ذهبي حول المربع */
 }
 
-.input-with-icon {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-.input-with-icon input { width: 100%; padding-left: 40px; }
-.input-icon {
-    position: absolute;
-    left: 15px;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.required { color: var(--danger); }
-
-/* Modal specific */
+/* ── النافذة المنبثقة (Modal) ── */
 .modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.85); /* خلفية سوداء ثقيلة */
+    backdrop-filter: blur(8px);  /* تعتيم وتغبيش المحتوى خلف النافذة (Glass Effect) */
     -webkit-backdrop-filter: blur(8px);
     display: flex; align-items: center; justify-content: center;
     z-index: 2000;
     opacity: 0; pointer-events: none;
-    transition: 0.3s;
+    transition: 0.3s;    /* حركة ظهور واختفاء خلال 0.3 ثانية */
 }
 
+/* عند فتح النافذة */
 .modal-overlay.open { opacity: 1; pointer-events: all; }
 
+/* صندوق محتوى النافذة المنبثقة */
 .modal-content {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    width: 100%; max-width: 450px;
+    border-radius: var(--radius-lg); /* زوايا منحنية كبيرة 20 بكسل */
+    width: 100%; max-width: 450px;   /* عرض النافذة لا يتجاوز 450 بكسل */
     box-shadow: var(--shadow-lg);
-    transform: scale(0.95) translateY(20px);
+    transform: scale(0.95) translateY(20px); /* تبدأ بحجم أصغر قليلاً ومزاحة للأسفل */
     transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* تأثير الدخول الناعم للنافذة */
 .modal-overlay.open .modal-content { transform: scale(1) translateY(0); }
 
 .modal-header {
-    padding: 25px 30px;
+    padding: 25px 30px; /* مساحة داخلية كبيرة لرأس النافذة */
     border-bottom: 1px solid var(--border-color);
     display: flex; justify-content: space-between; align-items: center;
 }
 
-.modal-header h2 { font-size: 1.3rem; color: var(--gold); font-weight: 700; letter-spacing: -0.5px; }
-.close-btn { background: transparent; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
-.close-btn:hover { color: var(--danger); transform: rotate(90deg); }
+.modal-header h2 { 
+    font-size: 1.3rem; 
+    color: var(--gold); 
+    font-weight: 700; 
+    letter-spacing: -0.5px; 
+}
 
-.modal-body { padding: 25px 30px; max-height: 65vh; overflow-y: auto; }
-.form-row { display: flex; flex-direction: column; gap: 12px; margin-bottom: 5px; }
+/* زر الإغلاق (X) في النافذة */
+.close-btn { 
+    background: transparent; border: none; color: var(--text-secondary); 
+    font-size: 1.5rem; cursor: pointer; transition: 0.2s; 
+}
+.close-btn:hover { 
+    color: var(--danger); /* اللون يصبح أحمر عند محاولة الإغلاق */
+    transform: rotate(90deg); /* تدوير الزر قليلاً لإعطاء حركة تفاعلية */
+}
+
+.modal-body { 
+    padding: 25px 30px; 
+    max-height: 65vh;    /* طول محتوى النافذة لا يتجاوز 65% من طول الشاشة مع تمرير */
+    overflow-y: auto; 
+}
+
+/* تذييل النافذة (Footer) للأزرار */
 .modal-footer {
     padding: 20px 30px;
     border-top: 1px solid var(--border-color);
-    display: flex; justify-content: flex-end; gap: 15px;
+    display: flex; justify-content: flex-end; gap: 15px; /* وضع الأزرار في اليسار (بالعربي) */
     background-color: rgba(0,0,0,0.2);
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
-/* ═════ Settings Switches ═════ */
-.switch { position: relative; display: inline-block; width: 50px; height: 26px; }
-.switch input { opacity: 0; width: 0; height: 0; }
+
+/* ── مفاتيح الإعدادات (Settings Switches - Toggle) ── */
+.switch { 
+    position: relative; 
+    display: inline-block; 
+    width: 50px; height: 26px; /* حجم زر التبديل */
+}
+
+.switch input { opacity: 0; width: 0; height: 0; } /* إخفاء زر الاختيار الأصلي */
+
+/* الجزء المتحرك داخل زر التبديل */
 .slider {
     position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px;
+    background-color: rgba(255,255,255,0.1); /* اللون الرمادي عند الإغلاق */
+    transition: .4s; border-radius: 34px;
 }
+
 .slider:before {
     position: absolute; content: ""; height: 18px; width: 18px; right: 4px; bottom: 4px;
     background-color: white; transition: .4s; border-radius: 50%;
 }
-input:checked + .slider { background-color: var(--success); }
-input:checked + .slider:before { transform: translateX(-24px); }
 
-/* Settings Grid */
+/* عندما يتم تفعيل الزر (Checked) */
+input:checked + .slider { background-color: var(--success); } /* يتحول للأخضر عند التشغيل */
+input:checked + .slider:before { transform: translateX(-24px); } /* تتحرك الدائرة لجهة اليسار */
+
+/* شبكة الإعدادات (مقسمة لعمودين) */
 .settings-grid { display: grid; gap: 30px; grid-template-columns: 1fr 1fr; }
 
-/* Mobile Menu Toggle - Hidden by default */
-.mobile-menu-toggle { display: none; }
-
-/* ═════ Responsive Design ═════ */
+/* ── استجابة التصميم (Responsive Design) ── */
 @media (max-width: 992px) {
-    .settings-grid { grid-template-columns: 1fr; }
-    .form-row { flex-direction: column; gap: 0; }
-    .topbar-search { width: 250px; }
+    /* للشاشات المتوسطة (Tablets) */
+    .settings-grid { grid-template-columns: 1fr; } /* تحويل الإعدادات لعمود واحد */
+    .topbar-search { width: 250px; } /* تصغير صندوق البحث */
 }
 
 @media (max-width: 768px) {
+    /* لشاشات الجوال (Mobile) */
     .admin-layout { position: relative; }
     
+    /* القائمة الجانبية تصبح مخفية وتظهر من اليمين (بالعربي) */
     .sidebar {
         position: fixed;
-        right: -100%;
+        right: -100%;    /* مخفية خارج الشاشة جهة اليمين */
         top: 0; bottom: 0;
         z-index: 1000;
         transition: right 0.3s ease;
         box-shadow: -5px 0 15px rgba(0,0,0,0.5);
     }
-    .sidebar.active { right: 0; }
+    .sidebar.active { right: 0; } /* تظهر عند الضغط على زر القائمة */
     
-    .mobile-menu-toggle { display: block; margin-left: 15px; }
+    .mobile-menu-toggle { display: block; margin-left: 15px; } /* إظهار زر القائمة للجوال */
     .topbar { padding: 0 20px; }
-    .topbar-search { display: none; } /* Hide search on mobile for space */
-    .user-profile span { display: none; } /* Hide user name */
+    .topbar-search { display: none; } /* إخفاء البحث لتوفير مساحة */
+    .user-profile span { display: none; } /* إخفاء اسم المستخدم، تظهر الصورة فقط */
     
-    .views-container { padding: 20px; }
-    .page-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+    .views-container { padding: 20px; } /* تقليل المسافات الجانبية */
     
-    .stats-grid { grid-template-columns: 1fr; gap: 15px; }
-    .filters-bar { flex-direction: column; }
-    
+    /* تحويل الجداول لنظام "البطاقات" لسهولة القراءة على الجوال */
     .table-container { display: block; border: 0; background: transparent; }
     .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
     
-    .data-table thead { display: none; } /* Hide table headers on mobile */
+    .data-table thead { display: none; } /* إخفاء رؤوس الجدول */
     .data-table tr {
         background-color: var(--bg-card);
         margin-bottom: 15px;
@@ -606,31 +740,29 @@ input:checked + .slider:before { transform: translateX(-24px); }
         text-align: right; margin-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.05);
         display: flex; justify-content: space-between; align-items: center; padding: 10px 0;
     }
-    .data-table td:last-child { border-bottom: none; margin-bottom: 0; justify-content: flex-end; }
     
-    /* Simulate table headers via pseudo-elements */
+    /* إضافة تسميات بجانب البيانات في الجوال باستخدام الـ Pseudo-elements */
     .data-table td:nth-child(2)::before { content: "الصنف:"; color: var(--text-secondary); }
     .data-table td:nth-child(3)::before { content: "القسم:"; color: var(--text-secondary); }
     .data-table td:nth-child(4)::before { content: "السعر:"; color: var(--text-secondary); }
-    
-    .modal-content { max-height: 90vh; border-radius: var(--radius-md) var(--radius-md) 0 0; align-self: flex-end; transform: translateY(100%); }
-    .modal-overlay.open .modal-content { transform: translateY(0); }
 }
 
-/* ═════ New: Tabs & Logs Styling ═════ */
+
+/* ── نظام التبويبات وسجل العمليات (Tabs & Logs) ── */
 .tabs-control {
-    background: rgba(0,0,0,0.2);
-    padding: 5px;
+    background: rgba(0,0,0,0.2); /* خلفية سوداء شفافة جداً للحاوية */
+    padding: 5px;       /* مسافة داخلية بسيطة حول الأزرار */
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    display: inline-flex;
+    display: inline-flex; /* العرض يتحدد حسب عدد الأزرار */
 }
 
+/* زر التبويب الفردي */
 .tab-btn {
     background: transparent;
     border: none;
-    padding: 8px 24px;
-    color: var(--text-secondary);
+    padding: 8px 24px;  /* مساحة ضغط مريحة للتبويب */
+    color: var(--text-secondary); /* لونه رمادي باهت افتراضياً */
     font-weight: 600;
     cursor: pointer;
     border-radius: var(--radius-sm);
@@ -638,12 +770,16 @@ input:checked + .slider:before { transform: translateX(-24px); }
 }
 
 .tab-btn:hover { color: var(--text-primary); }
+
+/* التبويب النشط حالياً */
 .tab-btn.active {
-    background: var(--gold);
-    color: #000;
+    background: var(--gold); /* يتلون باللون الذهبي بالكامل */
+    color: #000;             /* لون النص أسود ليكون واضحاً */
 }
 
+/* محتوى سجل العمليات */
 .log-tab-content {
+    /* أنيميشن ظهور تدريجي ناعم عند تبديل التبويب */
     animation: fadeIn 0.3s ease;
 }
 
@@ -652,14 +788,15 @@ input:checked + .slider:before { transform: translateX(-24px); }
     to { opacity: 1; }
 }
 
-/* General Badge */
+/* ── الشارات العامة (General Badges) ── */
 .badge {
-    position: static;
+    position: static;   /* توضع بجانب النص بشكل طبيعي */
     display: inline-block;
-    padding: 2px 10px;
+    padding: 2px 10px;  /* مساحة داخلية تجعلها كأنها علامة صغيرة */
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 700;
     line-height: 1.4;
-    text-transform: uppercase;
+    text-transform: uppercase; /* تحويل الحروف الإنجليزية لكبيرة (إذا وجدت) */
 }
+

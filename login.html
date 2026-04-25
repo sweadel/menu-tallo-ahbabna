@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طلوا حبابنا | تسجيل الدخول</title>
+    <!-- استيراد الخطوط والأيقونات -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --gold: #c3922e;
+            --gold: #c3922e; /* لون الذهب الأساسي للهوية */
             --bg: #0a0a0a;
             --card-bg: #151515;
             --text: #ffffff;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        
         body {
             background-color: var(--bg);
             color: var(--text);
@@ -23,6 +26,8 @@
             justify-content: center;
             background-image: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
         }
+
+        /* تصميم بطاقة تسجيل الدخول بشكل زجاجي وأنيق */
         .login-card {
             background: var(--card-bg);
             padding: 40px;
@@ -33,12 +38,16 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             text-align: center;
         }
+
         .logo { width: 80px; margin-bottom: 20px; }
         h1 { font-size: 1.5rem; margin-bottom: 30px; color: var(--gold); }
         .form-group { margin-bottom: 20px; text-align: right; }
         label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #888; }
+        
+        /* تنسيق خانات الإدخال مع الأيقونات الجانبية */
         .input-wrapper { position: relative; }
         .input-wrapper i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); }
+        
         input {
             width: 100%;
             padding: 12px 45px 12px 15px;
@@ -50,6 +59,7 @@
             transition: 0.3s;
         }
         input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(195, 146, 46, 0.1); }
+
         .login-btn {
             width: 100%;
             padding: 14px;
@@ -73,11 +83,12 @@
     <img src="images/tallo-logo.png" alt="Logo" class="logo">
     <h1>تسجيل دخول الإدارة</h1>
     
+    <!-- نموذج إدخال البيانات -->
     <div class="form-group">
         <label>اسم المستخدم</label>
         <div class="input-wrapper">
             <i class="fa-solid fa-user"></i>
-            <input type="text" id="username" placeholder="مثلاً: 123456" autocomplete="username">
+            <input type="text" id="username" placeholder="اسم المستخدم الخاص بك" autocomplete="username">
         </div>
     </div>
 
@@ -93,11 +104,12 @@
     <p class="error-msg" id="error">خطأ في اسم المستخدم أو كلمة المرور!</p>
 </div>
 
-<!-- Firebase SDKs (compat) -->
+<!-- مكتبات Firebase الأساسية -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
+    // إعدادات الاتصال بقاعدة البيانات
     const firebaseConfig = {
         apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
         authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -110,6 +122,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // وظيفة معالجة عملية تسجيل الدخول
     function handleLogin() {
         const u = document.getElementById('username').value.trim();
         const p = document.getElementById('password').value.trim();
@@ -121,18 +134,19 @@
         btn.disabled = true;
         btn.textContent = 'جاري التحقق...';
 
-        // 1. Check Hardcoded SuperAdmin (for safety/first run)
+        // 1. فحص حساب "المدير العام" الافتراضي (للطوارئ)
         if(u === '120120' && p === '120120') {
             doAuth(u);
             return;
         }
 
-        // 2. Check Firebase Users
+        // 2. فحص الحسابات المسجلة في Firebase
         db.ref('users').once('value').then(snapshot => {
             const users = snapshot.val();
             let found = false;
             
             if (users) {
+                // البحث في القائمة عن تطابق للاسم وكلمة المرور
                 Object.keys(users).forEach(key => {
                     const user = users[key];
                     if (user.username === u && user.password === p) {
@@ -142,19 +156,20 @@
             }
 
             if (found) {
-                doAuth(u);
+                doAuth(u); // نجاح الدخول
             } else {
-                showError();
+                showError(); // فشل الدخول
             }
         }).catch(() => {
             showError();
         });
 
+        // وظيفة تفعيل "جلسة الدخول" وحفظها في المتصفح
         function doAuth(user) {
             localStorage.setItem('admin_auth', 'true');
             localStorage.setItem('admin_user', user);
             localStorage.setItem('auth_time', Date.now());
-            window.location.href = 'admin.html';
+            window.location.href = 'admin.html'; // الانتقال للوحة التحكم
         }
 
         function showError() {
@@ -165,11 +180,14 @@
         }
     }
 
-    // Auto redirect if already logged in
+    // التحقق التلقائي: إذا كان المدير مسجلاً دخوله مسبقاً، يتم تحويله للوحة الإدارة فوراً
     if(localStorage.getItem('admin_auth') === 'true') {
         window.location.href = 'admin.html';
     }
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
