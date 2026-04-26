@@ -316,12 +316,7 @@ function initAdminUI() {
     document.getElementById('bulkDeactivateItems')?.addEventListener('click',bulkDeactivateItems);
     document.getElementById('bulkDeleteItems')?.addEventListener('click',bulkDeleteItems);
     document.getElementById('exportSelectedItems')?.addEventListener('click',exportSelectedItems);
-    // Dark mode toggle (simple class switch)
-    const darkToggle = document.createElement('button');
-    darkToggle.className='btn-primary-sm';
-    darkToggle.innerHTML='<i class="fas fa-moon"></i>الوضع الليلي';
-    darkToggle.onclick=()=>{document.body.classList.toggle('dark-mode');};
-    document.querySelector('.header-actions')?.appendChild(darkToggle);
+    // Dark mode toggle moved to DOMContentLoaded listener; removed here to avoid duplication
     // Role based UI: hide bulk actions for viewer
     const role = localStorage.getItem('admin_role') || 'editor';
     if (role==='viewer') {
