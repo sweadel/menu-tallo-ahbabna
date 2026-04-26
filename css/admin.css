@@ -98,16 +98,17 @@ td { padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.02); font-s
     background: var(--gold);
     color: #000;
     border: none;
-    padding: 12px 24px;
-    border-radius: 14px;
+    padding: 10px 20px;
+    border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 0.9rem;
 }
-.btn-primary:hover { background: var(--gold-hover); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(197, 160, 34, 0.3); }
+.btn-primary:hover { background: var(--gold-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(197, 160, 34, 0.2); }
 
 /* المدخلات */
 .form-control {
@@ -128,7 +129,7 @@ td { padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.02); font-s
 .modal-content { background: #121212; border: 1px solid var(--glass-border); width: 100%; max-width: 700px; border-radius: 30px; animation: modalUp 0.4s ease; }
 .modal-header { padding: 25px 30px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
 .modal-body { padding: 30px; max-height: 70vh; overflow-y: auto; }
-.modal-footer { padding: 20px 30px; border-top: 1px solid var(--glass-border); text-align: left; display: flex; justify-content: flex-end; }
+.modal-footer { padding: 20px 30px; border-top: 1px solid var(--glass-border); text-align: left; display: flex; justify-content: flex-end; gap: 10px; }
 
 @keyframes modalUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes slideIn { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
@@ -151,25 +152,52 @@ td { padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,0.02); font-s
 }
 .cat-filter-tab.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 600; }
 
-/* عناصر الجدول الجديدة */
-.badge-tag { font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; font-weight: 700; white-space: nowrap; }
-.bg-red { background: var(--red); color: #fff; }
-.bg-green { background: var(--green); color: #fff; }
-.bg-gold { background: var(--gold); color: #000; }
+/* عناصر الجدول الجديدة - تنسيق احترافي */
+.badge-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: 700; white-space: nowrap; display: inline-block; }
+.bg-red { background: rgba(231, 76, 60, 0.15); color: #ff7675; border: 1px solid rgba(231, 76, 60, 0.2); }
+.bg-green { background: rgba(46, 204, 113, 0.15); color: #55efc4; border: 1px solid rgba(46, 204, 113, 0.2); }
+.bg-gold { background: rgba(197, 160, 34, 0.15); color: var(--gold); border: 1px solid rgba(197, 160, 34, 0.2); }
 
-.section-tag { background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; color: var(--text-dim); }
-.order-badge { width: 24px; height: 24px; background: rgba(197, 160, 34, 0.1); color: var(--gold); display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
-.action-tag { background: rgba(197, 160, 34, 0.1); color: var(--gold); padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+.section-tag { background: rgba(255,255,255,0.03); padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; color: var(--text-dim); border: 1px solid var(--glass-border); }
+.order-badge { min-width: 28px; height: 28px; background: rgba(255, 255, 255, 0.05); color: var(--text-main); display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 0.85rem; font-weight: 600; border: 1px solid var(--glass-border); }
+.action-tag { background: rgba(197, 160, 34, 0.08); color: var(--gold); padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
 
-.action-btns { display: flex; gap: 8px; }
-.btn-icon { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-dim); cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+.action-btns { display: flex; gap: 6px; }
+.btn-icon { 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 8px; 
+    border: 1px solid var(--glass-border); 
+    background: rgba(255,255,255,0.02); 
+    color: var(--text-dim); 
+    cursor: pointer; 
+    transition: 0.2s; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 0.8rem;
+}
 .btn-icon:hover { background: rgba(197, 160, 34, 0.1); color: var(--gold); border-color: var(--gold); }
 .btn-icon.delete:hover { background: rgba(231, 76, 60, 0.1); color: var(--red); border-color: var(--red); }
+.btn-icon.edit:hover { background: rgba(46, 204, 113, 0.1); color: var(--green); border-color: var(--green); }
 
-.form-control-sm { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: #fff; padding: 6px 12px; border-radius: 10px; outline: none; font-size: 0.85rem; }
+.form-control-sm { 
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid var(--glass-border); 
+    color: #fff; 
+    padding: 5px 10px; 
+    border-radius: 8px; 
+    outline: none; 
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.form-control-sm:focus { border-color: var(--gold); }
 
-.btn-primary-sm { background: var(--gold); border: none; padding: 6px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-.btn-danger-sm { background: rgba(231, 76, 60, 0.1); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.2); padding: 6px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.btn-primary-sm { background: var(--gold); border: none; padding: 6px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; color: #000; transition: 0.2s; }
+.btn-primary-sm:hover { background: var(--gold-hover); transform: scale(1.05); }
+
+.btn-danger-sm { background: rgba(231, 76, 60, 0.08); color: var(--red); border: 1px solid rgba(231, 76, 60, 0.15); padding: 6px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+.btn-danger-sm:hover { background: rgba(231, 76, 60, 0.15); border-color: var(--red); }
 
 /* الموبايل */
 .mobile-header { display: none; padding: 15px 20px; background: #0f0f0f; border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 900; }
