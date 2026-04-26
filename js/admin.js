@@ -594,8 +594,20 @@ function quickMoveItem(key, newCat) {
         });
 }
 
+// تعديل ترتيب العنصر (تحريك للأعلى أو للأسفل)
+function moveItemOrder(key, step) {
+    const item = menuItems.find(i => i.key === key);
+    if (!item) return;
+    const newOrder = (item.order || 0) + step;
+    REFS.menu.child(key).update({ order: newOrder })
+        .then(() => {
+            showToast('تم تعديل ترتيب العنصر');
+            log('تعديل ترتيب', `${item.name} → ${newOrder}`);
+        });
+}
+
 function rebuildSelects() {
-    const filterTabs = document.getElementById('catFilterTabs');
+    const filterTabs = document.getElementById('categoryTabs');
     const itemSelect = document.getElementById('itemCategory');
     
     if (filterTabs) {
