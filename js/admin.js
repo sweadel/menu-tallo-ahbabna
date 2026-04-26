@@ -131,7 +131,7 @@ function renderTable() {
     const bulkPanel = document.getElementById('itemsBulkActions');
     if (bulkPanel) bulkPanel.style.display = anyChecked ? 'block' : 'none';
 
-    const tableBody = document.getElementById('itemsBody');
+    const tableBody = document.getElementById('menu-table-body');
     if (!tableBody) return;
 
     const searchQuery = (document.getElementById('globalSearch')?.value || '').toLowerCase();
@@ -202,6 +202,7 @@ function renderTable() {
                 </td>
                 <td>
                     <div class="action-btns">
+                        <button class="btn-icon clone" onclick="cloneItem('${item.key}')" title="نسخ"><i class="fa-solid fa-copy"></i></button>
                         <button class="btn-icon edit" onclick="editItem('${item.key}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-icon delete" onclick="deleteItem('${item.key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -324,89 +325,23 @@ function initAdminUI() {
     // Role based UI: hide bulk actions for viewer
     const role = localStorage.getItem('admin_role') || 'editor';
     if (role==='viewer') {
-        document.getElementById('itemsBulkActions').style.display='none';
-        // also hide edit/delete buttons later in renderTable (handled by canEdit variable)
+        const bulkPanel = document.getElementById('itemsBulkActions');
+        if (bulkPanel) bulkPanel.style.display='none';
     }
-}
 
-// Call init after DOM ready (already done at bottom of script)
-// Select‑all handler
+    // Select-all handler
     const selectAll = document.getElementById('selectAllItems');
     if (selectAll) {
         selectAll.addEventListener('change', e => {
             const checked = e.target.checked;
             document.querySelectorAll('.bulk-item').forEach(cb => cb.checked = checked);
-            // update bulk panel visibility after toggling
             const bulkPanel = document.getElementById('itemsBulkActions');
             if (bulkPanel) bulkPanel.style.display = checked ? 'block' : 'none';
         });
     }
-    initAdminUI();
-
-    const tableBody = document.getElementById('menu-table-body');
-    if (!tableBody) return;
-
-    const searchQuery = (document.getElementById('globalSearch')?.value || '').toLowerCase();
-    
-    // الفلترة حسب القسم المختار وحسب نص البحث
-    const filtered = menuItems.filter(item => {
-        const matchesCat = (activeFilterCat === 'all' || item.category === activeFilterCat);
-        const matchesSearch = (!searchQuery || 
-                               (item.name || '').toLowerCase().includes(searchQuery) || 
-                               (item.nameEn || '').toLowerCase().includes(searchQuery));
-        return matchesCat && matchesSearch;
-    });
-
-    filtered.sort((a, b) => (a.order || 0) - (b.order || 0));
-
-    tableBody.innerHTML = '';
-    filtered.forEach(item => {
-        const isActive = item.status !== 'inactive';
-        const catOptions = catItems.map(c => `<option value="${c.id}" ${item.category === c.id ? 'selected' : ''}>${c.nameAr}</option>`).join('');
-        
-        // بناء الشارة
-        let badgeHtml = '';
-        if (item.badge === 'HOT') badgeHtml = '<span class="badge-tag bg-red">حار 🔥</span>';
-        if (item.badge === 'NEW') badgeHtml = '<span class="badge-tag bg-green">جديد ✨</span>';
-        if (item.badge === 'SPECIAL') badgeHtml = '<span class="badge-tag bg-gold">مميز ⭐</span>';
-
-        tableBody.innerHTML += `
-            <tr>
-                <td><input type="checkbox" class="bulk-item" data-key="${item.key}"></td>
-                <td><img src="${item.image || 'images/tallo-logo.png'}" class="item-thumb" onerror="this.src='images/tallo-logo.png'"></td>
-                <td>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        ${badgeHtml}
-                        <span class="item-name">${item.name}</span>
-                    </div>
-                    <small class="item-en">${item.nameEn || ''}</small>
-                </td>
-                <td>
-                    <select class="form-control-sm" onchange="quickMoveItem('${item.key}', this.value)">
-                        ${catOptions}
-                    </select>
-                </td>
-                <td style="color:var(--gold); font-weight:bold;">${item.price} JD</td>
-                <td>
-                    <button onclick="toggleItem('${item.key}','${item.status}')" class="status-pill ${isActive ? 'status-active' : 'status-hidden'}">
-                        ${isActive ? 'نشط' : 'مخفي'}
-                    </button>
-                </td>
-                <td>
-                    <div style="display:flex; gap:5px;">
-                        <button class="btn-icon" onclick="moveItemOrder('${item.key}', -1)" title="للأعلى"><i class="fa-solid fa-chevron-up"></i></button>
-                        <button class="btn-icon" onclick="moveItemOrder('${item.key}', 1)" title="للأسفل"><i class="fa-solid fa-chevron-down"></i></button>
-                    </div>
-                </td>
-                <td>
-                    <div class="action-btns">
-                        <button class="btn-icon edit" onclick="editItem('${item.key}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-icon delete" onclick="deleteItem('${item.key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </td>
-            </tr>`;
-    });
 }
+
+
 
 function saveItem() {
     if (isSaving) return;
@@ -447,6 +382,20 @@ function saveItem() {
             showToast('حدث خطأ أثناء الحفظ', 'error');
         })
         .finally(() => isSaving = false);
+}
+
+function cloneItem(key) {
+    const item = menuItems.find(x => x.key === key);
+    if (!item) return;
+    
+    if (confirm(`هل تريد عمل نسخة من "${item.name}"؟`)) {
+        const newItem = { ...item, name: item.name + ' (نسخة)', updatedAt: firebase.database.ServerValue.TIMESTAMP };
+        delete newItem.key;
+        REFS.menu.push(newItem).then(() => {
+            showToast('تم نسخ العنصر بنجاح');
+            log('نسخ وجبة', item.name);
+        });
+    }
 }
 
 // ══════════════════════════════════════════════
@@ -570,14 +519,8 @@ function showToast(msg, type = 'success') {
 
 // معاينة الصورة في مودال الوجبات
 function previewItemImage(url) {
-    const previewContainer = document.getElementById('item-img-preview');
-    if (!previewContainer) return;
-    
-    if (url && url.length > 5) {
-        previewContainer.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;">`;
-    } else {
-        previewContainer.innerHTML = `<i class="fa-solid fa-image" style="font-size:3rem; color:rgba(255,255,255,0.05);"></i>`;
-    }
+    const img = document.getElementById('img-prev');
+    if (img) img.src = url || 'images/tallo-logo.png';
 }
 
 // الاستماع لكود الأيقونة في مودال الأقسام
@@ -808,24 +751,30 @@ function renderFeedTable() {
 }
 
 function renderLogsTable() {
-    const body = document.getElementById('logs-table-body');
-    if (!body) return;
+    const dashboardBody = document.getElementById('logs-table-body');
+    const fullBody = document.getElementById('logs-table-body-full');
+    if (!dashboardBody && !fullBody) return;
     
     REFS.logs.limitToLast(50).once('value', s => {
-        body.innerHTML = '';
-        if (!s.exists()) {
-            body.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:30px; opacity:0.5;">السجل فارغ</td></tr>';
+        const rows = [];
+        if (s.exists()) {
+            Object.values(s.val()).reverse().forEach(l => {
+                rows.push(`
+                    <tr>
+                        <td style="white-space:nowrap;">${new Date(l.timestamp).toLocaleString('ar-EG')}</td>
+                        <td><span class="action-tag">${l.action}</span></td>
+                        <td>${l.details} <br><small style="color:var(--text-dim)">بواسطة: ${l.user}</small></td>
+                    </tr>`);
+            });
+        } else {
+            const empty = '<tr><td colspan="3" style="text-align:center; padding:30px; opacity:0.5;">السجل فارغ</td></tr>';
+            if (dashboardBody) dashboardBody.innerHTML = empty;
+            if (fullBody) fullBody.innerHTML = empty;
             return;
         }
         
-        Object.values(s.val()).reverse().forEach(l => {
-            body.innerHTML += `
-                <tr>
-                    <td style="white-space:nowrap;">${new Date(l.timestamp).toLocaleString('ar-EG')}</td>
-                    <td><span class="action-tag">${l.action}</span></td>
-                    <td>${l.details} <br><small style="color:var(--text-dim)">بواسطة: ${l.user}</small></td>
-                </tr>`;
-        });
+        if (dashboardBody) dashboardBody.innerHTML = rows.slice(0, 10).join('');
+        if (fullBody) fullBody.innerHTML = rows.join('');
     });
 }
 
@@ -938,3 +887,23 @@ function moveItemOrder(key, direction) {
         showToast('تم تغيير ترتيب الوجبات');
     });
 }
+
+// ══════════════════════════════════════════════
+// 9. تهيئة التطبيق عند التحميل
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    // تشغيل المستمعات الأساسية
+    initAdminUI();
+    
+    // التوجه لآخر قسم كان مفتوحاً أو اللوحة الرئيسية
+    const lastView = localStorage.getItem('last_admin_view') || 'view-dashboard';
+    navigateTo(lastView);
+    
+    // عرض اسم المستخدم
+    const userDisplay = document.getElementById('current-user-display');
+    const userDisplaySettings = document.getElementById('current-user-display-settings');
+    const username = localStorage.getItem('admin_user') || 'المدير';
+    
+    if (userDisplay) userDisplay.textContent = `مرحباً، ${username}`;
+    if (userDisplaySettings) userDisplaySettings.textContent = username;
+});
