@@ -138,6 +138,8 @@ function renderTable() {
         return matchesCat && matchesSearch;
     });
 
+    filtered.sort((a, b) => (a.order || 0) - (b.order || 0));
+
     tableBody.innerHTML = '';
     filtered.forEach(item => {
         const isActive = item.status !== 'inactive';
@@ -171,6 +173,12 @@ function renderTable() {
                     </button>
                 </td>
                 <td>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn-icon" onclick="moveItemOrder('${item.key}', -1)" title="للأعلى"><i class="fa-solid fa-chevron-up"></i></button>
+                        <button class="btn-icon" onclick="moveItemOrder('${item.key}', 1)" title="للأسفل"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                </td>
+                <td>
                     <div class="action-btns">
                         <button class="btn-icon edit" onclick="editItem('${item.key}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-icon delete" onclick="deleteItem('${item.key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
@@ -201,6 +209,7 @@ function saveItem() {
         descEn: document.getElementById('itemDescEn').value.trim(),
         badge: document.getElementById('itemBadge').value || '',
         status: document.getElementById('itemStatus').value || 'active',
+        order: parseInt(editKey ? (menuItems.find(x=>x.key===editKey)?.order || 0) : (menuItems.length + 1)),
         updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
@@ -242,7 +251,13 @@ function renderCatTable() {
                 </td>
                 <td><span class="section-tag">${getSectionLabel(cat.section)}</span></td>
                 <td><b>${itemCount}</b> وجبة</td>
-                <td><span class="order-badge">${cat.order || 0}</span></td>
+                <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <button class="btn-icon" style="width:28px; height:28px;" onclick="moveCatOrder('${cat.id}', -1)"><i class="fa-solid fa-arrow-up"></i></button>
+                        <span class="order-badge">${cat.order || 0}</span>
+                        <button class="btn-icon" style="width:28px; height:28px;" onclick="moveCatOrder('${cat.id}', 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                    </div>
+                </td>
                 <td>
                     <button onclick="toggleCat('${cat.id}','${cat.status}')" class="status-pill ${isVisible ? 'status-active' : 'status-hidden'}">
                         ${isVisible ? 'ظاهر' : 'مخفي'}
@@ -649,6 +664,45 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // وظيفة البحث العالمي
-function onGlobalSearch() {
-    renderTable();
+function onGlobalSearch() { renderTable(); }
+
+// ══════════════════════════════════════════════
+// 9. وظائف إعادة الترتيب (Reordering)
+// ══════════════════════════════════════════════
+
+function moveCatOrder(id, direction) {
+    const idx = catItems.findIndex(c => c.id === id);
+    if (idx === -1) return;
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= catItems.length) return;
+
+    const current = catItems[idx];
+    const other = catItems[targetIdx];
+
+    const tempOrder = current.order || 0;
+    REFS.cats.child(current.id).update({ order: other.order || 0 });
+    REFS.cats.child(other.id).update({ order: tempOrder }).then(() => {
+        showToast('تم تغيير ترتيب الأقسام');
+    });
+}
+
+function moveItemOrder(key, direction) {
+    // نحصل على القائمة المفلترة حالياً (نفس القسم) لضمان الترتيب الصحيح
+    const q = (document.getElementById('globalSearch')?.value || '').toLowerCase();
+    const currentList = menuItems.filter(i => (activeFilterCat === 'all' || i.category === activeFilterCat) && (!q || (i.name || '').toLowerCase().includes(q)));
+    currentList.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    const idx = currentList.findIndex(i => i.key === key);
+    if (idx === -1) return;
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= currentList.length) return;
+
+    const current = currentList[idx];
+    const other = currentList[targetIdx];
+
+    const tempOrder = current.order || 0;
+    REFS.menu.child(current.key).update({ order: other.order || 0 });
+    REFS.menu.child(other.key).update({ order: tempOrder }).then(() => {
+        showToast('تم تغيير ترتيب الوجبات');
+    });
 }
