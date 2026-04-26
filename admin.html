@@ -1,205 +1,81 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم الفاخرة | طلو أحبابنا</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/admin.css">
+    <meta charset="UTF-8" />
+    <title>إدارة قائمة الطعام - Tallo Ahbabna</title>
+    <meta name="description" content="لوحة تحكم متكاملة لإدارة أقسام وأطباق القائمة باللغة العربية، مع إعادة ترتيب، تفعيل/إلغاء، وحفظ التغييرات في Firebase.">
+    <link rel="stylesheet" href="css/admin.css" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;800&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
+    <script src="js/admin.js" defer></script>
 </head>
 <body>
-
     <div class="admin-wrapper">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header"><img src="images/tallo-logo.png" alt="طلو أحبابنا"></div>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/logo.png" alt="شعار المطعم" />
+            </div>
             <nav class="sidebar-menu">
-                <a href="javascript:void(0)" class="menu-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</a>
-                <a href="javascript:void(0)" class="menu-item" data-view="view-menu" onclick="navigateTo('view-menu')"><i class="fa-solid fa-bowl-food"></i> قائمة الطعام</a>
-                <a href="javascript:void(0)" class="menu-item" data-view="view-categories" onclick="navigateTo('view-categories')"><i class="fa-solid fa-layer-group"></i> الأقسام</a>
-                <a href="javascript:void(0)" class="menu-item" data-view="view-design" onclick="navigateTo('view-design')"><i class="fa-solid fa-palette"></i> التصميم</a>
-                <a href="javascript:void(0)" class="menu-item" data-view="view-home" onclick="navigateTo('view-home')"><i class="fa-solid fa-house-chimney"></i> الرئيسية</a>
-                <a href="javascript:void(0)" class="menu-item" data-view="view-feedback" onclick="navigateTo('view-feedback')"><i class="fa-solid fa-comment-dots"></i> آراء الزبائن</a>
-                <a href="javascript:void(0)" class="menu-item" data-view="view-logs" onclick="navigateTo('view-logs')"><i class="fa-solid fa-list-check"></i> السجل</a>
-                <a href="javascript:void(0)" class="menu-item" data-view="view-trash" onclick="navigateTo('view-trash')"><i class="fa-solid fa-trash-can"></i> المحذوفات</a>
+                <a href="#" class="menu-item active"><i class="fas fa-utensils"></i>قائمة الطعام</a>
+                <a href="#" class="menu-item"><i class="fas fa-chart-line"></i>تقارير</a>
+                <a href="#" class="menu-item"><i class="fas fa-cog"></i>الإعدادات</a>
             </nav>
             <div class="sidebar-footer">
-                <button class="btn-primary" style="background: rgba(231, 76, 60, 0.1); color: #e74c3c; width: 100%;" onclick="logout()">تسجيل الخروج</button>
+                <button class="btn-primary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>تسجيل الخروج</button>
             </div>
         </aside>
-
+        <!-- Main Content -->
         <main class="main-content">
-            <div class="mobile-header">
-                <button onclick="document.getElementById('sidebar').classList.toggle('open')" style="background:none; border:none; color:#fff; font-size:1.5rem;"><i class="fa-solid fa-bars-staggered"></i></button>
-                <h2 style="font-size:1.1rem;">لوحة التحكم</h2>
-            </div>
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>إدارة قائمة الطعام</h1>
+                    <p>أضف، حرر، رتب، أو احذف الأقسام والأطباق.</p>
+                </div>
+                <button class="btn-primary" id="addCategoryBtn"><i class="fas fa-plus"></i>قسم جديد</button>
+            </header>
 
-            <!-- Dashboard -->
-            <section class="view active" id="view-dashboard">
-                <div class="page-header"><h1>أهلاً بك 👋</h1><p>ملخص مطعمك اليوم.</p></div>
-                <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-utensils"></i></div><div class="stat-info"><h3>الوجبات</h3><div class="stat-num" id="stat-total">0</div></div></div>
-                    <div class="stat-card"><div class="stat-icon" style="color:var(--gold);"><i class="fa-solid fa-layer-group"></i></div><div class="stat-info"><h3>الأقسام</h3><div class="stat-num" id="stat-cats">0</div></div></div>
-                    <div class="stat-card"><div class="stat-icon" style="color:#2ecc71;"><i class="fa-solid fa-comment-dots"></i></div><div class="stat-info"><h3>الآراء</h3><div class="stat-num" id="stat-feed">0</div></div></div>
+            <!-- Category Filter Tabs -->
+            <div class="cat-filter-tabs" id="categoryTabs"></div>
+
+            <!-- Data Card (Table) -->
+            <section class="data-card">
+                <div class="table-header">
+                    <h2>الأطباق</h2>
+                    <button class="btn-primary" id="addItemBtn"><i class="fas fa-plus"></i>طبق جديد</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th>ترتيب</th>
+                                <th>صورة</th>
+                                <th>الاسم (AR)</th>
+                                <th>الاسم (EN)</th>
+                                <th>السعر</th>
+                                <th>الحالة</th>
+                                <th>وسوم</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody"></tbody>
+                    </table>
                 </div>
             </section>
-
-            <!-- Categories View (Upgraded) -->
-            <section class="view" id="view-categories" style="display:none;">
-                <div class="page-header">
-                    <div class="page-title"><h1>إدارة الأقسام</h1><p>تحكم في أقسام المنيو، الأيقونات، والترتيب.</p></div>
-                    <button class="btn-primary" onclick="openCatModal()"><i class="fa-solid fa-folder-plus"></i> إضافة قسم جديد</button>
-                </div>
-                <div class="data-card">
-                    <div style="overflow-x:auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>الأيقونة</th>
-                                    <th>اسم القسم (عربي/En)</th>
-                                    <th>المنطقة</th>
-                                    <th>الوجبات</th>
-                                    <th>الترتيب</th>
-                                    <th>الحالة</th>
-                                    <th>إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cat-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Other Views (Stubs) -->
-            <section class="view" id="view-menu" style="display:none;">
-                <div class="page-header"><div class="page-title"><h1>إدارة المنيو</h1></div><button class="btn-primary" onclick="openItemModal()"><i class="fa-solid fa-plus"></i> وجبة جديدة</button></div>
-                <div class="data-card">
-                    <div class="table-header"><div class="cat-filter-tabs" id="catFilterTabs"></div><input type="text" id="globalSearch" class="form-control" placeholder="بحث..." oninput="onGlobalSearch()"></div>
-                    <div style="overflow-x:auto;"><table><thead><tr><th>الصورة</th><th>الاسم</th><th>نقل</th><th>السعر</th><th>الحالة</th><th>الترتيب</th><th>إجراءات</th></tr></thead><tbody id="menu-table-body"></tbody></table></div>
-                </div>
-            </section>
-            
-            <section class="view" id="view-design" style="display:none;">
-                <div class="page-header"><h1>إعدادات التصميم</h1><button class="btn-primary" onclick="saveDesignSettings()">حفظ الألوان</button></div>
-                <div class="data-card" style="padding:20px;"><div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;"><div><label>اللون الأساسي</label><input type="color" id="d_primary" class="form-control"></div><div><label>لون الخلفية</label><input type="color" id="d_bg" class="form-control"></div></div></div>
-            </section>
-
-            <section class="view" id="view-home" style="display:none;">
-                <div class="page-header"><h1>إعدادات الرئيسية</h1><button class="btn-primary" onclick="saveHomeSettings()">حفظ الإعدادات</button></div>
-                <div class="data-card" style="padding:20px;"><div><label>رابط فيديو الخلفية</label><input type="text" id="h_video" class="form-control"></div><div style="margin-top:10px;"><label>الجملة الترحيبية</label><input type="text" id="h_tagline" class="form-control"></div></div>
-            </section>
-
-            <section class="view" id="view-feedback" style="display:none;"><div class="page-header"><h1>آراء الزبائن</h1></div><div class="data-card"><table><thead><tr><th>الوقت</th><th>الاسم</th><th>التقييم</th><th>التعليق</th></tr></thead><tbody id="feed-table-body"></tbody></table></div></section>
-            <section class="view" id="view-logs" style="display:none;"><div class="page-header"><h1>سجل العمليات</h1></div><div class="data-card"><table><thead><tr><th>الوقت</th><th>الحدث</th><th>التفاصيل</th></tr></thead><tbody id="logs-table-body"></tbody></table></div></section>
-            <section class="view" id="view-trash" style="display:none;"><div class="page-header"><h1>سلة المحذوفات</h1></div><div class="data-card"><table><thead><tr><th>الاسم</th><th>تاريخ الحذف</th><th>إجراء</th></tr></thead><tbody id="trash-table-body"></tbody></table></div></section>
         </main>
     </div>
 
-    <!-- MODAL: CATEGORY (Upgraded) -->
-    <div class="modal-overlay" id="catModal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header"><h2 id="catModalTitle">إدارة القسم</h2><button onclick="closeCatModal()">&times;</button></div>
-            <div class="modal-body">
-                <form id="catForm">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                        <div><label>الاسم (عربي)</label><input type="text" id="catNameAr" class="form-control" placeholder="مثلاً: وجبات الغداء" required></div>
-                        <div><label>الاسم (إنجليزي)</label><input type="text" id="catNameEn" class="form-control" placeholder="مثلاً: Lunch Meals"></div>
-                        <div>
-                            <label>المنطقة الرئيسية</label>
-                            <select id="catSection" class="form-control" required>
-                                <option value="arabic">المنيو العربي (سدو)</option>
-                                <option value="intl">الانترناشونال</option>
-                                <option value="desserts">الحلويات</option>
-                                <option value="drinks">المشروبات والقهوة</option>
-                                <option value="argileh">الأراجيل</option>
-                            </select>
-                        </div>
-                        <div><label>رقم الترتيب</label><input type="number" id="catOrder" class="form-control" placeholder="1, 2, 3..."></div>
-                    </div>
-                    <div style="margin-top:15px;">
-                        <label>الأيقونة (كود FontAwesome)</label>
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="catIcon" class="form-control" placeholder="fa-utensils, fa-egg, fa-burger...">
-                            <div id="icon-preview" style="width:50px; height:45px; background:rgba(255,255,255,0.05); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:1.2rem;">
-                                <i class="fa-solid fa-circle-question"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
-                        <div><label>وصف القسم (عربي)</label><textarea id="catDescAr" class="form-control" rows="2"></textarea></div>
-                        <div><label>وصف القسم (إنجليزي)</label><textarea id="catDescEn" class="form-control" rows="2"></textarea></div>
-                    </div>
-                    <div style="margin-top:15px; display:flex; gap:15px; align-items:center;">
-                        <label>حالة القسم:</label>
-                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                            <input type="radio" name="catStatus" value="active" checked> ظاهر
-                        </label>
-                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                            <input type="radio" name="catStatus" value="hidden"> مخفي
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer"><button class="btn-primary" onclick="saveCategory()">حفظ التعديلات</button></div>
-        </div>
-    </div>
-
-    <!-- MODAL: ITEM (Upgraded) -->
-    <div class="modal-overlay" id="itemModal">
-        <div class="modal-content" style="max-width: 800px;">
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">إدارة الوجبة</h2>
-                <button onclick="closeItemModal()">&times;</button>
+                <h3 id="modalTitle">عنوان النافذة</h3>
+                <button class="btn-icon" id="closeModalBtn"><i class="fas fa-times"></i></button>
             </div>
-            <div class="modal-body">
-                <form id="itemForm">
-                    <div style="display:grid; grid-template-columns: 1fr 2fr; gap:20px;">
-                        <!-- الجانب الأيمن: الصورة والمعاينة -->
-                        <div style="display:flex; flex-direction:column; gap:10px;">
-                            <label>معاينة الصورة</label>
-                            <div id="item-img-preview" style="width:100%; aspect-ratio:1/1; background:rgba(255,255,255,0.05); border-radius:20px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid var(--glass-border);">
-                                <i class="fa-solid fa-image" style="font-size:3rem; color:rgba(255,255,255,0.1);"></i>
-                            </div>
-                            <input type="text" id="itemImg" class="form-control" placeholder="رابط الصورة (URL)" oninput="previewItemImage(this.value)">
-                        </div>
-                        
-                        <!-- الجانب الأيسر: البيانات -->
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                            <div><label>الاسم (عربي)</label><input type="text" id="itemName" class="form-control" required></div>
-                            <div><label>الاسم (إنجليزي)</label><input type="text" id="itemNameEn" class="form-control"></div>
-                            
-                            <div><label>القسم</label><select id="itemCategory" class="form-control" required></select></div>
-                            <div><label>السعر (JD)</label><input type="text" id="itemPrice" class="form-control"></div>
-                            
-                            <div>
-                                <label>شارة التمييز (Badge)</label>
-                                <select id="itemBadge" class="form-control">
-                                    <option value="">بدون شارة</option>
-                                    <option value="HOT">🔥 حار (Hot)</option>
-                                    <option value="NEW">✨ جديد (New)</option>
-                                    <option value="SPECIAL">⭐ مميز (Special)</option>
-                                </select>
-                            </div>
-                            <div><label>حالة الوجبة</label><select id="itemStatus" class="form-control"><option value="active">نشط</option><option value="inactive">مخفي</option></select></div>
-                            
-                            <div style="grid-column: span 2;"><label>وصف الوجبة (عربي)</label><textarea id="itemDesc" class="form-control" rows="2"></textarea></div>
-                            <div style="grid-column: span 2;"><label>وصف الوجبة (إنجليزي)</label><textarea id="itemDescEn" class="form-control" rows="2"></textarea></div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary" onclick="saveItem()">حفظ البيانات</button>
-            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
         </div>
     </div>
-
-    <!-- Notification Toast -->
-    <div id="toast-container" style="position:fixed; bottom:20px; left:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
-
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script src="js/admin.js"></script>
 </body>
 </html>
