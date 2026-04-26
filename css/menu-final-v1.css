@@ -54,7 +54,6 @@
 }
 
 html {
-  scroll-behavior: smooth; /* جعل الصفحة تتحرك بنعومة عند الانتقال بين الأقسام */
   -webkit-text-size-adjust: 100%; /* منع أجهزة الآيفون من تغيير حجم الخط تلقائياً */
 }
 
@@ -64,6 +63,9 @@ body {
   font-family: 'IBM Plex Sans Arabic', sans-serif; /* نوع الخط العربي الفخم */
   padding-bottom: 76px;  /* مسافة أمان في الأسفل (76 بكسل) لشريط التواصل الاجتماعي */
   min-height: 100dvh;    /* أقل ارتفاع للجسم هو كامل ارتفاع الشاشة (dvh للأجهزة الحديثة) */
+  overflow-x: hidden;    /* منع الرجة الأفقية */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* ══════════════════════════════════════════════
@@ -74,6 +76,8 @@ header {
   width: 100%;        /* عرض كامل الشاشة */
   z-index: 1000;      /* ليكون فوق جميع العناصر الأخرى */
   background: #000;   /* خلفية سوداء احتياطية */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /* .hdr-top: الجزء الذي يحتوي على اللوجو وخلفية السدو */
@@ -92,7 +96,7 @@ header {
   justify-content: flex-end; /* دفع العناصر لأسفل الهيدر */
   padding-bottom: 30px; /* مسافة 30 بكسل من الأسفل */
   z-index: 10; 
-  transition: transform 0.3s ease-out; /* حركة سلسة عند التغيير (0.3 ثانية) */
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* انتقال للتحويل والشفافية فقط */
 }
 
 /* طبقة تعتيم (Overlay) فوق السدو ليظهر اللوجو والكلمات بوضوح */
@@ -139,9 +143,7 @@ header {
   justify-content: center;
   width: 44px;        /* عرض الزر 44 بكسل (حجم مريح للأصابع) */
   height: 44px;       /* ارتفاع الزر 44 بكسل */
-  background: rgba(10, 10, 10, 0.65); /* خلفية سوداء شفافة (تأثير زجاجي) */
-  backdrop-filter: blur(10px); /* تعتيم (غباش) ما خلف الزر لبروزه */
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(10, 10, 10, 0.95); /* خلفية سوداء شبه كاملة */
   border: 1px solid rgba(197, 160, 34, 0.25); /* حدود ذهبية رقيقة جداً */
   border-radius: 50%; /* جعل الزر دائرياً تماماً */
   color: var(--gold); /* لون السهم ذهبي */
@@ -188,8 +190,9 @@ header {
    هذا الكود يتم تفعيله برمجياً عندما ينزل الزبون لأسفل الصفحة
 */
 header.shrunk .hdr-top {
-  min-height: 160px !important; /* تقليل ارتفاع الهيدر من 420 بكسل إلى 160 بكسل فقط */
-  transform: translateY(-80px); /* رفع الهيدر للأعلى بمقدار 80 بكسل لإخفاء جزء منه */
+  min-height: 140px !important; 
+  transform: translateY(-90px); 
+  transition: none !important; /* إلغاء الترانزيشن أثناء تغيير الارتفاع لمنع الرجة */
 }
 
 header.shrunk .logo-wrap {
@@ -235,6 +238,7 @@ header.shrunk .search-row {
   scrollbar-width: none; /* إخفاء شريط التمرير الافتراضي لشكل أنظف */
   -ms-overflow-style: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 .nav-row::-webkit-scrollbar {
@@ -253,8 +257,7 @@ header.shrunk .search-row {
   font-weight: 800;   /* سمك الخط (عريض) */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap; /* منع انقسام النص لسطرين */
-  backdrop-filter: blur(15px); /* تأثير غباش فخم خلف الزر */
-  -webkit-backdrop-filter: blur(15px);
+  background: rgba(20, 20, 20, 0.9); /* تعتيم أعلى بدلاً من الغباش */
   border: 1px solid rgba(255, 255, 255, 0.08); /* حدود دقيقة جداً لبروز الزر */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* ظل خفيف تحت الزر */
 }
@@ -301,7 +304,6 @@ header.shrunk .search-row {
   align-items: center; /* توسيط عمودي */
   padding: 0 18px;    /* مسافة داخلية */
   gap: 12px;          /* مسافة بين الأيقونة ومكان الكتابة */
-  /* تمت إزالة الغباش (Blur) المعقد لأنه سبب التعليق الرئيسي */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* ظل بسيط وسريع */
   transition: border-color 0.3s ease;
 }
@@ -330,9 +332,7 @@ header.shrunk .search-row {
 
 /* ── الجزء السفلي من الهيدر: شريط الأقسام الفرعية المثبت ── */
 .hdr-bottom {
-  background: rgba(10, 10, 10, 0.98); /* خلفية سوداء شبه كاملة (98%) لدعم الوضوح */
-  backdrop-filter: blur(15px); /* تعتيم زجاجي فخم */
-  -webkit-backdrop-filter: blur(15px);
+  background: #0a0a0a; /* لون صلب لمنع التعليق */
   border-top: 1px solid rgba(197, 160, 34, 0.15); /* خط علوي ذهبي رقيق جداً */
   border-bottom: 1px solid rgba(197, 160, 34, 0.15); /* خط سفلي ذهبي رقيق جداً */
 
@@ -341,6 +341,7 @@ header.shrunk .search-row {
   top: 0;             /* يلتصق بحافة الشاشة العلوية تماماً */
   z-index: 1100;      /* ليكون فوق المنيو والبطاقات دائماً */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6); /* ظل تحت الشريط لتمييزه عن المنيو */
+  will-change: transform, top;
 }
 
 /* حاوية أزرار الأصناف (مثل: فطور، غداء، شوربات...) */
@@ -562,9 +563,7 @@ section.active {
  └─────────────────────────────────────────────────┘
  ════════════════════════════════════════════════════════════════════ */
 .menu-card {
-  background: var(--card); /* خلفية زجاجية شفافة بنسبة 60% ليظهر ما خلفها */
-  backdrop-filter: blur(12px); /* تأثير الغباش الفخم خلف البطاقة بمقدار 12 بكسل */
-  -webkit-backdrop-filter: blur(12px);
+  background: #1e0a0a; /* لون صلب بدلاً من الزجاجي */
   border-radius: 24px; /* زوايا منحنية (24 بكسل) تعطي مظهراً ناعماً وفخماً */
   overflow: hidden;   /* لإخفاء أي أجزاء من الصورة تخرج عن حدود الزوايا المنحنية */
   display: flex;      /* ترتيب العناصر داخل البطاقة (صورة، اسم، سعر) عمودياً */
@@ -575,7 +574,6 @@ section.active {
   cursor: pointer;    /* تغيير شكل الماوس ليد عند الوقوف على الوجبة */
   position: relative; /* لتمكين وضع الشارات (مثل "جديد") فوق البطاقة بدقة */
   transform: translateZ(0); /* تحسين سرعة العرض على الهواتف */
-  will-change: transform; /* إخبار المتصفح أن البطاقة ستتحرك لضمان سلاسة الأنيميشن */
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); /* حركة ناعمة جداً عند التفاعل (0.35 ثانية) */
   -webkit-tap-highlight-color: transparent; /* إزالة الوميض الأزرق الافتراضي عند اللمس في الأندرويد */
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* ظل ناعم تحت البطاقة لإعطاء عمق وبروز */
@@ -960,7 +958,7 @@ section.active {
   transform: translateX(-50%); /* تعديل التوسيط ليكون دقيقاً */
   width: calc(100% - 40px); /* عرضه كامل الشاشة ناقص 40 بكسل (20 يمين و 20 يسار) */
   max-width: 450px;   /* لا يتجاوز عرضه 450 بكسل ليظل أنيقاً */
-  background: rgba(15, 15, 15, 0.85); /* خلفية سوداء شفافة (85%) */
+  background: rgba(15, 15, 15, 0.98); /* خلفية داكنة جداً بدلاً من الشفافة */
   padding: 12px 10px; /* مسافة داخلية (12 بكسل فوق وتحت، 10 يمين ويسار) */
   display: flex;      /* توزيع الأيقونات بجانب بعضها */
   justify-content: space-around; /* توزيع مسافات متساوية بين الأيقونات */
@@ -968,8 +966,6 @@ section.active {
   z-index: 1500;      /* فوق المنيو وتحت المودال */
   border: 1px solid rgba(197, 160, 34, 0.25); /* حدود ذهبية رقيقة جداً */
   border-radius: 20px; /* زوايا منحنية (20 بكسل) */
-  backdrop-filter: blur(20px) saturate(180%); /* تعتيم زجاجي قوي جداً مع زيادة تشبع الألوان */
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(197, 160, 34, 0.05); /* ظل خارجي وتوهج داخلي خفيف */
 }
 

@@ -33,7 +33,7 @@
         .logo-wrap img {
             filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
         }
-        body { direction: rtl; font-weight: 700; }
+        body { direction: rtl; background: #0a0a0a; }
         .sec-title::after { background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25)); }
     </style>
 </head>
@@ -196,6 +196,7 @@
 
         function setTab(tabId, btn) {
             currentTab = tabId;
+            
             // 1. تحديث شكل الأزرار (تلوين الزر المختار)
             document.querySelectorAll('#mainTabRow .pill').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
@@ -206,7 +207,7 @@
                 s.classList.remove('active'); 
             });
             
-            var targetSec = document.getElementById(tabId);
+            const targetSec = document.getElementById(tabId);
             if (targetSec) { 
                 targetSec.style.display = 'block'; 
                 targetSec.classList.add('active'); 
@@ -214,11 +215,14 @@
             
             // 3. تبديل شريط التصنيفات الفرعية العلوي
             document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
-            var sn = document.getElementById(tabId + 'Nav');
+            const sn = document.getElementById(tabId + 'Nav');
             if (sn) sn.style.display = 'flex';
             
-            // إعادة التمرير للأعلى بنعومة
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // 4. طلب تحديث البيانات في القسم الجديد (للتأكد)
+            requestRender();
+            
+            // إعادة التمرير للأعلى فوراً
+            window.scrollTo(0, 0);
         }
 
         /**
@@ -315,69 +319,80 @@
             return card;
         }
 
-        // الوظيفة الرئيسية لعرض المنيو بالكامل (تم تحسينها لتعرض القسم المختار فقط لتوفير الطاقة)
+        // الوظيفة الرئيسية لعرض المنيو بالكامل
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta || _isRendering) return;
-            _isRendering = true; // تفعيل القفل
-
-            const skel = document.getElementById('skeletons-arabic');
-            if (skel) skel.style.display = 'none';
+            _isRendering = true;
 
             const itemsByCat = {};
             Object.values(_menuItems).forEach(item => {
                 if (item.status === 'inactive') return;
                 if (!item.category) return;
-                if (!itemsByCat[item.category]) itemsByCat[item.category] = [];
-                itemsByCat[item.category].push(item);
+                const catId = item.category.toString().trim();
+                if (!itemsByCat[catId]) itemsByCat[catId] = [];
+                itemsByCat[catId].push(item);
             });
 
-            const secKey = currentTab; 
-            const navEl = document.getElementById(secKey + 'Nav');
-            const secEl = document.getElementById(secKey);
+            // قائمة الأقسام الرئيسية في الموقع
+            const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
             
-            if (navEl && secEl) {
-                const navFrag = document.createDocumentFragment();
-                const secFrag = document.createDocumentFragment();
+            sectionKeys.forEach(secKey => {
+                const navEl = document.getElementById(secKey + 'Nav');
+                const secEl = document.getElementById(secKey);
+                
+                if (navEl && secEl) {
+                    const navFrag = document.createDocumentFragment();
+                    const secFrag = document.createDocumentFragment();
 
-                const hero = secEl.querySelector('.section-hero');
-                if (hero) secFrag.appendChild(hero.cloneNode(true));
+                    // الحفاظ على الهيرو الخاص بالقسم
+                    const hero = secEl.querySelector('.section-hero');
+                    if (hero) secFrag.appendChild(hero.cloneNode(true));
 
-                const cats = Object.entries(_categoriesMeta)
-                    .map(([id, val]) => ({ id, ...val }))
-                    .filter(c => c.section === secKey && c.status !== 'hidden')
-                    .sort((a, b) => (a.order || 0) - (b.order || 0));
+                    const cats = Object.entries(_categoriesMeta)
+                        .map(([id, val]) => ({ id: id.toString().trim(), ...val }))
+                        .filter(c => c.section === secKey && c.status !== 'hidden')
+                        .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-                cats.forEach(cat => {
-                    const btn = document.createElement('a');
-                    btn.href = '#' + cat.id;
-                    btn.className = 'cat-btn';
-                    btn.innerHTML = (cat.icon ? `<i class="fa-solid ${cat.icon}"></i> ` : '') + cat.nameAr;
-                    navFrag.appendChild(btn);
+                    cats.forEach(cat => {
+                        const btn = document.createElement('a');
+                        btn.href = '#' + cat.id;
+                        btn.className = 'cat-btn';
+                        btn.innerHTML = (cat.icon ? `<i class="fa-solid ${cat.icon}"></i> ` : '') + (cat.nameAr || '');
+                        navFrag.appendChild(btn);
 
-                    const h2 = document.createElement('h2');
-                    h2.id = cat.id;
-                    h2.className = 'sec-title';
-                    h2.innerHTML = (cat.icon ? `<i class="fa-solid ${cat.icon} sec-icon"></i> ` : '') + cat.nameAr;
-                    
-                    const grid = document.createElement('div');
-                    grid.className = 'menu-grid';
-                    const items = itemsByCat[cat.id] || [];
-                    items.forEach(item => grid.appendChild(buildCard(item)));
+                        const h2 = document.createElement('h2');
+                        h2.id = cat.id;
+                        h2.className = 'sec-title';
+                        h2.innerHTML = (cat.icon ? `<i class="fa-solid ${cat.icon} sec-icon"></i> ` : '') + (cat.nameAr || '');
+                        
+                        const grid = document.createElement('div');
+                        grid.className = 'menu-grid';
+                        const items = itemsByCat[cat.id] || [];
+                        items.forEach(item => grid.appendChild(buildCard(item)));
 
-                    secFrag.appendChild(h2);
-                    secFrag.appendChild(grid);
-                });
+                        secFrag.appendChild(h2);
+                        secFrag.appendChild(grid);
+                    });
 
-                window.requestAnimationFrame(() => {
-                    navEl.innerHTML = '';
-                    navEl.appendChild(navFrag);
-                    secEl.innerHTML = '';
-                    secEl.appendChild(secFrag);
-                    _isRendering = false; // فتح القفل بعد الانتهاء
-                });
-            } else {
-                _isRendering = false;
-            }
+                    window.requestAnimationFrame(() => {
+                        // إخفاء الهياكل العظمية (Skeletons) عند أول رندر ناجح
+                        const skels = ['skeletons-arabic', 'skeletons-en'];
+                        skels.forEach(sId => {
+                            const sk = document.getElementById(sId);
+                            if (sk) sk.style.display = 'none';
+                        });
+
+                        navEl.innerHTML = '';
+                        navEl.appendChild(navFrag);
+                        secEl.innerHTML = '';
+                        secEl.appendChild(secFrag);
+                        
+                        _isRendering = false;
+                    });
+                } else {
+                    _isRendering = false;
+                }
+            });
         }
 
         let _renderTimeout;
@@ -408,18 +423,34 @@
         /**
          * منطق تصغير الهيدر عند التمرير (Shrinking Header)
          */
+        let isScrolling = false;
         function handleScroll() {
-            const header = document.getElementById('mainHeader');
-            if (!header) return;
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > 80) {
-                header.classList.add('shrunk');
-            } else {
-                header.classList.remove('shrunk');
-            }
+            if (isScrolling) return;
+            isScrolling = true;
+            window.requestAnimationFrame(() => {
+                const header = document.getElementById('mainHeader');
+                if (!header) { isScrolling = false; return; }
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                // رفع العتبة لـ 120 بكسل لزيادة الثبات ومنع "الرجة" عند التمرير البطيء
+                if (scrollTop > 120) {
+                    header.classList.add('shrunk');
+                } else if (scrollTop < 40) { // مسافة أمان لعدم التبديل السريع
+                    header.classList.remove('shrunk');
+                }
+                isScrolling = false;
+            });
         }
-        window.addEventListener('scroll', handleScroll);
-        window.addEventListener('load', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('load', () => {
+            handleScroll();
+            // معالجة القفزة عند الدخول من الرابط المباشر
+            if (window.location.hash) {
+                setTimeout(() => {
+                    const el = document.querySelector(window.location.hash);
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 500);
+            }
+        });
     </script>
     <!-- تسجيل نظام التشغيل السريع (Service Worker) -->
     <script src="sw-register.js" onerror="console.log('SW fallback')"></script>

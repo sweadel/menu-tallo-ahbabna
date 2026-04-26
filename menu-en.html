@@ -221,6 +221,10 @@
             if (sn) sn.style.display = 'flex';
             
             document.querySelectorAll('.sec-title, .menu-card').forEach(el => el.style.display = '');
+            
+            // طلب تحديث البيانات في القسم الجديد
+            requestRender();
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -307,8 +311,10 @@
         }
 
         // الوظيفة الرئيسية لعرض المنيو بالكامل بناءً على الأقسام والوجبات
+        let _isRendering = false;
         function renderFullMenu() {
-            if (!_menuItems || !_categoriesMeta) return;
+            if (!_menuItems || !_categoriesMeta || _isRendering) return;
+            _isRendering = true;
 
             const skel = document.getElementById('skeletons-en');
             if (skel) skel.style.display = 'none';
@@ -317,8 +323,9 @@
             Object.values(_menuItems).forEach(item => {
                 if (item.status === 'inactive') return;
                 if (!item.category) return;
-                if (!itemsByCat[item.category]) itemsByCat[item.category] = [];
-                itemsByCat[item.category].push(item);
+                const catId = item.category.toString().trim();
+                if (!itemsByCat[catId]) itemsByCat[catId] = [];
+                itemsByCat[catId].push(item);
             });
 
             // بناء كل قسم (عربي، انترناشونال، إلخ)
@@ -337,7 +344,7 @@
                 if (hero) secFrag.appendChild(hero.cloneNode(true));
 
                 const cats = Object.entries(_categoriesMeta)
-                    .map(([id, val]) => ({ id, ...val }))
+                    .map(([id, val]) => ({ id: id.toString().trim(), ...val }))
                     .filter(c => c.section === secKey && c.status !== 'hidden')
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
@@ -370,6 +377,7 @@
                     navEl.appendChild(navFrag);
                     secEl.innerHTML = '';
                     secEl.appendChild(secFrag);
+                    _isRendering = false;
                 });
             });
         }
