@@ -354,7 +354,7 @@ function saveItem() {
         nameEn: document.getElementById('itemNameEn').value.trim(),
         category: category,
         price: document.getElementById('itemPrice').value.trim(),
-        image: document.getElementById('itemImg').value.trim(),
+        image: document.getElementById('itemImage').value.trim(),
         desc: document.getElementById('itemDesc').value.trim(),
         descEn: document.getElementById('itemDescEn').value.trim(),
         badge: document.getElementById('itemBadge').value || '',
