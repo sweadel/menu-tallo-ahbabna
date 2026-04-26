@@ -221,6 +221,29 @@ function openItemModal(key = null) {
     }
     modal.classList.add('active');
     modal.style.display = 'flex';
+
+    // إظهار حقول أسعار الأوزان إذا كان القسم "مشاوي"
+    const weightPrices = document.getElementById('weightPricesFields');
+    if (weightPrices) {
+        const item = key ? menuItems.find(i => i.key === key) : null;
+        if ((item && item.category === 'ar-grill') || document.getElementById('itemCategory').value === 'ar-grill') {
+            weightPrices.style.display = 'block';
+            if (item) {
+                document.getElementById('priceQuarter').value = item.prices?.quarter || '';
+                document.getElementById('priceHalf').value = item.prices?.half || '';
+                document.getElementById('priceKilo').value = item.prices?.kilo || '';
+            }
+        } else {
+            weightPrices.style.display = 'none';
+        }
+    }
+}
+
+function onCategoryChange(catId) {
+    const weightPrices = document.getElementById('weightPricesFields');
+    if (weightPrices) {
+        weightPrices.style.display = (catId === 'ar-grill') ? 'block' : 'none';
+    }
 }
 
 function closeItemModal() {
@@ -248,6 +271,14 @@ function saveItem() {
         status: document.getElementById('itemStatus').value || 'active',
         updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
+
+    if (category === 'ar-grill') {
+        data.prices = {
+            quarter: document.getElementById('priceQuarter').value.trim(),
+            half: document.getElementById('priceHalf').value.trim(),
+            kilo: document.getElementById('priceKilo').value.trim()
+        };
+    }
 
     if (!editKey) data.order = menuItems.length + 1;
 
@@ -321,6 +352,51 @@ function saveCategory() {
 
 function editItem(k) { openItemModal(k); }
 function editCat(id) { openCatModal(id); }
+
+function renderCatTable() {
+    const body = document.getElementById('cat-table-body');
+    if (!body) return;
+    const canEdit = (localStorage.getItem('admin_role') || 'editor') !== 'viewer';
+
+    body.innerHTML = catItems.map(cat => {
+        const isActive = cat.status !== 'hidden';
+        const itemCount = menuItems.filter(i => i.category === cat.id).length;
+        
+        return `
+            <tr>
+                <td><i class="fa-solid ${cat.icon || 'fa-folder'}" style="font-size:1.2rem; color:var(--gold);"></i></td>
+                <td>
+                    <div style="font-weight:bold;">${cat.nameAr}</div>
+                    <small style="opacity:0.6;">${cat.nameEn || ''}</small>
+                </td>
+                <td><span class="badge-tag">${cat.section}</span></td>
+                <td><span class="count-badge">${itemCount} طبق</span></td>
+                <td>${cat.order || 0}</td>
+                <td>
+                    <button onclick="toggleCat('${cat.id}','${cat.status}')" class="status-pill ${isActive ? 'status-active' : 'status-hidden'}" ${!canEdit?'disabled':''}>
+                        ${isActive ? 'ظاهر' : 'مخفي'}
+                    </button>
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-icon edit" onclick="editCat('${cat.id}')" title="تعديل" ${!canEdit?'disabled':''}><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-icon delete" onclick="deleteCat('${cat.id}')" title="حذف" ${!canEdit?'disabled':''}><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>`;
+    }).join('');
+}
+
+function deleteCat(id) {
+    const cat = catItems.find(x => x.id === id);
+    if (!cat) return;
+    if (confirm(`هل أنت متأكد من حذف قسم "${cat.nameAr}"؟`)) {
+        REFS.cats.child(id).remove().then(() => {
+            showToast('تم حذف القسم بنجاح');
+            log('حذف قسم', cat.nameAr);
+        });
+    }
+}
 
 function deleteItem(key) {
     const item = menuItems.find(i => i.key === key);
