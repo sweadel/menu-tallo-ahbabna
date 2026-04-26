@@ -1,87 +1,107 @@
 <!DOCTYPE html>
 <!-- 
   ==========================================================================
-  المشروع: مطعم طلوا حبابنا - منيو ديجيتال
-  الملف: menu.html (النسخة العربية)
-  الوصف: صفحة المنيو الديناميكية. تقوم بجلب الوجبات والتصنيفات من Firebase
-         لحظياً. تدعم البحث، التبديل بين الأقسام، وعرض تفاصيل الوجبات.
+  المشروع: مطعم طلوا حبابنا - منيو ديجيتال فاخر
+  الملف: menu.html (النسخة العربية الكاملة)
+  الوصف: هذه هي النسخة المحدثة والكاملة للمنيو العربي.
+         تتميز بتصميم "بصمة السدو" الفاخر، وسرعة تحميل فائقة، ومزامنة لحظية مع Firebase.
   ==========================================================================
 -->
 <html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
-    <!-- منع التكبير اليدوي للشاشة لضمان ثبات التصميم كأنه تطبيق موبايل -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>طلوا حبابنا | قائمة الطعام</title>
-    
-    <!-- تحميل الخطوط العربية (IBM Plex & Cairo) -->
+    <meta name="theme-color" content="#1a0505">
+    <title>طلوا حبابنا | قائمة الطعام الكاملة</title>
+
+    <!-- تحميل الخطوط الملكية (IBM Plex Sans Arabic & Cairo) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap">
-    
-    <!-- ربط ملف التنسيق الأساسي ومكتبة الأيقونات (v12.1 Cache Buster) -->
-    <link rel="stylesheet" href="css/menu-final-v1.css?v=12.1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap">
+
+    <!-- الأيقونات والتنسيق الأساسي -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <link rel="stylesheet" href="css/menu-final-v1.css?v=12.2">
+
     <style>
-        /* إعدادات إضافية خاصة بشكل الهيدر واللوجو */
+        /* تحسينات بصرية إضافية لضمان "فخامة" الواجهة */
+        :root {
+            --gold-gradient: linear-gradient(135deg, #FFD700, #b38d1d);
+        }
+
+        body {
+            background-color: #0a0a0a;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* القوس الذهبي خلف اللوجو */
         .arch-overlay {
             background-image: url('images/header-arch-final.png') !important;
             display: block !important;
         }
-        .logo-wrap img {
-            filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.9)) !important;
+
+        /* تحسين شكل السكرول بار للموبايل */
+        ::-webkit-scrollbar { display: none; }
+
+        /* حركة دخول البطاقات */
+        .menu-card {
+            animation: cardEntrance 0.4s ease-out backwards;
         }
-        body { direction: rtl; background: #0a0a0a; }
-        .sec-title::after { background: linear-gradient(to left, transparent, rgba(197, 160, 34, .25)); }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 
 <body>
-    <!-- 1. شريط الإعلانات (يتم التحكم بنصه وتفعيله من لوحة الإدارة) -->
+
+    <!-- 1. شريط الإعلانات الديناميكي -->
     <div id="promo-banner" class="promo-banner" style="display: none;">
         <div class="promo-content">
             <i class="fa-solid fa-bullhorn"></i>
-            <span class="promo-text"></span>
+            <span class="promo-text">عرض خاص وحصري لمتابعينا!</span>
         </div>
     </div>
 
-    <!-- 2. الهيدر (رأس الصفحة) الذي يصغر عند النزول للأسفل -->
+    <!-- 2. الهيدر الملكي (يصغر عند التمرير) -->
     <header id="mainHeader">
         <div class="hdr-top">
-            <!-- طبقة القوس الذهبي خلف اللوجو -->
             <div class="arch-overlay"></div>
             
-            <!-- زر العودة للصفحة الرئيسية -->
-            <a href="index.html" class="back-btn" title="العودة">
+            <!-- زر العودة -->
+            <a href="index.html" class="back-btn">
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
 
+            <!-- اللوجو -->
             <div class="logo-wrap">
-                <img src="images/tallo-logo.png" alt="Logo">
+                <img src="images/tallo-logo.png" alt="طلوا حبابنا">
             </div>
 
-            <!-- أزرار التبديل بين الأقسام الرئيسية (عربي، انترناشونال، إلخ) -->
+            <!-- أزرار الأقسام الرئيسية -->
             <div class="nav-row" id="mainTabRow">
                 <a href="javascript:void(0)" class="pill active" onclick="setTab('arabic', this)">المنيو العربي</a>
-                <a href="javascript:void(0)" class="pill" onclick="setTab('intl', this)">الانترناشونال</a>
+                <a href="javascript:void(0)" class="pill" onclick="setTab('intl', this)">انترناشونال</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('desserts', this)">الحلويات</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('drinks', this)">المشروبات</a>
                 <a href="javascript:void(0)" class="pill" onclick="setTab('argileh', this)">الأراجيل</a>
             </div>
 
-            <!-- صندوق البحث الذكي -->
+            <!-- محرك البحث -->
             <div class="search-row">
                 <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass" style="color: var(--gold); font-size: 1rem;"></i>
-                    <input type="text" id="srch" placeholder="ابحث في القائمة..." oninput="filterMenu()">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="srch" placeholder="ابحث عن وجبتك المفضلة..." oninput="filterMenu()">
                 </div>
             </div>
         </div>
     </header>
-    
-    <!-- شريط التصنيفات الفرعية (يظهر حسب القسم المختار) -->
+
+    <!-- 3. شريط الأصناف الفرعية (Sticky) -->
     <div class="hdr-bottom">
         <div class="sub-nav" id="arabicNav"></div>
         <div class="sub-nav" style="display:none" id="intlNav"></div>
@@ -90,31 +110,30 @@
         <div class="sub-nav" style="display:none" id="argilehNav"></div>
     </div>
 
-    <!-- 3. حاوية المحتوى الديناميكي (الوجبات) -->
+    <!-- 4. حاوية المنيو الرئيسية -->
     <div class="container">
-        <!-- الأقسام: يتم ملؤها بالبيانات برمجياً من Firebase -->
         
         <!-- قسم العربي -->
         <section id="arabic" class="active">
             <div class="section-hero">
                 <div class="hero-text">
                     <div class="hero-title">المنيو العربي</div>
-                    <div class="hero-sub">🍳 إفطار · 🥙 شعبيات · 🍖 مشاوي · والمزيد ✨</div>
+                    <div class="hero-sub">نكهاتنا الأصيلة.. من قلب تراثنا الأردني 🇯🇴</div>
                 </div>
             </div>
-            <!-- الهياكل المؤقتة (Skeletons) تظهر أثناء تحميل البيانات -->
+            <!-- هياكل التحميل المؤقتة -->
             <div id="skeletons-arabic" class="menu-grid">
-                <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-price"></div></div>
-                <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-price"></div></div>
+                <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div></div>
+                <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-text"></div></div>
             </div>
         </section>
 
-        <!-- باقي الأقسام (تكون مخفية في البداية وتظهر عند اختيارها) -->
+        <!-- باقي الأقسام -->
         <section id="intl" style="display:none;">
             <div class="section-hero">
                 <div class="hero-text">
-                    <div class="hero-title">الانترناشونال</div>
-                    <div class="hero-sub">🍟 مقبلات · 🍝 باستا · 🍕 بيتزا · 🍔 سندويشات</div>
+                    <div class="hero-title">انترناشونال</div>
+                    <div class="hero-sub">أطباق عالمية مختارة.. جودة لا تضاهى 🌍</div>
                 </div>
             </div>
         </section>
@@ -123,7 +142,7 @@
             <div class="section-hero">
                 <div class="hero-text">
                     <div class="hero-title">الحلويات</div>
-                    <div class="hero-sub">🍰 حلويات شرقية وغربية طازجة 🥐</div>
+                    <div class="hero-sub">كل قطعة تحكي قصة حلاوة فريدة 🍰</div>
                 </div>
             </div>
         </section>
@@ -132,7 +151,7 @@
             <div class="section-hero">
                 <div class="hero-text">
                     <div class="hero-title">المشروبات</div>
-                    <div class="hero-sub">☕ قهوة مختصة · 🍹 عصائر · 🥤 مشروبات باردة</div>
+                    <div class="hero-sub">انتعاش يدوم.. قهوة مختصة وعصائر طبيعية 🍹</div>
                 </div>
             </div>
         </section>
@@ -140,14 +159,15 @@
         <section id="argileh" style="display:none;">
             <div class="section-hero">
                 <div class="hero-text">
-                    <div class="hero-title">قائمة الأراجيل</div>
-                    <div class="hero-sub">💨 أنواع فاخرة ومختارة 🌬️</div>
+                    <div class="hero-title">الأراجيل</div>
+                    <div class="hero-sub">أنواع فاخرة وخلطات مميزة لمزاجك 💨</div>
                 </div>
             </div>
         </section>
+
     </div>
 
-    <!-- 4. شريط التواصل السريع (عائم في الأسفل) -->
+    <!-- 5. شريط التواصل الاجتماعي العائم -->
     <div class="social-bar">
         <a href="https://maps.app.goo.gl/e8zRvaiQsCE6bMM4A" target="_blank" class="s-link">
             <i class="fa-solid fa-location-dot"></i>
@@ -167,119 +187,30 @@
         </a>
     </div>
 
-    <!-- 5. نافذة تفاصيل الوجبة (تظهر من الأسفل عند النقر على وجبة) -->
+    <!-- 6. نافذة تفاصيل الوجبة (BottomSheet) -->
     <div class="modal-overlay" id="dishModal" onclick="closeModal(event)">
-        <div class="modal-sheet" role="dialog" aria-modal="true">
-            <button class="modal-close" onclick="closeDishModal()" aria-label="إغلاق">&times;</button>
-            <div class="modal-handle"></div> <!-- الخط الصغير العلوي للسحب -->
+        <div class="modal-sheet">
+            <button class="modal-close" onclick="closeDishModal()">&times;</button>
+            <div class="modal-handle"></div>
             <div class="modal-img" id="modalImg"></div>
             <div class="modal-body">
                 <div class="modal-header-row">
                     <h2 class="modal-title" id="modalTitle"></h2>
                     <span class="modal-price-badge" id="modalPrice"></span>
                 </div>
-                <p class="modal-label">التفاصيل</p>
+                <p class="modal-label">المكونات والتفاصيل</p>
                 <p class="modal-desc" id="modalDesc"></p>
+                <button class="modal-action-btn" onclick="closeDishModal()">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- 6. الأكواد البرمجية (JavaScript) -->
+    <!-- 7. المنطق البرمجي (Firebase & Logic) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        /**
-         * منطق التنقل بين الأقسام (Tabs)
-         */
-        var currentTab = 'arabic';
-
-        function setTab(tabId, btn) {
-            currentTab = tabId;
-            
-            // 1. تحديث شكل الأزرار (تلوين الزر المختار)
-            document.querySelectorAll('#mainTabRow .pill').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            
-            // 2. إخفاء جميع الأقسام وإظهار القسم المطلوب فقط
-            document.querySelectorAll('section').forEach(s => { 
-                s.style.display = 'none'; 
-                s.classList.remove('active'); 
-            });
-            
-            const targetSec = document.getElementById(tabId);
-            if (targetSec) { 
-                targetSec.style.display = 'block'; 
-                targetSec.classList.add('active'); 
-            }
-            
-            // 3. تبديل شريط التصنيفات الفرعية العلوي
-            document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
-            const sn = document.getElementById(tabId + 'Nav');
-            if (sn) sn.style.display = 'flex';
-            
-            // 4. طلب تحديث البيانات في القسم الجديد (للتأكد)
-            requestRender();
-            
-            // إعادة التمرير للأعلى فوراً
-            window.scrollTo(0, 0);
-        }
-
-        /**
-         * وظيفة البحث في القائمة
-         */
-        function filterMenu() {
-            var srchEl = document.getElementById('srch');
-            if (!srchEl) return;
-            var q = srchEl.value.toLowerCase();
-            
-            if (q.length > 0) {
-                // عند البحث: نخفي التصنيفات ونظهر كل الوجبات المطابقة في صفحة واحدة
-                document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
-                document.querySelectorAll('section').forEach(s => s.style.display = 'block');
-                document.querySelectorAll('.sec-title').forEach(st => st.style.display = 'none');
-                document.querySelectorAll('.menu-card').forEach(c => {
-                    c.style.display = c.dataset.t.toLowerCase().includes(q) ? 'flex' : 'none';
-                });
-            } else {
-                // عند مسح البحث: نعود للوضع الطبيعي (التبويبات)
-                setTab(currentTab, document.querySelector('#mainTabRow .pill.active'));
-            }
-        }
-
-        /**
-         * منطق نافذة تفاصيل الوجبة (Modal)
-         */
-        function openDishModal(card) {
-            var name = card.dataset.t || '';
-            var price = card.querySelector('.card-price') ? card.querySelector('.card-price').textContent : '';
-            var desc = card.dataset.desc || '';
-            var bgUrl = card.querySelector('.card-img').style.backgroundImage.slice(4, -1).replace(/"/g, "");
-
-            document.getElementById('modalTitle').textContent = name;
-            document.getElementById('modalPrice').textContent = price;
-            document.getElementById('modalDesc').textContent = desc;
-
-            var modalImg = document.getElementById('modalImg');
-            modalImg.innerHTML = bgUrl ? `<img src="${bgUrl}" class="modal-actual-img">` : `<img src="images/tallo-logo.png" style="width:180px;margin:auto;">`;
-
-            document.getElementById('dishModal').classList.add('open');
-            document.body.style.overflow = 'hidden'; // منع تمرير الصفحة خلف النافذة
-        }
-
-        function closeDishModal() {
-            document.getElementById('dishModal').classList.remove('open');
-            document.body.style.overflow = '';
-        }
-
-        // إغلاق النافذة عند النقر خارجها
-        function closeModal(e) {
-            if (e.target === document.getElementById('dishModal')) closeDishModal();
-        }
-
-        /**
-         * الربط مع Firebase لجلب البيانات الحقيقية
-         */
+        // إعدادات Firebase
         const _fbCfg = {
             apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
             authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -294,15 +225,16 @@
 
         let _menuItems = null;
         let _categoriesMeta = null;
-        let _isRendering = false; // قفل لمنع التحديث المتكرر (Infinite Loop)
+        let _isRendering = false;
+        var currentTab = 'arabic';
 
         /**
-         * بناء كرت الوجبة برمجياً
+         * بناء بطاقة الوجبة
          */
         function buildCard(item) {
             const card = document.createElement('a');
             card.className = 'menu-card';
-            card.setAttribute('data-t', item.name || '');
+            card.setAttribute('data-t', (item.name || '').toLowerCase());
             card.setAttribute('data-desc', item.desc || '');
             
             const imgStyle = item.image ? `background-image:url('${item.image}');` : '';
@@ -315,11 +247,47 @@
                     <span class="card-price">${price ? price + ' د.أ' : ''}</span>
                 </div>
             `;
-            card.onclick = (e) => { e.preventDefault(); openDishModal(card); };
+            card.onclick = (e) => { 
+                e.preventDefault(); 
+                openDishModal(card); 
+            };
             return card;
         }
 
-        // الوظيفة الرئيسية لعرض المنيو بالكامل
+        /**
+         * التنقل بين الأقسام
+         */
+        function setTab(tabId, btn) {
+            currentTab = tabId;
+            
+            // تحديث الأزرار
+            document.querySelectorAll('#mainTabRow .pill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            
+            // تحديث الأقسام
+            document.querySelectorAll('section').forEach(s => {
+                s.style.display = 'none';
+                s.classList.remove('active');
+            });
+            const target = document.getElementById(tabId);
+            if (target) {
+                target.style.display = 'block';
+                target.classList.add('active');
+            }
+            
+            // تحديث شريط التصنيفات
+            document.querySelectorAll('.sub-nav').forEach(sn => sn.style.display = 'none');
+            const nav = document.getElementById(tabId + 'Nav');
+            if (nav) nav.style.display = 'flex';
+            
+            // طلب رندر للتأكد
+            requestRender();
+            window.scrollTo(0, 0);
+        }
+
+        /**
+         * عرض المنيو بالكامل
+         */
         function renderFullMenu() {
             if (!_menuItems || !_categoriesMeta || _isRendering) return;
             _isRendering = true;
@@ -328,15 +296,13 @@
             Object.values(_menuItems).forEach(item => {
                 if (item.status === 'inactive') return;
                 if (!item.category) return;
-                const catId = item.category.toString().trim();
-                if (!itemsByCat[catId]) itemsByCat[catId] = [];
-                itemsByCat[catId].push(item);
+                const cid = item.category.toString().trim();
+                if (!itemsByCat[cid]) itemsByCat[cid] = [];
+                itemsByCat[cid].push(item);
             });
 
-            // قائمة الأقسام الرئيسية في الموقع
-            const sectionKeys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
-            
-            sectionKeys.forEach(secKey => {
+            const keys = ['arabic', 'intl', 'desserts', 'drinks', 'argileh'];
+            keys.forEach(secKey => {
                 const navEl = document.getElementById(secKey + 'Nav');
                 const secEl = document.getElementById(secKey);
                 
@@ -344,27 +310,31 @@
                     const navFrag = document.createDocumentFragment();
                     const secFrag = document.createDocumentFragment();
 
-                    // الحفاظ على الهيرو الخاص بالقسم
+                    // الحفاظ على الهيرو
                     const hero = secEl.querySelector('.section-hero');
                     if (hero) secFrag.appendChild(hero.cloneNode(true));
 
+                    // جلب التصنيفات لهذا القسم
                     const cats = Object.entries(_categoriesMeta)
                         .map(([id, val]) => ({ id: id.toString().trim(), ...val }))
                         .filter(c => c.section === secKey && c.status !== 'hidden')
                         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
                     cats.forEach(cat => {
+                        // زر التصنيف في الشريط العلوي
                         const btn = document.createElement('a');
                         btn.href = '#' + cat.id;
                         btn.className = 'cat-btn';
                         btn.innerHTML = (cat.icon ? `<i class="fa-solid ${cat.icon}"></i> ` : '') + (cat.nameAr || '');
                         navFrag.appendChild(btn);
 
+                        // عنوان التصنيف
                         const h2 = document.createElement('h2');
                         h2.id = cat.id;
                         h2.className = 'sec-title';
                         h2.innerHTML = (cat.icon ? `<i class="fa-solid ${cat.icon} sec-icon"></i> ` : '') + (cat.nameAr || '');
                         
+                        // شبكة الوجبات
                         const grid = document.createElement('div');
                         grid.className = 'menu-grid';
                         const items = itemsByCat[cat.id] || [];
@@ -375,18 +345,16 @@
                     });
 
                     window.requestAnimationFrame(() => {
-                        // إخفاء الهياكل العظمية (Skeletons) عند أول رندر ناجح
-                        const skels = ['skeletons-arabic', 'skeletons-en'];
-                        skels.forEach(sId => {
-                            const sk = document.getElementById(sId);
-                            if (sk) sk.style.display = 'none';
-                        });
+                        // إخفاء الـ Skeleton
+                        const sk = document.getElementById('skeletons-arabic');
+                        if (sk) sk.style.display = 'none';
 
                         navEl.innerHTML = '';
                         navEl.appendChild(navFrag);
+                        
+                        // تنظيف القسم مع الحفاظ على الأداء
                         secEl.innerHTML = '';
                         secEl.appendChild(secFrag);
-                        
                         _isRendering = false;
                     });
                 } else {
@@ -398,61 +366,73 @@
         let _renderTimeout;
         function requestRender() {
             clearTimeout(_renderTimeout);
-            _renderTimeout = setTimeout(() => {
-                renderFullMenu();
-            }, 100);
+            _renderTimeout = setTimeout(() => { renderFullMenu(); }, 100);
         }
-
-        // بدء مراقبة التغييرات بذكاء لمنع التجمد
-        function initListeners() {
-            // جلب البيانات مرة واحدة أولاً لضمان الاستقرار
-            db.ref('categories_meta').once('value').then(snap => {
-                _categoriesMeta = snap.val();
-                return db.ref('menu_items').once('value');
-            }).then(snap => {
-                _menuItems = snap.val();
-                renderFullMenu();
-                
-                // ثم الاستماع للتحديثات الحية بشكل هادئ
-                db.ref('menu_items').on('value', s => { _menuItems = s.val(); requestRender(); });
-                db.ref('categories_meta').on('value', s => { _categoriesMeta = s.val(); requestRender(); });
-            });
-        }
-        initListeners();
 
         /**
-         * منطق تصغير الهيدر عند التمرير (Shrinking Header)
+         * البحث
          */
-        let isScrolling = false;
-        function handleScroll() {
-            if (isScrolling) return;
-            isScrolling = true;
-            window.requestAnimationFrame(() => {
-                const header = document.getElementById('mainHeader');
-                if (!header) { isScrolling = false; return; }
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                // رفع العتبة لـ 120 بكسل لزيادة الثبات ومنع "الرجة" عند التمرير البطيء
-                if (scrollTop > 120) {
-                    header.classList.add('shrunk');
-                } else if (scrollTop < 40) { // مسافة أمان لعدم التبديل السريع
-                    header.classList.remove('shrunk');
-                }
-                isScrolling = false;
-            });
-        }
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('load', () => {
-            handleScroll();
-            // معالجة القفزة عند الدخول من الرابط المباشر
-            if (window.location.hash) {
-                setTimeout(() => {
-                    const el = document.querySelector(window.location.hash);
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }, 500);
+        function filterMenu() {
+            const q = document.getElementById('srch').value.toLowerCase();
+            if (q.length > 0) {
+                document.querySelectorAll('.sub-nav').forEach(s => s.style.display = 'none');
+                document.querySelectorAll('section').forEach(s => s.style.display = 'block');
+                document.querySelectorAll('.sec-title').forEach(t => t.style.display = 'none');
+                document.querySelectorAll('.menu-card').forEach(c => {
+                    const match = c.dataset.t.includes(q);
+                    c.style.display = match ? 'flex' : 'none';
+                });
+            } else {
+                setTab(currentTab, document.querySelector('#mainTabRow .pill.active'));
             }
-        });
+        }
+
+        /**
+         * المودال
+         */
+        function openDishModal(card) {
+            const name = card.dataset.t;
+            const price = card.querySelector('.card-price')?.textContent || '';
+            const desc = card.dataset.desc;
+            const bg = card.querySelector('.card-img').style.backgroundImage.slice(4, -1).replace(/"/g, "");
+
+            document.getElementById('modalTitle').textContent = name;
+            document.getElementById('modalPrice').textContent = price;
+            document.getElementById('modalDesc').textContent = desc;
+            document.getElementById('modalImg').innerHTML = bg ? `<img src="${bg}" class="modal-actual-img">` : `<img src="images/tallo-logo.png" style="width:120px; opacity:0.5;">`;
+            
+            document.getElementById('dishModal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDishModal() {
+            document.getElementById('dishModal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'dishModal') closeDishModal();
+        }
+
+        /**
+         * تشغيل المستمعات
+         */
+        function init() {
+            db.ref('categories_meta').on('value', s => { _categoriesMeta = s.val(); requestRender(); });
+            db.ref('menu_items').on('value', s => { _menuItems = s.val(); requestRender(); });
+        }
+        init();
+
+        // منطق تصغير الهيدر
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('mainHeader');
+            if (window.scrollY > 120) header.classList.add('shrunk');
+            else if (window.scrollY < 40) header.classList.remove('shrunk');
+        }, { passive: true });
     </script>
-    <!-- تسجيل نظام التشغيل السريع (Service Worker) -->
-    <script src="sw-register.js" onerror="console.log('SW fallback')"></script>
+
+    <!-- تسجيل الـ Service Worker -->
+    <script src="sw-register.js"></script>
+
 </body>
 </html>
