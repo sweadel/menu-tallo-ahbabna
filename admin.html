@@ -130,20 +130,73 @@
                         <div><label>وصف القسم (عربي)</label><textarea id="catDescAr" class="form-control" rows="2"></textarea></div>
                         <div><label>وصف القسم (إنجليزي)</label><textarea id="catDescEn" class="form-control" rows="2"></textarea></div>
                     </div>
+                    <div style="margin-top:15px; display:flex; gap:15px; align-items:center;">
+                        <label>حالة القسم:</label>
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="radio" name="catStatus" value="active" checked> ظاهر
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                            <input type="radio" name="catStatus" value="hidden"> مخفي
+                        </label>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer"><button class="btn-primary" onclick="saveCategory()">حفظ التعديلات</button></div>
         </div>
     </div>
 
-    <!-- MODAL: ITEM (Stays for completeness) -->
+    <!-- MODAL: ITEM (Upgraded) -->
     <div class="modal-overlay" id="itemModal">
-        <div class="modal-content">
-            <div class="modal-header"><h2 id="modalTitle">إدارة الوجبة</h2><button onclick="closeItemModal()">&times;</button></div>
-            <div class="modal-body"><form id="itemForm"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><input type="text" id="itemName" class="form-control" placeholder="الاسم عربي" required><input type="text" id="itemNameEn" class="form-control" placeholder="الاسم إنجليزي"><select id="itemCategory" class="form-control" required></select><input type="text" id="itemPrice" class="form-control" placeholder="السعر"></div><input type="text" id="itemImg" class="form-control" placeholder="رابط الصورة" style="margin-top:10px;"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;"><textarea id="itemDesc" class="form-control" placeholder="وصف عربي" rows="2"></textarea><textarea id="itemDescEn" class="form-control" placeholder="وصف إنجليزي" rows="2"></textarea></div></form></div>
-            <div class="modal-footer"><button class="btn-primary" onclick="saveItem()">حفظ البيانات</button></div>
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 id="modalTitle">إدارة الوجبة</h2>
+                <button onclick="closeItemModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <div style="display:grid; grid-template-columns: 1fr 2fr; gap:20px;">
+                        <!-- الجانب الأيمن: الصورة والمعاينة -->
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <label>معاينة الصورة</label>
+                            <div id="item-img-preview" style="width:100%; aspect-ratio:1/1; background:rgba(255,255,255,0.05); border-radius:20px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid var(--glass-border);">
+                                <i class="fa-solid fa-image" style="font-size:3rem; color:rgba(255,255,255,0.1);"></i>
+                            </div>
+                            <input type="text" id="itemImg" class="form-control" placeholder="رابط الصورة (URL)" oninput="previewItemImage(this.value)">
+                        </div>
+                        
+                        <!-- الجانب الأيسر: البيانات -->
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                            <div><label>الاسم (عربي)</label><input type="text" id="itemName" class="form-control" required></div>
+                            <div><label>الاسم (إنجليزي)</label><input type="text" id="itemNameEn" class="form-control"></div>
+                            
+                            <div><label>القسم</label><select id="itemCategory" class="form-control" required></select></div>
+                            <div><label>السعر (JD)</label><input type="text" id="itemPrice" class="form-control"></div>
+                            
+                            <div>
+                                <label>شارة التمييز (Badge)</label>
+                                <select id="itemBadge" class="form-control">
+                                    <option value="">بدون شارة</option>
+                                    <option value="HOT">🔥 حار (Hot)</option>
+                                    <option value="NEW">✨ جديد (New)</option>
+                                    <option value="SPECIAL">⭐ مميز (Special)</option>
+                                </select>
+                            </div>
+                            <div><label>حالة الوجبة</label><select id="itemStatus" class="form-control"><option value="active">نشط</option><option value="inactive">مخفي</option></select></div>
+                            
+                            <div style="grid-column: span 2;"><label>وصف الوجبة (عربي)</label><textarea id="itemDesc" class="form-control" rows="2"></textarea></div>
+                            <div style="grid-column: span 2;"><label>وصف الوجبة (إنجليزي)</label><textarea id="itemDescEn" class="form-control" rows="2"></textarea></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="saveItem()">حفظ البيانات</button>
+            </div>
         </div>
     </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-container" style="position:fixed; bottom:20px; left:20px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
