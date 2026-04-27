@@ -127,6 +127,71 @@ REFS.cats.on('value', snap => {
     updateStats();
 });
 
+REFS.feed.on('value', snap => {
+    feedItems = [];
+    if (snap.exists()) Object.entries(snap.val()).forEach(([k, v]) => feedItems.push({ key: k, ...v }));
+    feedItems.sort((a, b) => b.timestamp - a.timestamp);
+    renderFeedTable();
+    updateStats();
+});
+
+function renderFeedTable() {
+    const tableBody = document.getElementById('feed-table-body');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = feedItems.map(f => {
+        const date = f.dateStr || new Date(f.timestamp).toLocaleString('ar-EG');
+        const ratings = f.ratings || {};
+        
+        // حساب المتوسط أو عرض النجوم بشكل تفصيلي
+        const starHtml = (val) => {
+            let stars = '';
+            for(let i=1; i<=5; i++) {
+                stars += `<i class="fa-star ${i <= val ? 'fa-solid' : 'fa-regular'}" style="color:var(--gold); font-size:0.7rem;"></i>`;
+            }
+            return stars;
+        };
+
+        return `
+            <tr>
+                <td><small>${date}</small></td>
+                <td>
+                    <div style="font-weight:bold;">${f.name}</div>
+                    <small style="opacity:0.6;">${f.phone || 'بدون هاتف'}</small>
+                    ${f.table ? `<span class="badge-tag" style="font-size:0.6rem;">طاولة: ${f.table}</span>` : ''}
+                </td>
+                <td>
+                    <div style="display:flex; flex-direction:column; gap:4px; font-size:0.75rem;">
+                        <div style="display:flex; justify-content:space-between; gap:10px;">
+                            <span>طعام:</span> <span>${starHtml(ratings.food || 0)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; gap:10px;">
+                            <span>خدمة:</span> <span>${starHtml(ratings.service || 0)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; gap:10px;">
+                            <span>جو:</span> <span>${starHtml(ratings.atmosphere || 0)}</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div style="max-width:250px; font-size:0.85rem; line-height:1.4; color:var(--text-dim);">
+                        ${f.comments || '<i style="opacity:0.5;">بدون ملاحظات</i>'}
+                    </div>
+                    ${f.lang ? `<small style="display:block; margin-top:5px; font-size:0.65rem; color:var(--gold);">اللغة: ${f.lang === 'ar' ? 'العربية' : 'English'}</small>` : ''}
+                </td>
+                <td>
+                    <button class="btn-icon delete" onclick="deleteFeedback('${f.key}')" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>`;
+    }).join('');
+}
+
+function deleteFeedback(key) {
+    if (confirm('هل أنت متأكد من حذف هذه الملاحظة؟')) {
+        REFS.feed.child(key).remove().then(() => showToast('تم حذف الملاحظة'));
+    }
+}
+
 function renderTable() {
     const canEdit = (localStorage.getItem('admin_role') || 'editor') !== 'viewer';
     const tableBody = document.getElementById('menu-table-body');

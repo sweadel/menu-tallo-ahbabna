@@ -2,202 +2,345 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tallow Ahbabna | Share Your Experience</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tallo Ahbabna | Share Your Experience</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --gold: #C5A022;
+            --gold-light: #FFD700;
+            --bg: #0a0a0a;
+            --surface: #161616;
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+            --border: rgba(197, 160, 34, 0.2);
+            --font-main: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background-color: #000;
-            color: #fff;
-            padding-top: 20px;
-            direction: ltr;
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
-            font-weight: 600;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at top, #1a0505 0%, #0a0a0a 100%);
         }
-        .feedback-container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            background: rgba(26, 26, 26, 0.95);
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(197, 160, 34, 0.1);
-            border: 1px solid rgba(197, 160, 34, 0.2);
-        }
-        .logo-header {
+
+        /* Header & Logo */
+        header {
+            padding: 40px 20px;
             text-align: center;
-            margin-bottom: 20px;
+            width: 100%;
         }
-        .logo-header img {
-            height: 100px;
+        .logo-wrap img {
+            height: 110px;
+            filter: drop-shadow(0 0 15px rgba(197, 160, 34, 0.3));
         }
-        .intro-text {
+
+        /* Feedback Card */
+        .feedback-card {
+            width: 92%;
+            max-width: 550px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 30px 25px;
+            margin-bottom: 50px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feedback-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
             text-align: center;
+            margin-bottom: 10px;
+            color: var(--gold);
+        }
+
+        .intro {
             font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: #ccc;
+            text-align: center;
+            color: var(--text-dim);
+            line-height: 1.7;
+            margin-bottom: 30px;
         }
+
+        /* Form Grid */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-            color: var(--primary);
-            font-weight: 700;
-        }
-        .form-group input, .form-group textarea {
-            background: #111;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus, .form-group textarea:focus {
-            border-color: var(--primary);
-        }
-        .rating-section {
-            background: #1a1a1a;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            text-align: center;
-            border: 1px solid #222;
-        }
-        .rating-title {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .stars {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .stars i {
-            font-size: 1.8rem;
-            color: #333;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .stars i:hover, .stars i.active {
-            color: var(--primary);
-        }
-        .submit-btn {
-            width: 100%;
-            background: var(--primary);
-            color: #000;
-            border: none;
-            padding: 15px;
-            border-radius: 15px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            margin-top: 20px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .submit-btn:active {
-            transform: scale(0.98);
-        }
+
         @media (max-width: 480px) {
             .form-grid { grid-template-columns: 1fr; }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            padding-left: 5px;
+        }
+
+        .input-group input, .input-group textarea {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 14px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            border-color: var(--gold);
+            background: rgba(197, 160, 34, 0.05);
+            outline: none;
+            box-shadow: 0 0 15px rgba(197, 160, 34, 0.1);
+        }
+
+        /* Rating Sections */
+        .rating-box {
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rating-label {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stars {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stars i {
+            font-size: 2rem;
+            color: #222;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stars i:hover, 
+        .stars i:hover ~ i,
+        .stars i.active {
+            color: var(--gold);
+            transform: scale(1.15);
+            text-shadow: 0 0 15px rgba(197, 160, 34, 0.4);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: 18px;
+            border: none;
+            background: linear-gradient(135deg, var(--gold), #8a6a00);
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(197, 160, 34, 0.2);
+        }
+
+        .submit-btn:active { transform: scale(0.97); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Success Overlay */
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #000;
+            margin-bottom: 30px;
+            box-shadow: 0 0 40px rgba(197, 160, 34, 0.4);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+        .success-msg h2 { font-size: 2rem; margin-bottom: 15px; color: var(--gold); }
+        .success-msg p { color: var(--text-dim); line-height: 1.6; margin-bottom: 35px; max-width: 400px; }
+
+        .home-btn {
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: 1px solid var(--gold);
+            background: transparent;
+            color: var(--gold);
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .home-btn:hover { background: var(--gold); color: #000; }
+
+        /* Back Link */
+        .back-link {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="feedback-container">
-            <div class="logo-header">
-                <img src="images/tallo-logo.png" alt="Tallow Ahbabna">
+    <header>
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
+        <div class="logo-wrap">
+            <img src="images/tallo-logo.png" alt="Tallo Ahbabna Logo">
+        </div>
+    </header>
+
+    <div class="feedback-card">
+        <h1>Share Your Thoughts</h1>
+        <p class="intro">
+            Your feedback helps us grow. Your notes reach our management directly to ensure you always have the best experience.
+        </p>
+
+        <form id="feedbackForm">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="custName" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="input-group">
+                    <label>Table / Invoice #</label>
+                    <input type="text" id="tableNum" placeholder="Optional">
+                </div>
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="custPhone" placeholder="07XXXXXXXX">
+                </div>
+                <div class="input-group">
+                    <label>Visit Date</label>
+                    <input type="text" id="dateTime" readonly>
+                </div>
             </div>
-            
-            <p class="intro-text">
-                Thank you for choosing our restaurant. We always strive to provide the best service. Your feedback here will reach the management and quality department to ensure we always deliver the best.
-            </p>
 
-            <form id="feedbackForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" placeholder="Full Name">
-                    </div>
-                    <div class="form-group">
-                        <label>Table or Invoice #</label>
-                        <input type="text" placeholder="Leave blank if not available">
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" placeholder="07XXXXXXXX">
-                    </div>
-                    <div class="form-group">
-                        <label>Date & Time</label>
-                        <input type="text" id="dateTime" readonly>
-                    </div>
+            <div class="rating-box">
+                <span class="rating-label">Food Quality</span>
+                <div class="stars" data-category="food">
+                    <i class="fas fa-star" data-value="1"></i>
+                    <i class="fas fa-star" data-value="2"></i>
+                    <i class="fas fa-star" data-value="3"></i>
+                    <i class="fas fa-star" data-value="4"></i>
+                    <i class="fas fa-star" data-value="5"></i>
                 </div>
+            </div>
 
-                <div class="rating-section">
-                    <span class="rating-title">Service</span>
-                    <div class="stars" data-category="service">
-                        <i class="fas fa-star" data-value="1"></i>
-                        <i class="fas fa-star" data-value="2"></i>
-                        <i class="fas fa-star" data-value="3"></i>
-                        <i class="fas fa-star" data-value="4"></i>
-                        <i class="fas fa-star" data-value="5"></i>
-                    </div>
+            <div class="rating-box">
+                <span class="rating-label">Service Level</span>
+                <div class="stars" data-category="service">
+                    <i class="fas fa-star" data-value="1"></i>
+                    <i class="fas fa-star" data-value="2"></i>
+                    <i class="fas fa-star" data-value="3"></i>
+                    <i class="fas fa-star" data-value="4"></i>
+                    <i class="fas fa-star" data-value="5"></i>
                 </div>
+            </div>
 
-                <div class="rating-section">
-                    <span class="rating-title">Food Quality</span>
-                    <div class="stars" data-category="food">
-                        <i class="fas fa-star" data-value="1"></i>
-                        <i class="fas fa-star" data-value="2"></i>
-                        <i class="fas fa-star" data-value="3"></i>
-                        <i class="fas fa-star" data-value="4"></i>
-                        <i class="fas fa-star" data-value="5"></i>
-                    </div>
+            <div class="rating-box">
+                <span class="rating-label">Ambiance & Cleanliness</span>
+                <div class="stars" data-category="atmosphere">
+                    <i class="fas fa-star" data-value="1"></i>
+                    <i class="fas fa-star" data-value="2"></i>
+                    <i class="fas fa-star" data-value="3"></i>
+                    <i class="fas fa-star" data-value="4"></i>
+                    <i class="fas fa-star" data-value="5"></i>
                 </div>
+            </div>
 
-                <div class="rating-section">
-                    <span class="rating-title">Atmosphere</span>
-                    <div class="stars" data-category="atmosphere">
-                        <i class="fas fa-star" data-value="1"></i>
-                        <i class="fas fa-star" data-value="2"></i>
-                        <i class="fas fa-star" data-value="3"></i>
-                        <i class="fas fa-star" data-value="4"></i>
-                        <i class="fas fa-star" data-value="5"></i>
-                    </div>
-                </div>
+            <div class="input-group" style="margin-top: 10px;">
+                <label>Additional Comments</label>
+                <textarea id="custMsg" rows="4" placeholder="Any suggestions or complaints?"></textarea>
+            </div>
 
-                <div class="form-group">
-                    <label>Do you have any additional comments?</label>
-                    <textarea rows="4" placeholder="Write your notes here..."></textarea>
-                </div>
+            <button type="button" id="submitBtn" class="submit-btn" onclick="sendFeedback()">Submit Feedback</button>
+        </form>
+    </div>
 
-                <button type="button" class="submit-btn" onclick="submitFeedback()">Send Feedback</button>
-            </form>
+    <!-- Success Overlay -->
+    <div id="successPage" class="success-overlay">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="success-msg">
+            <h2>Thank You!</h2>
+            <p>Your feedback has been received successfully. We appreciate your time and help in making us better. See you again soon at Tallo Ahbabna.</p>
+            <a href="index.html" class="home-btn">Back to Home</a>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        // Initialize Firebase
         const _cfg = {
             apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
             authDomain: "tallow-ahbabna.firebaseapp.com",
@@ -208,70 +351,58 @@
             databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
         };
         if (!firebase.apps.length) firebase.initializeApp(_cfg);
-    </script>
-    <script src="js/design-sync.js"></script>
-    
-    <script>
-        // Set current date/time
+
+        // Current Date/Time
         document.getElementById('dateTime').value = new Date().toLocaleString('en-US');
 
-        // Star rating logic
+        // Star logic
         document.querySelectorAll('.stars i').forEach(star => {
             star.addEventListener('click', function() {
-                const category = this.parentElement;
-                const value = parseInt(this.getAttribute('data-value'));
-                const stars = category.querySelectorAll('i');
-                
+                const parent = this.parentElement;
+                const val = parseInt(this.dataset.value);
+                const stars = parent.querySelectorAll('i');
                 stars.forEach(s => {
-                    if (parseInt(s.getAttribute('data-value')) <= value) {
-                        s.classList.add('active');
-                    } else {
-                        s.classList.remove('active');
-                    }
+                    s.classList.toggle('active', parseInt(s.dataset.value) <= val);
                 });
             });
         });
 
-        function submitFeedback() {
-            const form = document.getElementById('feedbackForm');
-            const name = form.querySelector('input[type="text"]').value;
-            const table = form.querySelectorAll('input[type="text"]')[1].value;
-            const phone = form.querySelector('input[type="tel"]').value;
-            const comments = form.querySelector('textarea').value;
-            
-            const ratings = {};
-            document.querySelectorAll('.stars').forEach(s => {
-                const cat = s.getAttribute('data-category');
-                const active = s.querySelectorAll('i.active').length;
-                ratings[cat] = active;
-            });
+        function sendFeedback() {
+            const name = document.getElementById('custName').value.trim();
+            const table = document.getElementById('tableNum').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const message = document.getElementById('custMsg').value.trim();
+            const btn = document.getElementById('submitBtn');
 
             if (!name) { alert('Please enter your name'); return; }
+
+            const ratings = {};
+            document.querySelectorAll('.stars').forEach(s => {
+                ratings[s.dataset.category] = s.querySelectorAll('i.active').length || 0;
+            });
 
             const data = {
                 name,
                 table,
                 phone,
-                comments,
+                comments: message,
                 ratings,
                 timestamp: Date.now(),
                 dateStr: document.getElementById('dateTime').value,
                 lang: 'en'
             };
 
-            const btn = document.querySelector('.submit-btn');
             btn.disabled = true;
             btn.textContent = 'Sending...';
 
             firebase.database().ref('feedback').push(data)
                 .then(() => {
-                    alert('Thank you for your feedback! Your notes have been sent successfully.');
-                    window.location.href = 'index.html';
+                    document.getElementById('successPage').style.display = 'flex';
                 })
                 .catch(err => {
-                    alert('An error occurred: ' + err.message);
+                    alert('Error sending feedback: ' + err.message);
                     btn.disabled = false;
-                    btn.textContent = 'Send Feedback';
+                    btn.textContent = 'Submit Feedback';
                 });
         }
     </script>
