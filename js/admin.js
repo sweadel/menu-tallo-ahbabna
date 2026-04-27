@@ -67,10 +67,54 @@ function navigateTo(id) {
     if (id === 'view-menu') renderTable();
     if (id === 'view-categories') renderCatTable();
     if (id === 'view-feedback') renderFeedTable();
+    if (id === 'view-design') loadDesign();
     if (id === 'view-settings') {
         const u = document.getElementById('current-user-display-settings');
         if(u) u.textContent = localStorage.getItem('admin_user') || 'المدير العام';
     }
+}
+
+function loadDesign() {
+    REFS.design.once('value', s => {
+        const d = s.val() || {};
+        if (document.getElementById('design-gold')) document.getElementById('design-gold').value = d.gold || '#C5A022';
+        if (document.getElementById('design-bg')) document.getElementById('design-bg').value = d.bg || '#0a0a0a';
+        if (document.getElementById('design-font')) document.getElementById('design-font').value = d.font || "'Cairo', sans-serif";
+    });
+    
+    REFS.home.once('value', s => {
+        const h = s.val() || {};
+        if (document.getElementById('promo-status')) document.getElementById('promo-status').value = h.promoShow ? 'show' : 'hide';
+        if (document.getElementById('promo-text')) document.getElementById('promo-text').value = h.promoText || '';
+    });
+}
+
+function saveDesign() {
+    if (isSaving) return;
+    isSaving = true;
+    
+    const dData = {
+        gold: document.getElementById('design-gold').value,
+        bg: document.getElementById('design-bg').value,
+        font: document.getElementById('design-font').value,
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
+    };
+    
+    const hData = {
+        promoShow: document.getElementById('promo-status').value === 'show',
+        promoText: document.getElementById('promo-text').value.trim(),
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
+    };
+    
+    Promise.all([
+        REFS.design.update(dData),
+        REFS.home.update(hData)
+    ]).then(() => {
+        showToast('تم حفظ إعدادات التصميم بنجاح ✨');
+    }).catch(err => {
+        showToast('خطأ أثناء الحفظ', 'error');
+        console.error(err);
+    }).finally(() => isSaving = false);
 }
 
 function toggleSidebar() {
@@ -123,7 +167,45 @@ function updateStats() {
           f = document.getElementById('stat-feed');
     if (t) t.textContent = menuItems.length;
     if (c) c.textContent = catItems.filter(cat => cat.status !== 'hidden').length;
-    if (f) { REFS.feed.once('value', s => f.textContent = s.numChildren()); }
+    
+    // جلب عدد التعليقات
+    REFS.feed.once('value', s => {
+        if (f) f.textContent = s.numChildren();
+        feedItems = [];
+        if (s.exists()) Object.entries(s.val()).forEach(([k,v]) => feedItems.push({key:k, ...v}));
+        feedItems.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+    });
+}
+
+function renderFeedTable() {
+    const body = document.getElementById('feed-table-body');
+    if (!body) return;
+
+    if (feedItems.length === 0) {
+        body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:50px; color:var(--text-dim);">لا توجد ملاحظات حالياً</td></tr>';
+        return;
+    }
+
+    body.innerHTML = feedItems.map(item => {
+        const date = item.timestamp ? new Date(item.timestamp).toLocaleString('ar-JO') : 'غير معروف';
+        const rating = '⭐'.repeat(item.rating || 5);
+        return `
+            <tr>
+                <td><b>${item.name || 'زائر'}</b><br><small>${item.phone || ''}</small></td>
+                <td><div style="color:var(--gold);">${rating}</div></td>
+                <td><div style="max-width:300px; white-space:normal;">${item.comment || 'بدون تعليق'}</div></td>
+                <td><small>${date}</small></td>
+                <td>
+                    <button class="btn-icon" style="color:var(--red);" onclick="deleteFeed('${item.key}')"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>`;
+    }).join('');
+}
+
+function deleteFeed(key) {
+    if (confirm('هل أنت متأكد من حذف هذه الملاحظة؟')) {
+        REFS.feed.child(key).remove().then(() => showToast('تم الحذف'));
+    }
 }
 
 function renderTable() {
@@ -208,6 +290,11 @@ function openItemModal(key = null) {
     form.reset();
     document.getElementById('itemKey').value = key || '';
     document.getElementById('itemModalTitle').textContent = key ? 'تعديل بيانات الطبق' : 'إضافة طبق ملكي جديد';
+    
+    // إخفاء حقول الأوزان افتراضياً
+    const weightFields = document.getElementById('weightPricesFields');
+    if (weightFields) weightFields.style.display = 'none';
+    
     previewItemImage('');
 
     if (key) {
@@ -221,10 +308,32 @@ function openItemModal(key = null) {
             document.getElementById('itemBadge').value = item.badge || '';
             document.getElementById('itemPrepTime').value = item.prepTime || '';
             document.getElementById('itemDesc').value = item.desc || '';
+            document.getElementById('itemDescEn').value = item.descEn || '';
+            
+            // تعبئة الأوزان إذا وجدت
+            if (item.prices) {
+                document.getElementById('priceQuarter').value = item.prices.quarter || '';
+                document.getElementById('priceHalf').value = item.prices.half || '';
+                document.getElementById('priceKilo').value = item.prices.kilo || '';
+            }
+            
+            onCategoryChange(item.category);
             previewItemImage(item.image);
         }
     }
     modal.classList.add('active');
+}
+
+function onCategoryChange(catId) {
+    const weightFields = document.getElementById('weightPricesFields');
+    if (!weightFields) return;
+    
+    // إظهار حقول الأوزان فقط لقسم المشاوي
+    if (catId === 'ar-grill') {
+        weightFields.style.display = 'block';
+    } else {
+        weightFields.style.display = 'none';
+    }
 }
 
 function closeItemModal() {
@@ -245,10 +354,22 @@ function saveItem() {
         price: document.getElementById('itemPrice').value.trim(),
         image: document.getElementById('itemImage').value.trim(),
         desc: document.getElementById('itemDesc').value.trim(),
+        descEn: document.getElementById('itemDescEn').value.trim(),
         badge: document.getElementById('itemBadge').value || '',
         prepTime: document.getElementById('itemPrepTime')?.value.trim() || '',
         updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
+
+    // إضافة الأوزان إذا كان القسم هو المشاوي
+    if (category === 'ar-grill') {
+        data.prices = {
+            quarter: document.getElementById('priceQuarter').value.trim(),
+            half: document.getElementById('priceHalf').value.trim(),
+            kilo: document.getElementById('priceKilo').value.trim()
+        };
+    } else {
+        data.prices = null; // إزالة الأوزان إذا تم تغيير القسم
+    }
 
     const ref = editKey ? REFS.menu.child(editKey) : REFS.menu.push();
     ref.update(data).then(() => {

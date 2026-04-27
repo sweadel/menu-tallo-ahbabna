@@ -79,6 +79,14 @@ body { background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; 
 }
 .stat-card:hover { transform: translateY(-10px); border-color: var(--gold); background: rgba(197, 160, 34, 0.05); }
 
+/* Grid Spans */
+.span-2 { grid-column: span 2; }
+.span-3 { grid-column: span 3; }
+
+@media (max-width: 1200px) {
+    .span-2, .span-3 { grid-column: span 1; }
+}
+
 .stat-icon {
     width: 70px; height: 70px;
     background: linear-gradient(135deg, rgba(197, 160, 34, 0.2), transparent);
