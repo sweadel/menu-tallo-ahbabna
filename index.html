@@ -278,26 +278,34 @@
 
     <script>
         /**
-         * 1. منطق تشغيل الصوت بذكاء (عند أول تفاعل حقيقي)
+         * 1. منطق تشغيل الصوت (تلقائي بأقصى سرعة ممكنة)
          */
         function initSmartAutoplay() {
             const audio = document.getElementById('introAudio');
             if (!audio) return;
 
-            const playAudio = () => {
+            // محاولة التشغيل الفوري
+            const attemptPlay = () => {
                 audio.play().then(() => {
                     cleanup();
-                }).catch(() => {});
+                }).catch(() => {
+                    // إذا منع المتصفح التشغيل التلقائي، ننتظر أول تفاعل
+                    console.log("Autoplay blocked, waiting for interaction...");
+                });
             };
 
             const cleanup = () => {
-                ['mousedown', 'touchstart', 'keydown', 'wheel'].forEach(ev => 
-                    window.removeEventListener(ev, playAudio)
+                ['mousedown', 'touchstart', 'keydown', 'wheel', 'click'].forEach(ev => 
+                    window.removeEventListener(ev, attemptPlay)
                 );
             };
 
-            ['mousedown', 'touchstart', 'keydown', 'wheel'].forEach(ev => 
-                window.addEventListener(ev, playAudio, { passive: true })
+            // محاولة التشغيل فوراً عند تحميل الصفحة
+            attemptPlay();
+
+            // الاستماع لأي حركة في حال فشل التشغيل التلقائي
+            ['mousedown', 'touchstart', 'keydown', 'wheel', 'click'].forEach(ev => 
+                window.addEventListener(ev, attemptPlay, { passive: true, once: true })
             );
         }
         window.addEventListener('DOMContentLoaded', initSmartAutoplay);
