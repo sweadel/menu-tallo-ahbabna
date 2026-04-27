@@ -311,7 +311,35 @@
         <source src="intro-audio.m4a" type="audio/mp4">
     </audio>
 
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
     <script>
+        // Firebase Config
+        const _fbCfg = {
+            apiKey: "AIzaSyCwMxgmrfnsme4pgLx00tgjGCo-gQBMUo8",
+            authDomain: "tallow-ahbabna.firebaseapp.com",
+            projectId: "tallow-ahbabna",
+            storageBucket: "tallow-ahbabna.firebasestorage.app",
+            messagingSenderId: "1025966646494",
+            appId: "1:1025966646494:web:f89373fad63d988f298e4f",
+            databaseURL: "https://tallow-ahbabna-default-rtdb.firebaseio.com"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(_fbCfg);
+        const db = firebase.database();
+
+        // Design Sync for Index
+        db.ref('settings/design').on('value', s => {
+            const d = s.val() || {};
+            const r = document.documentElement.style;
+            if (d.gold) r.setProperty('--gold', d.gold);
+            if (d.bg) r.setProperty('--bg-dark', d.bg);
+            if (d.font) {
+                r.setProperty('--font-arabic', d.font);
+                document.body.style.fontFamily = d.font;
+            }
+        });
+
         /**
          * بدء التجربة الكاملة (تشغيل الصوت وإظهار المحتوى)
          */
@@ -320,18 +348,15 @@
             const container = document.getElementById('main-container');
             const social = document.getElementById('social-bar');
             const audio = document.getElementById('introAudio');
-                );
-            };
 
-            // محاولة التشغيل فوراً عند تحميل الصفحة
-            attemptPlay();
-
-            // الاستماع لأي حركة في حال فشل التشغيل التلقائي
-            ['mousedown', 'touchstart', 'keydown', 'wheel', 'click'].forEach(ev => 
-                window.addEventListener(ev, attemptPlay, { passive: true, once: true })
-            );
+            if (splash) splash.classList.add('fade-out');
+            if (container) container.classList.add('reveal');
+            if (social) social.classList.add('reveal');
+            
+            if (audio) {
+                audio.play().catch(e => console.log("Audio play failed:", e));
+            }
         }
-        window.addEventListener('DOMContentLoaded', initSmartAutoplay);
 
         /**
          * 2. وظيفة الانتقال السريع والآمن

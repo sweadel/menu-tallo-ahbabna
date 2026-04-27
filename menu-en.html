@@ -466,6 +466,27 @@
                 _categoriesMeta = snap.val(); 
                 requestRender(); 
             });
+
+            // Design Sync
+            db.ref('settings/design').on('value', s => {
+                const d = s.val() || {};
+                const r = document.documentElement.style;
+                if (d.gold) r.setProperty('--gold', d.gold);
+                if (d.bg) r.setProperty('--bg-dark', d.bg);
+                if (d.font) r.setProperty('--font-en', d.font);
+                if (d.font) document.body.style.fontFamily = d.font;
+            });
+
+            // Promo Banner Sync
+            db.ref('settings/home').on('value', s => {
+                const h = s.val() || {};
+                const banner = document.getElementById('promo-banner');
+                const text = banner?.querySelector('.promo-text');
+                if (banner && text) {
+                    banner.style.display = h.promoShow ? 'flex' : 'none';
+                    text.textContent = h.promoText || '';
+                }
+            });
         }
         initListeners();
 

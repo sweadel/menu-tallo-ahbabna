@@ -161,20 +161,21 @@ REFS.cats.on('value', snap => {
     updateStats();
 });
 
+REFS.feed.on('value', snap => {
+    feedItems = [];
+    if (snap.exists()) Object.entries(snap.val()).forEach(([k, v]) => feedItems.push({ key: k, ...v }));
+    feedItems.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    renderFeedTable();
+    updateStats();
+});
+
 function updateStats() {
     const t = document.getElementById('stat-total'), 
           c = document.getElementById('stat-cats'), 
           f = document.getElementById('stat-feed');
     if (t) t.textContent = menuItems.length;
     if (c) c.textContent = catItems.filter(cat => cat.status !== 'hidden').length;
-    
-    // جلب عدد التعليقات
-    REFS.feed.once('value', s => {
-        if (f) f.textContent = s.numChildren();
-        feedItems = [];
-        if (s.exists()) Object.entries(s.val()).forEach(([k,v]) => feedItems.push({key:k, ...v}));
-        feedItems.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-    });
+    if (f) f.textContent = feedItems.length;
 }
 
 function renderFeedTable() {
@@ -249,7 +250,7 @@ function renderTable() {
                 </td>
                 <td>
                     <div class="action-btns" style="justify-content:center;">
-                        <button class="btn-icon" onclick="editItem('${item.key}')" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-icon" onclick="openItemModal('${item.key}')" title="تعديل"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button class="btn-icon" style="color:var(--red);" onclick="deleteItem('${item.key}')" title="حذف"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 </td>
@@ -402,7 +403,7 @@ function renderCatTable() {
                 </td>
                 <td>
                     <div class="action-btns" style="justify-content:center;">
-                        <button class="btn-icon" onclick="editCat('${cat.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="btn-icon" onclick="openCatModal('${cat.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button class="btn-icon" style="color:var(--red);" onclick="deleteCat('${cat.id}')"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 </td>
@@ -413,6 +414,55 @@ function renderCatTable() {
 function previewItemImage(url) {
     const img = document.getElementById('img-prev');
     if (img) img.src = url || 'images/tallo-logo.png';
+}
+
+function openCatModal(id = null) {
+    editCatKey = id;
+    const modal = document.getElementById('catModal');
+    const form = document.getElementById('catForm');
+    form.reset();
+    document.getElementById('catKey').value = id || '';
+    document.getElementById('catModalTitle').textContent = id ? 'تعديل بيانات القسم' : 'إضافة قسم جديد';
+    updateIconPreview('fa-folder');
+
+    if (id) {
+        const cat = catItems.find(c => c.id === id);
+        if (cat) {
+            document.getElementById('catNameAr').value = cat.nameAr || '';
+            document.getElementById('catNameEn').value = cat.nameEn || '';
+            document.getElementById('catSection').value = cat.section || 'arabic';
+            document.getElementById('catOrder').value = cat.order || 0;
+            document.getElementById('catIcon').value = cat.icon || '';
+            updateIconPreview(cat.icon || 'fa-folder');
+        }
+    }
+    modal.classList.add('active');
+}
+
+function closeCatModal() {
+    document.getElementById('catModal').classList.remove('active');
+}
+
+function saveCategory() {
+    if (isSaving) return;
+    const nameAr = document.getElementById('catNameAr').value.trim();
+    if (!nameAr) return showToast('يرجى إدخال اسم القسم', 'error');
+
+    isSaving = true;
+    const id = editCatKey || `cat_${Date.now()}`;
+    const data = {
+        nameAr,
+        nameEn: document.getElementById('catNameEn').value.trim(),
+        section: document.getElementById('catSection').value,
+        order: parseInt(document.getElementById('catOrder').value) || 0,
+        icon: document.getElementById('catIcon').value.trim() || 'fa-utensils',
+        status: 'active'
+    };
+
+    REFS.cats.child(id).update(data).then(() => {
+        showToast('تم حفظ القسم بنجاح');
+        closeCatModal();
+    }).finally(() => isSaving = false);
 }
 
 function updateIconPreview(val) {

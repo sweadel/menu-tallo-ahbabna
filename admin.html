@@ -99,6 +99,18 @@
                     </div>
                     <button class="btn-primary" onclick="openItemModal()"><i class="fa-solid fa-plus"></i> إضافة طبق</button>
                 </div>
+
+                <!-- Bulk Actions Bar -->
+                <div id="itemsBulkActions" class="stat-card" style="display:none; margin-top:20px; background:rgba(255, 94, 87, 0.1); border-color:var(--red); padding:15px 30px; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <i class="fa-solid fa-check-double" style="color:var(--red);"></i>
+                        <span>تم تحديد <b id="bulkCount">0</b> أطباق</span>
+                    </div>
+                    <button class="btn-primary" style="background:var(--red); box-shadow:none;" onclick="bulkDeleteItems()">
+                        <i class="fa-solid fa-trash-can"></i> حذف المحدد
+                    </button>
+                </div>
+
                 <div class="table-container">
                     <table>
                         <thead>
@@ -289,6 +301,14 @@
                         <div class="input-group"><label>Name (English)</label><input type="text" id="catNameEn" class="form-control"></div>
                         <div class="input-group"><label>التبويب الرئيسي</label><select id="catSection" class="form-control"><option value="arabic">المنيو العربي</option><option value="intl">انترناشونال</option><option value="desserts">الحلويات</option><option value="drinks">المشروبات</option><option value="argileh">الأراجيل</option></select></div>
                         <div class="input-group"><label>الترتيب</label><input type="number" id="catOrder" class="form-control" value="0"></div>
+                        <div class="input-group" style="grid-column: span 2;">
+                            <label>أيقونة القسم (FontAwesome Class)</label>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" id="catIcon" class="form-control" placeholder="مثلاً: fa-burger" oninput="updateIconPreview(this.value)">
+                                <div id="icon-preview" class="stat-icon" style="width:50px; height:50px; flex-shrink:0;"><i class="fa-solid fa-folder"></i></div>
+                            </div>
+                            <small style="color:var(--text-dim);">استخدم أكواد FontAwesome (مثل: fa-pizza-slice, fa-coffee)</small>
+                        </div>
                     </div>
                     <button type="submit" class="btn-primary" style="width:100%; margin-top:20px;">حفظ القسم</button>
                 </form>
