@@ -1,324 +1,168 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم الفاخرة | طلوا حبابنا</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin.css">
-    <style>
-        :root {
-            --gold: #C5A022;
-            --dark-bg: #0a0a0a;
-            --card-bg: #151515;
-            --text-dim: rgba(255, 255, 255, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
-        .weight-prices-section {
-            background: rgba(197, 160, 34, 0.05);
-            border: 1px solid rgba(197, 160, 34, 0.2);
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            display: none;
-        }
-        .weight-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 20px;
-            width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard – Tallo Ahbabna</title>
+  <!-- SEO meta tags -->
+  <meta name="description" content="Professional SaaS‑level admin panel for managing users, content and analytics of the Tallo Ahbabna platform." />
+  <link rel="icon" href="data:," />
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/yourkit.js" crossorigin="anonymous"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --font-family: 'Inter', sans-serif;
+      --primary-h: 210; /* cool blue */
+      --primary: hsl(var(--primary-h), 70%, 55%);
+      --primary-dark: hsl(var(--primary-h), 70%, 45%);
+      --bg: #f0f4f8;
+      --bg-dark: #1e1e2f;
+      --surface: #ffffff;
+      --surface-dark: #2c2c3e;
+      --text: #212529;
+      --text-dark: #e0e0e0;
+      --radius: 0.75rem;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    [data-theme="dark"] {
+      --bg: var(--bg-dark);
+      --surface: var(--surface-dark);
+      --text: var(--text-dark);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin:0; font-family: var(--font-family); background: var(--bg); color: var(--text);
+      display: flex; min-height: 100vh; overflow-x: hidden;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 260px; background: var(--surface); padding: 1.5rem; box-shadow: var(--shadow); border-right: 1px solid rgba(0,0,0,0.08);
+      display: flex; flex-direction: column; gap: 1.5rem; transition: transform .3s ease;
+    }
+    .sidebar a { text-decoration:none; color: var(--text); font-weight:500; display:flex; align-items:center; gap:.5rem; padding:.5rem 1rem; border-radius: var(--radius); transition: background .2s; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(0,0,0,0.05); }
+    .sidebar .logo { font-size:1.25rem; font-weight:700; color: var(--primary); }
+    /* Main content */
+    .main {
+      flex:1; padding:1.5rem; max-width: 1440px; margin:auto;
+    }
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;
+    }
+    .topbar h1 { margin:0; font-size:1.5rem; font-weight:600; }
+    .toggle-theme {
+      cursor:pointer; font-size:1.2rem; color: var(--text);
+    }
+    /* Cards */
+    .grid {
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap:1.5rem;
+    }
+    .card {
+      background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding:1.5rem; transition: transform .2s;
+    }
+    .card:hover { transform: translateY(-4px); }
+    .card h3 { margin:0 0 .5rem; font-size:1rem; color: #555; }
+    .card .value { font-size:1.75rem; font-weight:600; color: var(--primary); }
+    /* Table */
+    table { width:100%; border-collapse:collapse; background: var(--surface); border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow); }
+    th, td { padding:.75rem 1rem; text-align:left; }
+    th { background: rgba(0,0,0,0.04); font-weight:600; }
+    tr:nth-child(even) { background: rgba(0,0,0,0.02); }
+    .badge { padding:.2rem .6rem; border-radius:12px; font-size:.75rem; font-weight:500; }
+    .badge.admin { background: hsl(0,70%,80%); color:#900; }
+    .badge.editor { background: hsl(45,70%,80%); color:#b75c00; }
+    .badge.user { background: hsl(120,70%,80%); color:#006400; }
+    /* Responsive */
+    @media(max-width:768px){ .sidebar{ position:fixed; top:0; left:0; height:100vh; transform:translateX(-100%); z-index:1000; }
+      .sidebar.open{transform:translateX(0);} .menu-btn{display:block;cursor:pointer;}
+    }
+  </style>
 </head>
-<body>
-    <div class="admin-wrapper">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header"><img src="images/tallo-logo.png" style="width: 120px;"></div>
-            <nav class="sidebar-nav">
-                <button class="menu-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard')"><i class="fa-solid fa-gauge-high"></i> الرئيسية</button>
-                <button class="menu-item" data-view="view-menu" onclick="navigateTo('view-menu')"><i class="fa-solid fa-utensils"></i> المنيو</button>
-                <button class="menu-item" data-view="view-categories" onclick="navigateTo('view-categories')"><i class="fa-solid fa-layer-group"></i> الأقسام</button>
-                <button class="menu-item" data-view="view-feedback" onclick="navigateTo('view-feedback')">
-                    <i class="fa-solid fa-comment-dots"></i> الملاحظات
-                </button>
-                <button class="menu-item" data-view="view-design" onclick="navigateTo('view-design')">
-                    <i class="fa-solid fa-palette"></i> مظهر الموقع
-                </button>
-                <button class="menu-item" data-view="view-settings" onclick="navigateTo('view-settings')">
-                    <i class="fa-solid fa-sliders"></i> الإعدادات
-                </button>
-            </nav>
-            <div class="sidebar-footer"><button class="logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button></div>
-        </aside>
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="header-left">
-                    <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-                    <h1 id="view-title">لوحة التحكم</h1>
-                </div>
-                <div class="header-right">
-                    <div class="user-info">
-                        <span id="current-user-display">مرحباً، المدير العام</span>
-                        <div class="avatar"><i class="fa-solid fa-user-shield"></i></div>
-                    </div>
-                </div>
-            </header>
-            
-            <section id="view-dashboard" class="view active">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background:rgba(197, 160, 34, 0.1); color:var(--gold);"><i class="fa-solid fa-burger"></i></div>
-                        <div class="stat-data"><span id="stat-total">0</span><small>طبق ملكي</small></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background:rgba(29, 209, 161, 0.1); color:var(--green);"><i class="fa-solid fa-list"></i></div>
-                        <div class="stat-data"><span id="stat-cats">0</span><small>قسم مفعل</small></div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background:rgba(255, 94, 87, 0.1); color:var(--red);"><i class="fa-solid fa-heart"></i></div>
-                        <div class="stat-data"><span id="stat-feed">0</span><small>تقييم زوار</small></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="view-menu" class="view">
-                <div class="view-header">
-                    <div class="filter-row">
-                        <input type="text" id="globalSearch" placeholder="ابحث عن طبق..." oninput="renderTable()" class="search-input">
-                        <div class="cat-filters" id="categoryTabs"></div>
-                    </div>
-                    <button class="btn-primary" onclick="openItemModal()"><i class="fa-solid fa-plus"></i> إضافة طبق</button>
-                </div>
-
-                <!-- Bulk Actions Bar -->
-                <div id="itemsBulkActions" class="stat-card" style="display:none; margin-top:20px; background:rgba(255, 94, 87, 0.1); border-color:var(--red); padding:15px 30px; justify-content:space-between; align-items:center;">
-                    <div style="display:flex; align-items:center; gap:15px;">
-                        <i class="fa-solid fa-check-double" style="color:var(--red);"></i>
-                        <span>تم تحديد <b id="bulkCount">0</b> أطباق</span>
-                    </div>
-                    <button class="btn-primary" style="background:var(--red); box-shadow:none;" onclick="bulkDeleteItems()">
-                        <i class="fa-solid fa-trash-can"></i> حذف المحدد
-                    </button>
-                </div>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th width="40"><input type="checkbox" id="selectAllItems"></th>
-                                <th>الطبق</th>
-                                <th>القسم</th>
-                                <th>السعر</th>
-                                <th>الحالة</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="menu-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Categories View -->
-            <section id="view-categories" class="view">
-                <div class="view-header">
-                    <h2>إدارة الأقسام</h2>
-                    <button class="btn-primary" onclick="openCatModal()"><i class="fa-solid fa-plus"></i> إضافة قسم</button>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th width="60">الأيقونة</th>
-                                <th>اسم القسم</th>
-                                <th>التبويب الرئيسي</th>
-                                <th>عدد الأطباق</th>
-                                <th>الحالة</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cat-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Feedback View -->
-            <section id="view-feedback" class="view">
-                <div class="view-header">
-                    <h2>ملاحظات وتقييمات الزوار</h2>
-                    <button class="btn-primary" onclick="updateStats(); renderFeedTable();"><i class="fa-solid fa-sync"></i> تحديث</button>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>الزائر</th>
-                                <th>التقييم</th>
-                                <th>التعليق</th>
-                                <th>التاريخ</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="feed-table-body"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Design View -->
-            <section id="view-design" class="view">
-                <div class="view-header">
-                    <h2>تخصيص مظهر المنيو (Design Sync)</h2>
-                    <button class="btn-primary" onclick="saveDesign()"><i class="fa-solid fa-floppy-disk"></i> حفظ التغييرات</button>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:15px; grid-column: span 2;">
-                        <h3>الألوان والهوية البصرية</h3>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%;">
-                            <div class="input-group">
-                                <label>اللون الذهبي الأساسي</label>
-                                <input type="color" id="design-gold" class="form-control" style="height:50px; padding:5px;">
-                            </div>
-                            <div class="input-group">
-                                <label>لون الخلفية (Dark Mode)</label>
-                                <input type="color" id="design-bg" class="form-control" style="height:50px; padding:5px;">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:15px;">
-                        <h3>الخطوط (Typography)</h3>
-                        <div class="input-group" style="width:100%;">
-                            <label>نوع الخط العربي</label>
-                            <select id="design-font" class="form-control">
-                                <option value="'Cairo', sans-serif">Cairo (عصري)</option>
-                                <option value="'IBM Plex Sans Arabic', sans-serif">IBM Plex (راقي)</option>
-                                <option value="'Zain', sans-serif">Zain (نحيف وفاخر)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:15px; grid-column: span 3;">
-                        <h3>شريط الإعلانات (Promo Banner)</h3>
-                        <div style="display:grid; grid-template-columns:1fr 4fr; gap:20px; width:100%; align-items:center;">
-                            <div class="input-group">
-                                <label>الحالة</label>
-                                <select id="promo-status" class="form-control">
-                                    <option value="show">تفعيل</option>
-                                    <option value="hide">إخفاء</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>نص الإعلان</label>
-                                <input type="text" id="promo-text" class="form-control" placeholder="مثلاً: خصم 20% على المشاوي بمناسبة الافتتاح!">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Settings View -->
-            <section id="view-settings" class="view">
-                <div class="view-header">
-                    <h2>إعدادات النظام</h2>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:15px;">
-                        <h3>معلومات الحساب</h3>
-                        <p id="current-user-display-settings" style="color:var(--gold); font-weight:800; font-size:1.2rem;">المدير العام</p>
-                        <button class="btn-primary" style="background:var(--red); color:#fff; box-shadow:none;" onclick="localStorage.clear(); window.location.reload();">
-                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج من النظام
-                        </button>
-                    </div>
-                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:15px;">
-                        <h3>تحديث البيانات</h3>
-                        <p>تزامن لحظي مع Firebase مفعل ✅</p>
-                        <button class="btn-primary" onclick="window.location.reload();">
-                            <i class="fas fa-sync"></i> إعادة تحميل الصفحة
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </main>
+<body data-theme="light">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">Tallo Ahbabna</div>
+    <nav>
+      <a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="#users"><i class="fas fa-users"></i> Users</a>
+      <a href="#content"><i class="fas fa-database"></i> Content</a>
+      <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#logs"><i class="fas fa-clipboard-list"></i> Logs</a>
+    </nav>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <h1>Admin Dashboard</h1>
+      <div class="toggle-theme" id="themeToggle"><i class="fas fa-moon"></i></div>
     </div>
+    <section class="grid">
+      <div class="card">
+        <h3>Total Users</h3>
+        <div class="value" id="totalUsers">—</div>
+      </div>
+      <div class="card">
+        <h3>Active Sessions</h3>
+        <div class="value" id="activeSessions">—</div>
+      </div>
+      <div class="card">
+        <h3>New Sign‑ups (24h)</h3>
+        <div class="value" id="newSignups">—</div>
+      </div>
+      <div class="card">
+        <h3>System Errors</h3>
+        <div class="value" id="systemErrors">—</div>
+      </div>
+    </section>
+    <section style="margin-top:2rem;">
+      <h2>Users Management</h2>
+      <table id="usersTable">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <!-- rows will be injected by JS -->
+        </tbody>
+      </table>
+    </section>
+    <section style="margin-top:2rem;">
+      <h2>Analytics</h2>
+      <canvas id="signupsChart" width="400" height="200"></canvas>
+    </section>
+  </main>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { renderUsers, setupUserActions } from "./assets/js/users.js";
+import { initChart } from "./assets/js/analytics.js";
+import { auth, db } from "./assets/js/firebase.js";
 
-    <!-- Modals -->
-    <div id="itemModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="itemModalTitle">بيانات الطبق</h2>
-                <button class="btn-icon" onclick="closeItemModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="itemForm" onsubmit="event.preventDefault(); saveItem();">
-                    <input type="hidden" id="itemKey">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                        <div class="input-group"><label>الاسم (عربي)</label><input type="text" id="itemName" class="form-control" required></div>
-                        <div class="input-group"><label>Name (English)</label><input type="text" id="itemNameEn" class="form-control"></div>
-                        <div class="input-group"><label>السعر الأساسي (JD)</label><input type="text" id="itemPrice" class="form-control" required></div>
-                        <div class="input-group"><label>القسم</label><select id="itemCategory" class="form-control" onchange="onCategoryChange(this.value)" required></select></div>
-                        
-                        <div class="input-group" style="grid-column: span 2;">
-                            <div id="weightPricesFields" class="weight-prices-section">
-                                <label style="color:var(--gold); font-weight:700;"><i class="fa-solid fa-scale-balanced"></i> أسعار الأوزان (للمشاوي)</label>
-                                <div class="weight-grid">
-                                    <div class="input-group"><small>1/4 كيلو</small><input type="text" id="priceQuarter" class="form-control"></div>
-                                    <div class="input-group"><small>1/2 كيلو</small><input type="text" id="priceHalf" class="form-control"></div>
-                                    <div class="input-group"><small>1 كيلو</small><input type="text" id="priceKilo" class="form-control"></div>
-                                </div>
-                            </div>
-                        </div>
+// Theme toggle (kept inline for simplicity)
+const toggle = document.getElementById('themeToggle');
+const root = document.body;
+toggle.addEventListener('click',()=>{
+  const isDark = root.dataset.theme==='dark';
+  root.dataset.theme = isDark?'light':'dark';
+  toggle.innerHTML = isDark?'<i class="fas fa-moon"></i>':'<i class="fas fa-sun"></i>';
+});
 
-                        <div class="input-group" style="grid-column: span 2;"><label>رابط الصورة</label><input type="url" id="itemImage" class="form-control" oninput="previewItemImage(this.value)"></div>
-                        <div class="input-group"><label>شارة التميز</label><select id="itemBadge" class="form-control"><option value="">بدون شارة</option><option value="HOT">حار 🔥</option><option value="NEW">جديد ✨</option><option value="SPECIAL">مميز ⭐</option></select></div>
-                        <div class="input-group"><label>وقت التحضير</label><input type="text" id="itemPrepTime" class="form-control"></div>
-                        <div class="input-group"><label>وصف الطبق (عربي)</label><textarea id="itemDesc" class="form-control" rows="2"></textarea></div>
-                        <div class="input-group"><label>Description (English)</label><textarea id="itemDescEn" class="form-control" rows="2"></textarea></div>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width:100%; margin-top:20px;">حفظ بيانات الطبق</button>
-                </form>
-            </div>
-        </div>
-    </div>
+// Auth state listener (placeholder – customize as needed)
+onAuthStateChanged(auth, user => {
+  if (user) {
+    console.log('Logged in as', user.email);
+    // TODO: fetch role from Firestore and adjust UI permissions
+  } else {
+    console.log('Not logged in');
+  }
+});
 
-    <div id="catModal" class="modal-overlay">
-        <div class="modal-content" style="max-width:600px;">
-            <div class="modal-header">
-                <h2 id="catModalTitle">بيانات القسم</h2>
-                <button class="btn-icon" onclick="closeCatModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="catForm" onsubmit="event.preventDefault(); saveCategory();">
-                    <input type="hidden" id="catKey">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                        <div class="input-group"><label>اسم القسم (عربي)</label><input type="text" id="catNameAr" class="form-control" required></div>
-                        <div class="input-group"><label>Name (English)</label><input type="text" id="catNameEn" class="form-control"></div>
-                        <div class="input-group"><label>التبويب الرئيسي</label><select id="catSection" class="form-control"><option value="arabic">المنيو العربي</option><option value="intl">انترناشونال</option><option value="desserts">الحلويات</option><option value="drinks">المشروبات</option><option value="argileh">الأراجيل</option></select></div>
-                        <div class="input-group"><label>الترتيب</label><input type="number" id="catOrder" class="form-control" value="0"></div>
-                        <div class="input-group" style="grid-column: span 2;">
-                            <label>أيقونة القسم (FontAwesome Class)</label>
-                            <div style="display:flex; gap:10px;">
-                                <input type="text" id="catIcon" class="form-control" placeholder="مثلاً: fa-burger" oninput="updateIconPreview(this.value)">
-                                <div id="icon-preview" class="stat-icon" style="width:50px; height:50px; flex-shrink:0;"><i class="fa-solid fa-folder"></i></div>
-                            </div>
-                            <small style="color:var(--text-dim);">استخدم أكواد FontAwesome (مثل: fa-pizza-slice, fa-coffee)</small>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width:100%; margin-top:20px;">حفظ القسم</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast-container" style="position:fixed; bottom:30px; left:30px; z-index:9999; display:flex; flex-direction:column; gap:10px;"></div>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script src="js/admin.js"></script>
+// Initialize dashboard data
+renderUsers();
+setupUserActions();
+initChart();
+</script>
 </body>
 </html>
