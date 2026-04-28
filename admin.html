@@ -88,6 +88,7 @@
     <nav>
       <a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
       <a href="#users"><i class="fas fa-users"></i> Users</a>
+      <a href="#menu"><i class="fas fa-utensils"></i> Menu</a>
       <a href="#content"><i class="fas fa-database"></i> Content</a>
       <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
       <a href="#logs"><i class="fas fa-clipboard-list"></i> Logs</a>
@@ -127,10 +128,48 @@
         </tbody>
       </table>
     </section>
-    <section style="margin-top:2rem;">
+    <section id="menuSection" style="display:none; margin-top:2rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h2>Menu Management</h2>
+        <button id="addMenuItemBtn" class="main-btn gold" style="padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 0.5rem;">+ Add Item</button>
+      </div>
+      <table id="menuTable">
+        <thead>
+          <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <!-- rows will be injected by JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <section id="analyticsSection" style="margin-top:2rem;">
       <h2>Analytics</h2>
       <canvas id="signupsChart" width="400" height="200"></canvas>
     </section>
+
+    <!-- Modal for Menu Items -->
+    <div id="itemModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+      <div class="card" style="width:100%; max-width:500px; position:relative;">
+        <button id="closeModalBtn" style="position:absolute; top:1rem; right:1rem; border:none; background:none; font-size:1.5rem; cursor:pointer; color:var(--text);">&times;</button>
+        <h2 id="modalTitle">Add Menu Item</h2>
+        <form id="menuItemForm" style="display:flex; flex-direction:column; gap:1rem; margin-top:1rem;">
+          <input type="text" id="itemName" placeholder="Item Name (Arabic)" required style="padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;" />
+          <input type="text" id="itemNameEn" placeholder="Item Name (English)" style="padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;" />
+          <select id="itemCategory" required style="padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;">
+            <option value="" disabled selected>Select Category</option>
+            <option value="dr-cold">Cold Drinks</option>
+            <option value="dr-hot">Hot Drinks</option>
+            <option value="dr-juice">Juices & Smoothies</option>
+            <option value="dr-mojito">Mojito & Iced Tea</option>
+          </select>
+          <input type="text" id="itemPrice" placeholder="Price (JD)" style="padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;" />
+          <input type="text" id="itemImage" placeholder="Image Path (e.g. images/pepsi.png)" style="padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;" />
+          <textarea id="itemDesc" placeholder="Description (Arabic)" style="padding:0.5rem; border-radius:0.4rem; border:1px solid #ccc;"></textarea>
+          <button type="submit" class="main-btn gold" style="padding:0.75rem; border-radius:0.5rem;">Save Item</button>
+        </form>
+      </div>
+    </div>
   </main>
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -138,6 +177,7 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { renderUsers, setupUserActions } from "./assets/js/users.js";
 import { initChart } from "./assets/js/analytics.js";
+import { renderMenu, setupMenuActions } from "./assets/js/menu.js";
 import { auth, db } from "./assets/js/firebase.js";
 
 // Theme toggle (kept inline for simplicity)
@@ -158,11 +198,38 @@ onAuthStateChanged(auth, user => {
     console.log('Not logged in');
   }
 });
-
 // Initialize dashboard data
 renderUsers();
 setupUserActions();
 initChart();
+renderMenu();
+setupMenuActions();
+
+// Navigation logic
+document.querySelectorAll('.sidebar nav a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.sidebar nav a').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    
+    const target = link.getAttribute('href').substring(1);
+    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+    
+    if (target === 'users') {
+      document.getElementById('usersSection').style.display = 'block';
+    } else if (target === 'menu') {
+      document.getElementById('menuSection').style.display = 'block';
+    } else if (target === 'analytics') {
+      document.getElementById('analyticsSection').style.display = 'block';
+    } else {
+      // Default dashboard view
+      document.getElementById('statsSection').style.display = 'grid';
+      document.getElementById('usersSection').style.display = 'block';
+      document.getElementById('analyticsSection').style.display = 'block';
+    }
+  });
+});
+
 </script>
 </body>
 </html>
