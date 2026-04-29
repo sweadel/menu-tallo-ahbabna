@@ -624,7 +624,7 @@
 
     <!-- App Logic -->
     <script>
-        // ── Global Helpers ──
+        // ── Global Helpers (must load before admin.js) ──
         window.showLoading = function(show) {
             const overlay = document.getElementById('loading-overlay');
             if (overlay) overlay.style.display = show ? 'flex' : 'none';
@@ -641,18 +641,9 @@
             setTimeout(function(){ toast.style.opacity='0'; toast.style.transition='opacity 0.3s'; setTimeout(function(){ toast.remove(); }, 300); }, 3000);
         };
 
-        window.navigateTo = function(id) {
-            document.querySelectorAll('.menu-item').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-view') === id) btn.classList.add('active');
-            });
-            document.querySelectorAll('.view').forEach(view => {
-                view.classList.remove('active');
-                if (view.id === id) view.classList.add('active');
-            });
-            localStorage.setItem('last_admin_view', id);
-        };
-        
+        // Placeholder — admin.js overrides with full version
+        window.navigateTo = window.navigateTo || function(){};
+
         function logout() {
             localStorage.removeItem('admin_auth');
             window.location.href = 'login.html';
