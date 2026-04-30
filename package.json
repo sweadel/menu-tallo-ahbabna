@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "jimp": "^0.16.1",
-    "jsdom": "^29.0.2"
-  },
-  "devDependencies": {
-    "pdf-parse": "^2.4.5"
-  }
-}
