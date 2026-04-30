@@ -506,5 +506,18 @@
     </script>
     <!-- تسجيل خدمة العمل بدون إنترنت (Service Worker) -->
     <script src="sw-register.js" onerror="console.log('SW fallback')"></script>
+    <!-- Back to Top Button -->
+    <div class="scroll-top" id="btnScrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fa-solid fa-chevron-up"></i>
+    </div>
+
+    <script>
+        // Show/Hide Scroll to Top Button
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('btnScrollTop');
+            if (window.scrollY > 400) btn.classList.add('show');
+            else btn.classList.remove('show');
+        }, { passive: true });
+    </script>
 </body>
 </html>

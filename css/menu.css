@@ -920,3 +920,69 @@ section.active {
  font-size: .84rem;
  }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+ 12. زر العودة للأعلى — Back to Top Button
+ ════════════════════════════════════════════════════════════════════ */
+.scroll-top {
+  position: fixed;
+  bottom: 95px; /* يرتفع قليلاً فوق شريط التواصل */
+  right: 20px;
+  width: 46px;
+  height: 46px;
+  background: rgba(17, 17, 17, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 1500;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.8);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), inset 0 0 8px rgba(229, 196, 103, 0.1);
+}
+
+.scroll-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.scroll-top:hover {
+  background: var(--gold);
+  color: #000;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(229, 196, 103, 0.3);
+}
+
+.scroll-top:active {
+  transform: scale(0.9);
+}
+
+.scroll-top::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  opacity: 0.4;
+  animation: pulse-top 2s infinite;
+}
+
+@keyframes pulse-top {
+  0% { transform: scale(1); opacity: 0.4; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* في العربي نضعه على اليسار لتجنب الزحام */
+[dir="rtl"] .scroll-top {
+  right: auto;
+  left: 20px;
+}
