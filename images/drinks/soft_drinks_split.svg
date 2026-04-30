@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <rect width="800" height="800" fill="#000"/>
+  <image href="pepsi_can.jpg" x="0" y="0" width="400" height="800" preserveAspectRatio="xMidYMid slice" />
+  <image href="matrix_cola_bottle_1777405640074.png" x="400" y="0" width="400" height="800" preserveAspectRatio="xMidYMid slice" />
+  <line x1="400" y1="0" x2="400" y2="800" stroke="#C5A022" stroke-width="6" />
+  <text x="200" y="750" font-family="Arial" font-size="40" fill="white" font-weight="bold" text-anchor="middle" filter="drop-shadow(2px 2px 2px black)">Pepsi</text>
+  <text x="600" y="750" font-family="Arial" font-size="40" fill="white" font-weight="bold" text-anchor="middle" filter="drop-shadow(2px 2px 2px black)">Matrix Cola</text>
+</svg>
