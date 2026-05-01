@@ -287,18 +287,22 @@
 
             document.getElementById('modalTitle').textContent = name;
             
-            if (pricesData) {
-                let priceHtml = `
-                    <div class="price-options">
-                        <div class="p-opt"><span>1/4 KG:</span> <b>${pricesData.quarter} JD</b></div>
-                        <div class="p-opt"><span>1/2 KG:</span> <b>${pricesData.half} JD</b></div>
-                        <div class="p-opt"><span>1 KG:</span> <b>${pricesData.kilo} JD</b></div>
-                    </div>
-                `;
+            if (pricesData && Array.isArray(pricesData)) {
+                let priceHtml = `<div class="modal-multi-prices">`;
+                pricesData.forEach(p => {
+                    priceHtml += `
+                        <div class="m-opt">
+                            <span class="opt-label">${p.labelEn || p.label}:</span>
+                            <span class="opt-val">${p.price} JD</span>
+                        </div>
+                    `;
+                });
+                priceHtml += `</div>`;
                 document.getElementById('modalPrice').innerHTML = priceHtml;
                 document.getElementById('modalPrice').style.display = 'block';
             } else {
                 document.getElementById('modalPrice').textContent = price;
+                document.getElementById('modalPrice').style.display = price ? 'inline-block' : 'none';
             }
             
             document.getElementById('modalDesc').textContent = desc;
@@ -355,6 +359,21 @@
             // Prep Time
             const prepHtml = item.prepTime ? `<span class="card-prep"><i class="fa-regular fa-clock"></i> ${item.prepTime}</span>` : '';
 
+            // Multiple Prices Logic
+            let priceSection = `<span class="card-price">${price ? price + ' JD' : ''}</span>`;
+            if (item.prices && Array.isArray(item.prices)) {
+                priceSection = `
+                    <div class="card-multi-prices">
+                        ${item.prices.map(p => `
+                            <div class="multi-price-row">
+                                <span class="m-label">${p.labelEn || p.label}</span>
+                                <span class="m-price">${p.price} JD</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
             card.innerHTML = `
                 ${badgeHtml}
                 <div class="card-img">
@@ -363,7 +382,7 @@
                 <div class="card-body">
                     <h3 class="card-name">${item.nameEn || item.name || ''}</h3>
                     <div class="card-meta">
-                        <span class="card-price">${price ? price + ' JD' : ''}</span>
+                        ${priceSection}
                         ${prepHtml}
                     </div>
                 </div>

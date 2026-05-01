@@ -1147,3 +1147,81 @@ section.active {
   left: 20px;
 }
 
+
+/* ── خيارات الأسعار المتعددة (المشاوي) ── */
+.card-multi-prices {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 5px 0;
+  border-top: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.multi-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.m-label {
+  color: var(--text-dim);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.m-price {
+  color: var(--gold);
+  font-weight: 800;
+}
+
+.modal-multi-prices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 15px 0;
+  padding: 15px 10px;
+  background: rgba(255, 215, 0, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 215, 0, 0.15);
+}
+
+.m-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  position: relative;
+}
+
+.m-opt:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 20%;
+  bottom: 20%;
+  width: 1px;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.opt-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.opt-val {
+  font-size: 0.95rem;
+  color: var(--gold);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 400px) {
+    .opt-val { font-size: 0.85rem; }
+    .opt-label { font-size: 0.65rem; }
+}

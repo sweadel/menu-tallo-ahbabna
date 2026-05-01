@@ -256,12 +256,15 @@
             card.className = 'menu-card';
             card.setAttribute('data-t', (item.name || '').toLowerCase());
             card.setAttribute('data-desc', item.desc || '');
-            if (item.prices) card.setAttribute('data-prices', JSON.stringify(item.prices));
+            
+            if (item.prices) {
+                card.setAttribute('data-prices', JSON.stringify(item.prices));
+            }
             
             const imgSrc = item.image || 'images/tallo-logo.png';
             const price = (item.price || '').toString().trim();
             
-            // Process Badges
+            // Badges
             let badgeHtml = '';
             if (item.badge === 'HOT') badgeHtml = `<span class="card-badge bg-red">حار 🔥</span>`;
             else if (item.badge === 'NEW') badgeHtml = `<span class="card-badge bg-green">جديد ✨</span>`;
@@ -270,6 +273,21 @@
             // Prep Time
             const prepHtml = item.prepTime ? `<span class="card-prep"><i class="fa-regular fa-clock"></i> ${item.prepTime}</span>` : '';
             
+            // Multiple Prices Logic
+            let priceSection = `<span class="card-price">${price ? price + ' د.أ' : ''}</span>`;
+            if (item.prices && Array.isArray(item.prices)) {
+                priceSection = `
+                    <div class="card-multi-prices">
+                        ${item.prices.map(p => `
+                            <div class="multi-price-row">
+                                <span class="m-label">${p.label}</span>
+                                <span class="m-price">${p.price} د.أ</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
             card.innerHTML = `
                 ${badgeHtml}
                 <div class="card-img">
@@ -278,7 +296,7 @@
                 <div class="card-body">
                     <h3 class="card-name">${item.name || ''}</h3>
                     <div class="card-meta">
-                        <span class="card-price">${price ? price + ' د.أ' : ''}</span>
+                        ${priceSection}
                         ${prepHtml}
                     </div>
                 </div>
@@ -449,19 +467,22 @@
 
             document.getElementById('modalTitle').textContent = name;
             
-            let priceHtml = price;
-            if (pricesData) {
-                priceHtml = `
-                    <div class="price-options">
-                        <div class="p-opt"><span>1/4 كيلو:</span> <b>${pricesData.quarter} د.أ</b></div>
-                        <div class="p-opt"><span>1/2 كيلو:</span> <b>${pricesData.half} د.أ</b></div>
-                        <div class="p-opt"><span>1 كيلو:</span> <b>${pricesData.kilo} د.أ</b></div>
-                    </div>
-                `;
+            if (pricesData && Array.isArray(pricesData)) {
+                let priceHtml = `<div class="modal-multi-prices">`;
+                pricesData.forEach(p => {
+                    priceHtml += `
+                        <div class="m-opt">
+                            <span class="opt-label">${p.label}:</span>
+                            <span class="opt-val">${p.price} د.أ</span>
+                        </div>
+                    `;
+                });
+                priceHtml += `</div>`;
                 document.getElementById('modalPrice').innerHTML = priceHtml;
                 document.getElementById('modalPrice').style.display = 'block';
             } else {
                 document.getElementById('modalPrice').textContent = price;
+                document.getElementById('modalPrice').style.display = price ? 'inline-block' : 'none';
             }
             
             document.getElementById('modalDesc').textContent = desc;
